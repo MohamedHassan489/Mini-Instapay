@@ -29,7 +29,7 @@ public class DepositController implements Initializable {
         ObservableList<Client> searchResult = Model.getInstance().searchClient(UserName_fld.getText());
         result_listView.setItems(searchResult);
         result_listView.setCellFactory(clientListView ->  new ClientCellFactory());
-        client = searchResult.get(0);
+        client = searchResult.getFirst();
     }
     public void onDeposit(){
         double amount = Double.parseDouble(amount_fld.getText());
