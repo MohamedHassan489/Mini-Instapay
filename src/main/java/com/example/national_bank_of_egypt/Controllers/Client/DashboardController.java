@@ -1,29 +1,25 @@
 package com.example.national_bank_of_egypt.Controllers.Client;
 
 import com.example.national_bank_of_egypt.Models.Model;
-import com.example.national_bank_of_egypt.Models.Transactions;
+import com.example.national_bank_of_egypt.Models.Transaction;
 import com.example.national_bank_of_egypt.Views.TransactionCellFactory;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
 import java.net.URL;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
     public Text userName;
     public Label login_date;
-    public Label checking_bal;
-    public Label checking_acc_num;
-    public Label saving_bal;
-    public Label saving_acc_num;
+    public Label total_balance;
+    public Label account_count;
     public Label income_bal;
     public Label expenses_bal;
-    public ListView<Transactions> Transaction_list;
+    public ListView<Transaction> Transaction_list;
     public TextField username_fld;
     public TextField amount_fld;
     public TextArea message_fld;
@@ -32,62 +28,75 @@ public class DashboardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ShowData();
-        intiLatestTransactions();
-        Transaction_list.setItems(Model.getInstance().getLatesTrans());
+        initLatestTransactions();
+        Transaction_list.setItems(Model.getInstance().getTransactions());
         Transaction_list.setCellFactory(e -> new TransactionCellFactory());
         accountSummary();
-        send_btn.setOnAction(event->onSendMoney());
-    }
-    private void ShowData(){
-        userName.textProperty().bind(Bindings.concat("Hi, ").concat(Model.getInstance().getClient().firstNameProperty()));
-        login_date.setText("Today, " + LocalDate.now());
-        checking_bal.textProperty().bind(Bindings.concat("$").concat(Model.getInstance().getClient().checkingAccountProperty().get().balanceProperty().asString()));
-        saving_bal.textProperty().bind(Bindings.concat("$").concat(Model.getInstance().getClient().savingAccountProperty().get().balanceProperty().asString()));
-        checking_acc_num.textProperty().bind(Model.getInstance().getClient().checkingAccountProperty().get().account_numberProperty());
-        saving_acc_num.textProperty().bind(Model.getInstance().getClient().savingAccountProperty().get().account_numberProperty());
-    }
-    private void intiLatestTransactions(){
-        if (Model.getInstance().getLatesTrans().isEmpty()){
-            Model.getInstance().setLatesTrans();
+        if (send_btn != null) {
+            send_btn.setOnAction(event -> onSendMoney());
         }
     }
-//    Method calculates all expenses and income
+
+    private void ShowData(){
+        if (Model.getInstance().getCurrentUser() != null) {
+            userName.textProperty().bind(Bindings.concat("Hi, ").concat(Model.getInstance().getCurrentUser().firstNameProperty()));
+            login_date.setText("Today, " + LocalDate.now());
+            
+            double totalBal = Model.getInstance().getCurrentUser().getBankAccounts().stream()
+                .mapToDouble(acc -> acc.getBalance())
+                .sum();
+            total_balance.setText("$" + totalBal);
+            account_count.setText(String.valueOf(Model.getInstance().getCurrentUser().getBankAccounts().size()));
+        }
+    }
+
+    private void initLatestTransactions(){
+        Model.getInstance().loadTransactions(4);
+    }
+
     private void accountSummary(){
         double income = 0;
         double expenses = 0;
-        if (Model.getInstance().getAllTrans().isEmpty()){
-            Model.getInstance().setAllTrans();
-        }
-        for (Transactions  trancaions:Model.getInstance().getAllTrans()){
-            if (trancaions.senderProperty().get().equals(Model.getInstance().getClient().userNameProperty().get())){
-                expenses+= trancaions.amountProperty().get();
+        Model.getInstance().loadTransactions(-1);
+        for (Transaction transaction : Model.getInstance().getTransactions()){
+            if (transaction.getSender().equals(Model.getInstance().getCurrentUser().getUserName())){
+                expenses += transaction.getAmount();
             }else {
-                income+= trancaions.amountProperty().get();
+                income += transaction.getAmount();
             }
         }
-        income_bal.setText("+$"+income);
-        expenses_bal.setText("-$"+expenses);
+        income_bal.setText("+$" + income);
+        expenses_bal.setText("-$" + expenses);
     }
-    private void  onSendMoney(){
-        String receiver = username_fld.getText();
-        double amount = Double.parseDouble(amount_fld.getText());
-        String message = message_fld.getText();
-        String sender = Model.getInstance().getClient().userNameProperty().get();
-        ResultSet resultSet = Model.getInstance().getDataBaseDriver().searchClient(receiver);
-        try{
-            if(resultSet.isBeforeFirst()){
-                Model.getInstance().getDataBaseDriver().updateBalance(receiver, amount, "ADD");
+
+    private void onSendMoney(){
+        if (Model.getInstance().getCurrentUser() == null) return;
+        
+        String receiverIdentifier = username_fld.getText();
+        if (receiverIdentifier.isEmpty()) {
+            return;
+        }
+        
+        try {
+            double amount = Double.parseDouble(amount_fld.getText());
+            String message = message_fld.getText();
+            
+            if (Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
+                return;
             }
-        }catch (Exception e){
+            
+            String senderAccount = Model.getInstance().getCurrentUser().getBankAccounts().get(0).getAccountNumber();
+            
+            if (Model.getInstance().sendMoney(receiverIdentifier, senderAccount, amount, message, "INSTANT")) {
+                username_fld.setText("");
+                amount_fld.setText("");
+                message_fld.setText("");
+                ShowData();
+                initLatestTransactions();
+                accountSummary();
+            }
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-            Model.getInstance().getDataBaseDriver().updateBalance(sender, amount, "SUB");
-
-            Model.getInstance().getClient().savingAccountProperty().get().setBalance(Model.getInstance().getDataBaseDriver().getSavingsAccountBalance(sender));
-            Model.getInstance().getDataBaseDriver().newTransaction(sender, receiver, amount, message);
-            username_fld.setText("");
-            amount_fld.setText("");
-            message_fld.setText("");
-
     }
 }

@@ -2,11 +2,8 @@ package com.example.national_bank_of_egypt.Views;
 
 import com.example.national_bank_of_egypt.Controllers.Admin.AdminController;
 import com.example.national_bank_of_egypt.Controllers.Client.ClientController;
-import com.example.national_bank_of_egypt.Models.Model;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -22,13 +19,13 @@ public class ViewFactory {
     private AnchorPane dashboardview;
     private AnchorPane accountsView;
     private AnchorPane transactionsView;
-    private AnchorPane createClientViews;
-
-    private AnchorPane RequestLoanView;
-
-    private AnchorPane clientsView;
-
-    private AnchorPane depositView;
+    private AnchorPane sendMoneyView;
+    private AnchorPane profileView;
+    private AnchorPane disputesView;
+    private AnchorPane notificationsView;
+    private AnchorPane usersView;
+    private AnchorPane reportsView;
+    private AnchorPane systemHealthView;
 
 
     public ViewFactory(){
@@ -86,20 +83,85 @@ public class ViewFactory {
         }
         return accountsView;
     }
-    public AnchorPane getRequestLoanView() {
-        if (RequestLoanView == null){
+    public AnchorPane getSendMoneyView() {
+        if (sendMoneyView == null){
             try {
-                RequestLoanView = new FXMLLoader(getClass().getResource("/fxml/Client/RequestLoan.fxml")).load();
-
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/SendMoney.fxml"));
+                sendMoneyView = loader.load();
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
-        return RequestLoanView;
+        return sendMoneyView;
+    }
+
+    public AnchorPane getProfileView() {
+        if (profileView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Profile.fxml"));
+                profileView = loader.load();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return profileView;
+    }
+
+    public AnchorPane getDisputesView() {
+        if (disputesView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Disputes.fxml"));
+                disputesView = loader.load();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return disputesView;
+    }
+
+    public AnchorPane getNotificationsView() {
+        if (notificationsView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Notifications.fxml"));
+                notificationsView = loader.load();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return notificationsView;
+    }
+
+    public AnchorPane getReportsView() {
+        if (reportsView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/Reports.fxml"));
+                reportsView = loader.load();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return reportsView;
+    }
+
+    public AnchorPane getSystemHealthView() {
+        if (systemHealthView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/SystemHealth.fxml"));
+                systemHealthView = loader.load();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return systemHealthView;
     }
 
     public void showLoginWindow(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+        CreateStage(loader);
+    }
+
+    public void showRegistrationWindow(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Register.fxml"));
         CreateStage(loader);
     }
     public void showClinetWindow(){
@@ -113,43 +175,21 @@ public class ViewFactory {
         return adminselectedmenuitem;
     }
     public void showAdminWindow(){
-        FXMLLoader loader = new FXMLLoader(getClass().getResource( "/Fxml/Admin/Admin.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource( "/fxml/Admin/Admin.fxml"));
         AdminController controller = new AdminController();
         loader.setController(controller);
         CreateStage(loader);
     }
-    public AnchorPane getDepositViews(){
-        if (depositView == null){
+    public AnchorPane getUsersView(){
+        if (usersView == null){
             try {
-                depositView = new FXMLLoader(getClass().getResource( "/Fxml/Admin/Deposit.fxml")).load();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/Users.fxml"));
+                usersView = loader.load();
             } catch (Exception e){
                 e.printStackTrace();
             }
-
-        } return depositView;
-    }
-
-    public AnchorPane getClientViews(){
-        if (clientsView == null){
-            try {
-                clientsView = new FXMLLoader(getClass().getResource( "/Fxml/Admin/Clients.fxml")).load();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-
-        } return clientsView;
-    }
-
-
-    public AnchorPane getCreateClientViews(){
-        if (createClientViews == null){
-            try {
-                createClientViews = new FXMLLoader(getClass().getResource( "/Fxml/Admin/CreateClient.fxml")).load();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-
-        } return createClientViews;
+        }
+        return usersView;
     }
     private void CreateStage(FXMLLoader loader){
         Scene scene = null;
@@ -162,7 +202,7 @@ public class ViewFactory {
         stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/images/icon.png"))));
         stage.setResizable(false);
         stage.setScene(scene);
-        stage.setTitle("National Bank of Egypt");
+        stage.setTitle("Mini-InstaPay");
         stage.show();
     }
 

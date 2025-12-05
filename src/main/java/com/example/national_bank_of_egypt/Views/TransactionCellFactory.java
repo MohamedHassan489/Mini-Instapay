@@ -1,15 +1,15 @@
 package com.example.national_bank_of_egypt.Views;
 
 import com.example.national_bank_of_egypt.Controllers.Client.TransactionCellController;
-import com.example.national_bank_of_egypt.Models.Transactions;
+import com.example.national_bank_of_egypt.Models.Transaction;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 
 import java.io.IOException;
 
-public class TransactionCellFactory extends ListCell<Transactions> {
+public class TransactionCellFactory extends ListCell<Transaction> {
     @Override
-    protected void updateItem(Transactions transaction, boolean b) {
+    protected void updateItem(Transaction transaction, boolean b) {
         super.updateItem(transaction, b);
         if (b) {
             setText(null);

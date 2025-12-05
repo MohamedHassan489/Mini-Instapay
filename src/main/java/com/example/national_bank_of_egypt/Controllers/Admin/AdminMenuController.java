@@ -9,36 +9,49 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 public class AdminMenuController implements Initializable {
-    public Button create_client_btn;
-    public Button clients_btn;
+    public Button users_btn;
+    public Button transactions_btn;
+    public Button disputes_btn;
+    public Button reports_btn;
+    public Button system_health_btn;
     public Button logout_btn;
-    public Button deposit_btn;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addListeners();
     }
+
     private void addListeners(){
-        logout_btn.setOnAction(actionEvent -> onLogout());
-        create_client_btn.setOnAction((actionEvent -> onCreateClient()));
-        clients_btn.setOnAction(actionEvent -> onClients());
-        deposit_btn.setOnAction(actionEvent -> onDeposit());
+        if (logout_btn != null) logout_btn.setOnAction(actionEvent -> onLogout());
+        if (users_btn != null) users_btn.setOnAction(actionEvent -> onUsers());
+        if (transactions_btn != null) transactions_btn.setOnAction(actionEvent -> onTransactions());
+        if (disputes_btn != null) disputes_btn.setOnAction(actionEvent -> onDisputes());
+        if (reports_btn != null) reports_btn.setOnAction(actionEvent -> onReports());
+        if (system_health_btn != null) system_health_btn.setOnAction(actionEvent -> onSystemHealth());
     }
 
-    private  void onCreateClient (){
-        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.CREATE_CLIENT);
+    private void onUsers(){
+        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.USERS);
     }
-    private void onClients(){
-        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.CLIENT);
 
+    private void onTransactions(){
+        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.TRANSACTIONS);
     }
-    private void onDeposit(){
-        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.DEPOSIT);
 
+    private void onDisputes(){
+        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.DISPUTES);
+    }
+
+    private void onReports(){
+        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.REPORTS);
+    }
+
+    private void onSystemHealth(){
+        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(AdminMenuOption.SYSTEM_HEALTH);
     }
 
     private void onLogout() {
-        Stage stage = (Stage) clients_btn.getScene().getWindow();
+        Stage stage = (Stage) logout_btn.getScene().getWindow();
         Model.getInstance().getViewFactory().closeStage(stage);
         Model.getInstance().getViewFactory().showLoginWindow();
         Model.getInstance().setAdminLoginSuccessFlag(false);

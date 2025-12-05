@@ -16,30 +16,33 @@ public class LoginController implements Initializable {
     public TextField Username_fld;
     public PasswordField password_fld;
     public Button login_btn;
+    public Button register_btn;
     public Label error_lbl;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT,AccountType.ADMIN));
+        acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN));
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType());
-        acc_selector.valueProperty().addListener(observable ->setAcc_selector());
-        login_btn.setOnAction(actionEvent ->  onLogin());
+        acc_selector.valueProperty().addListener(observable -> setAcc_selector());
+        login_btn.setOnAction(actionEvent -> onLogin());
+        if (register_btn != null) {
+            register_btn.setOnAction(actionEvent -> onRegister());
+        }
     }
 
     private void onLogin(){
         Stage stage = (Stage) error_lbl.getScene().getWindow();
         if(Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT){
-            Model.getInstance().evaluateClientCred(Username_fld.getText(), password_fld.getText());
-            if (Model.getInstance().getClientLoginSuccessFlag()) {
+            Model.getInstance().evaluateUserCred(Username_fld.getText(), password_fld.getText());
+            if (Model.getInstance().getUserLoginSuccessFlag()) {
                 Model.getInstance().getViewFactory().showClinetWindow();
                 Model.getInstance().getViewFactory().closeStage(stage);
             }else {
                 Username_fld.setText("");
                 password_fld.setText("");
-                error_lbl.setText("No such a User.");
+                error_lbl.setText("Invalid credentials.");
             }
         }else {
-
             Model.getInstance().evaluateAdminCred(Username_fld.getText(), password_fld.getText());
             if (Model.getInstance().getAdminLoginSuccessFlag()) {
                 Model.getInstance().getViewFactory().showAdminWindow();
@@ -47,17 +50,28 @@ public class LoginController implements Initializable {
             }else {
                 Username_fld.setText("");
                 password_fld.setText("");
-                error_lbl.setText("No such a User.");
+                error_lbl.setText("Invalid credentials.");
             }
         }
     }
-    private void  setAcc_selector(){
+
+    private void onRegister() {
+        Model.getInstance().getViewFactory().showRegistrationWindow();
+    }
+
+    private void setAcc_selector(){
         Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
         if (acc_selector.getValue() == AccountType.ADMIN){
             username_lbl.setText("AdminName");
+            if (register_btn != null) {
+                register_btn.setVisible(false);
+            }
         }else {
             username_lbl.setText("UserName");
-
+            if (register_btn != null) {
+                register_btn.setVisible(true);
+            }
         }
     }
 }
+

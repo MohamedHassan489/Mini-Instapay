@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="50.0" prefWidth="750.0" styleClass="client_cell_container" stylesheets="@../../Styles/ClientCell.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
-   <FontAwesomeIconView glyphName="USER" layoutX="14.0" layoutY="29.0" size="20" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+<AnchorPane prefHeight="50.0" prefWidth="750.0" styleClass="client_cell_container" stylesheets="@../../Styles/ClientCell.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <Text text="👤" style="-fx-font-size: 20;" layoutX="14.0" layoutY="29.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
    <HBox layoutX="144.0" layoutY="-36.0" prefHeight="40.0" prefWidth="668.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="5.0">
       <Label fx:id="fName_lbl" prefHeight="24.0" prefWidth="81.0" text="Mido" />
       <Label fx:id="lName_lbl" prefHeight="24.0" prefWidth="89.0" text="Hassan" />
@@ -14,6 +14,6 @@
       <Label fx:id="ch_acc_lbl" prefHeight="18.0" prefWidth="92.0" styleClass="acc_display_lbl" text="24435" />
       <Label fx:id="sv_acc_lbl" prefHeight="18.0" prefWidth="80.0" styleClass="acc_display_lbl" text="23330213" />
       <Label fx:id="data_lbl" prefHeight="24.0" prefWidth="112.0" text="5-5-2022" />
-      <FontAwesomeIconView fill="#258055" glyphName="CALENDAR" size="20" text="" />
+      <Text text="📅" style="-fx-fill: #258055; -fx-font-size: 20;" />
    </HBox>
 </AnchorPane>

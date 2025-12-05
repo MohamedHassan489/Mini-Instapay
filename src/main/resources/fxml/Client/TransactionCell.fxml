@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
@@ -11,8 +10,8 @@
             xmlns:fx="http://javafx.com/fxml/1">
     <VBox prefHeight="50.0" prefWidth="50.0" styleClass="trans_icon_container" AnchorPane.bottomAnchor="5.0"
           AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="5.0">
-        <FontAwesomeIconView fx:id="in_icon" glyphName="LONG_ARROW_LEFT" size="17"/>
-        <FontAwesomeIconView fx:id="out_icon" glyphName="LONG_ARROW_RIGHT" size="17"/>
+        <Label fx:id="in_icon" text="←" style="-fx-font-size: 17;"/>
+        <Label fx:id="out_icon" text="→" style="-fx-font-size: 17;"/>
     </VBox>
     <Label fx:id="trans_date_lbl" layoutX="103.0" layoutY="14.0" styleClass="trans_data_lbl" text="25-4-2024"
            AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="22.0"/>
@@ -21,10 +20,6 @@
     <Line endY="20.0" layoutX="293.0" layoutY="12.0" AnchorPane.bottomAnchor="21.5" AnchorPane.leftAnchor="300.0"/>
     <Label fx:id="receiver_lbl" layoutX="360.0" layoutY="19.0" styleClass="trans_pAddress_lbl" text="Waleed"
            AnchorPane.leftAnchor="358.0" AnchorPane.topAnchor="22.0"/>
-    <Label fx:id="amount_lbl" layoutX="471.0" layoutY="22.0" styleClass="trans_amount_lbl" text="500"
-           AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="15.0">
-        <graphic>
-          <FontAwesomeIconView glyphName="DOLLAR"/>
-        </graphic>
-    </Label>
+    <Label fx:id="amount_lbl" layoutX="471.0" layoutY="22.0" styleClass="trans_amount_lbl" text="500 $"
+           AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="15.0"/>
 </AnchorPane>
