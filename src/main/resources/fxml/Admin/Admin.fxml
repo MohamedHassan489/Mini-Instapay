@@ -13,7 +13,7 @@
 
     </left>
     <center>
-        <fx:include source="CreateClient.fxml"/>
+        <fx:include source="Users.fxml"/>
     </center>
 
 </BorderPane>

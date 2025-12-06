@@ -71,5 +71,23 @@ public class TransactionLimit {
     public boolean isWeeklyLimitExceeded(double amount) {
         return (weeklyUsed.get() + amount) > weeklyLimit.get();
     }
+    
+    public boolean isDailyLimitApproaching(double amount) {
+        double threshold = dailyLimit.get() * 0.8; // 80% threshold
+        return (dailyUsed.get() + amount) >= threshold && (dailyUsed.get() + amount) < dailyLimit.get();
+    }
+    
+    public boolean isWeeklyLimitApproaching(double amount) {
+        double threshold = weeklyLimit.get() * 0.8; // 80% threshold
+        return (weeklyUsed.get() + amount) >= threshold && (weeklyUsed.get() + amount) < weeklyLimit.get();
+    }
+    
+    public double getDailyLimitRemaining() {
+        return dailyLimit.get() - dailyUsed.get();
+    }
+    
+    public double getWeeklyLimitRemaining() {
+        return weeklyLimit.get() - weeklyUsed.get();
+    }
 }
 

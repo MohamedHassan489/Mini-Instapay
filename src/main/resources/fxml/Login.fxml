@@ -9,23 +9,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.LoginController">
-    <VBox layoutY="7.0" prefHeight="400.0" prefWidth="200.0" styleClass="login_logo_container" stylesheets="@../Styles/login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <Label text="🏦" style="-fx-font-size: 30;" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="National Bank" />
+<AnchorPane prefHeight="640.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.LoginController">
+    <VBox layoutY="7.0" prefHeight="640.0" prefWidth="80.0" styleClass="login_logo_container" stylesheets="@../Styles/login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Label text="🏦" style="-fx-font-size: 20;" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 10;" text="Pay" />
     </VBox>
-    <VBox layoutX="222.0" layoutY="21.0" prefHeight="350.0" prefWidth="350.0" styleClass="login_form_container" stylesheets="@../Styles/login.css" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Label id="choice-prompt-text " text="Chose Your Account Type" />
-        <ChoiceBox fx:id="acc_selector" prefWidth="150.0" styleClass="account_selector" />
-        <Label fx:id="username_lbl" text="UserName" />
-        <TextField fx:id="Username_fld" styleClass="input_field" />
-        <Label text="Password" />
-        <PasswordField fx:id="password_fld" styleClass="input_field" />
-        <Button fx:id="login_btn" mnemonicParsing="false" styleClass="lo" text="Log in">
+    <VBox layoutX="90.0" layoutY="21.0" prefHeight="600.0" prefWidth="260.0" styleClass="login_form_container" stylesheets="@../Styles/login.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0" spacing="6.0">
+        <Label id="choice-prompt-text" style="-fx-font-size: 9;" text="Type" />
+        <ChoiceBox fx:id="acc_selector" prefWidth="260.0" prefHeight="24.0" styleClass="account_selector" />
+        <Label fx:id="username_lbl" style="-fx-font-size: 9;" text="Username" />
+        <TextField fx:id="Username_fld" prefHeight="24.0" prefWidth="260.0" styleClass="input_field" />
+        <Label style="-fx-font-size: 9;" text="Password" />
+        <PasswordField fx:id="password_fld" prefHeight="24.0" prefWidth="260.0" styleClass="input_field" />
+        <Button fx:id="login_btn" mnemonicParsing="false" prefHeight="28.0" prefWidth="260.0" styleClass="lo" style="-fx-font-size: 10;" text="Login">
          <graphic>
-            <Label text="➜" style="-fx-text-fill: white; -fx-font-size: 20;" />
+            <Label text="➜" style="-fx-text-fill: white; -fx-font-size: 14;" />
          </graphic></Button>
-        <Button fx:id="register_btn" mnemonicParsing="false" styleClass="register_btn" text="Sign Up" />
-        <Label fx:id="error_lbl" styleClass="error_lbl" stylesheets="@../Styles/login.css" text="" />
+        <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="28.0" prefWidth="260.0" styleClass="register_btn" style="-fx-font-size: 10;" text="Sign Up" />
+        <Label fx:id="error_lbl" styleClass="error_lbl" style="-fx-font-size: 9;" stylesheets="@../Styles/login.css" text="" wrapText="true" />
     </VBox>
 </AnchorPane>

@@ -55,8 +55,28 @@ public class Dispute {
         return disputeId.get();
     }
 
+    public String getTransactionId() {
+        return transactionId.get();
+    }
+
+    public String getUserId() {
+        return userId.get();
+    }
+
+    public String getReason() {
+        return reason.get();
+    }
+
     public String getStatus() {
         return status.get();
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated.get();
+    }
+
+    public String getResolution() {
+        return resolution.get();
     }
 
     public void setStatus(String status) {

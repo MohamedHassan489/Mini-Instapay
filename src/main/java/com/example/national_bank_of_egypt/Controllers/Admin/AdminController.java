@@ -16,10 +16,14 @@ public class AdminController implements Initializable {
         Model.getInstance().getViewFactory().getAdminselectedmenuitem().addListener((observableValue, oldVal, newVal) -> {
             switch (newVal){
                 case USERS -> admin_parent.setCenter(Model.getInstance().getViewFactory().getUsersView());
+                case TRANSACTIONS -> admin_parent.setCenter(Model.getInstance().getViewFactory().getAdminTransactionsView());
+                case DISPUTES -> admin_parent.setCenter(Model.getInstance().getViewFactory().getAdminDisputesView());
                 case REPORTS -> admin_parent.setCenter(Model.getInstance().getViewFactory().getReportsView());
                 case SYSTEM_HEALTH -> admin_parent.setCenter(Model.getInstance().getViewFactory().getSystemHealthView());
                 default -> admin_parent.setCenter(Model.getInstance().getViewFactory().getUsersView());
             }
         });
+        // Set default view to Users
+        Model.getInstance().getViewFactory().getAdminselectedmenuitem().set(com.example.national_bank_of_egypt.Views.AdminMenuOption.USERS);
     }
 }

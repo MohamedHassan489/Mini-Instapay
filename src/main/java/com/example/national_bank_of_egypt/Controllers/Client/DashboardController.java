@@ -15,8 +15,6 @@ import java.util.ResourceBundle;
 public class DashboardController implements Initializable {
     public Text userName;
     public Label login_date;
-    public Label total_balance;
-    public Label account_count;
     public Label income_bal;
     public Label expenses_bal;
     public ListView<Transaction> Transaction_list;
@@ -24,29 +22,70 @@ public class DashboardController implements Initializable {
     public TextField amount_fld;
     public TextArea message_fld;
     public Button send_btn;
+    public Label checking_bal;
+    public Label checking_acc_num;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ShowData();
-        initLatestTransactions();
-        Transaction_list.setItems(Model.getInstance().getTransactions());
-        Transaction_list.setCellFactory(e -> new TransactionCellFactory());
-        accountSummary();
-        if (send_btn != null) {
-            send_btn.setOnAction(event -> onSendMoney());
+        try {
+            // Add null checks to prevent crashes
+            if (userName == null || login_date == null) {
+                System.err.println("Warning: Some FXML fields are null in DashboardController");
+                return;
+            }
+            
+            ShowData();
+            initLatestTransactions();
+            if (Transaction_list != null) {
+                Transaction_list.setItems(Model.getInstance().getTransactions());
+                Transaction_list.setCellFactory(e -> new TransactionCellFactory());
+            }
+            accountSummary();
+            if (send_btn != null) {
+                send_btn.setOnAction(event -> onSendMoney());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error initializing DashboardController: " + e.getMessage());
         }
     }
 
     private void ShowData(){
-        if (Model.getInstance().getCurrentUser() != null) {
-            userName.textProperty().bind(Bindings.concat("Hi, ").concat(Model.getInstance().getCurrentUser().firstNameProperty()));
-            login_date.setText("Today, " + LocalDate.now());
-            
-            double totalBal = Model.getInstance().getCurrentUser().getBankAccounts().stream()
-                .mapToDouble(acc -> acc.getBalance())
-                .sum();
-            total_balance.setText("$" + totalBal);
-            account_count.setText(String.valueOf(Model.getInstance().getCurrentUser().getBankAccounts().size()));
+        try {
+            if (Model.getInstance().getCurrentUser() != null && userName != null && login_date != null) {
+                userName.textProperty().bind(Bindings.concat("Hi, ").concat(Model.getInstance().getCurrentUser().firstNameProperty()));
+                login_date.setText("Today, " + LocalDate.now());
+                
+                // Display first account if available
+                if (!Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
+                    var firstAccount = Model.getInstance().getCurrentUser().getBankAccounts().get(0);
+                    if (checking_bal != null) {
+                        checking_bal.setText("$" + String.format("%.2f", firstAccount.getBalance()));
+                    }
+                    if (checking_acc_num != null) {
+                        checking_acc_num.setText(firstAccount.getAccountNumber());
+                    }
+                } else {
+                    // No accounts - set default values
+                    if (checking_bal != null) {
+                        checking_bal.setText("$0.00");
+                    }
+                    if (checking_acc_num != null) {
+                        checking_acc_num.setText("No Account");
+                    }
+                }
+            } else {
+                // User not logged in - set default values
+                if (userName != null) {
+                    userName.setText("Hi, Guest");
+                }
+                if (login_date != null) {
+                    login_date.setText("Today, " + LocalDate.now());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error in ShowData: " + e.getMessage());
         }
     }
 
@@ -55,18 +94,28 @@ public class DashboardController implements Initializable {
     }
 
     private void accountSummary(){
-        double income = 0;
-        double expenses = 0;
-        Model.getInstance().loadTransactions(-1);
-        for (Transaction transaction : Model.getInstance().getTransactions()){
-            if (transaction.getSender().equals(Model.getInstance().getCurrentUser().getUserName())){
-                expenses += transaction.getAmount();
-            }else {
-                income += transaction.getAmount();
+        try {
+            if (Model.getInstance().getCurrentUser() == null) return;
+            
+            double income = 0;
+            double expenses = 0;
+            Model.getInstance().loadTransactions(-1);
+            for (Transaction transaction : Model.getInstance().getTransactions()){
+                if (transaction.getSender() != null && transaction.getSender().equals(Model.getInstance().getCurrentUser().getUserName())){
+                    expenses += transaction.getAmount();
+                } else if (transaction.getReceiver() != null && transaction.getReceiver().equals(Model.getInstance().getCurrentUser().getUserName())){
+                    income += transaction.getAmount();
+                }
             }
+            if (income_bal != null) {
+                income_bal.setText("+$" + String.format("%.2f", income));
+            }
+            if (expenses_bal != null) {
+                expenses_bal.setText("-$" + String.format("%.2f", expenses));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        income_bal.setText("+$" + income);
-        expenses_bal.setText("-$" + expenses);
     }
 
     private void onSendMoney(){

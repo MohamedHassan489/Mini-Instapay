@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.AdminDisputesController">
+    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="Dispute Management" />
+        <ListView fx:id="disputes_list" prefHeight="400.0" prefWidth="760.0" />
+        <HBox spacing="10.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Selected Dispute Resolution:" />
+            <TextArea fx:id="resolution_fld" prefHeight="80.0" prefWidth="500.0" />
+            <Button fx:id="resolve_btn" mnemonicParsing="false" prefHeight="80.0" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Resolve" />
+        </HBox>
+        <Label fx:id="status_lbl" text="" />
+    </VBox>
+</AnchorPane>
+

@@ -9,18 +9,20 @@ public class ClientCellFactory extends ListCell<User> {
     @Override
     protected void updateItem(User user, boolean empty) {
         super.updateItem(user, empty);
-        if (empty){
+        if (empty || user == null){
             setText(null);
             setGraphic(null);
         }else {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/ClientCell.fxml"));
-            ClientCellController controller = new ClientCellController(user);
-            loader.setController(controller);
-            setText(null);
             try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/ClientCell.fxml"));
+                ClientCellController controller = new ClientCellController(user);
+                loader.setController(controller);
+                setText(null);
                 setGraphic(loader.load());
             }catch (Exception e){
                 e.printStackTrace();
+                setText("Error loading user cell");
+                setGraphic(null);
             }
         }
     }

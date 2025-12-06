@@ -98,5 +98,9 @@ public class User {
     public String getPassword() {
         return password.get();
     }
+    
+    public String getAddress() {
+        return address.get();
+    }
 }
 

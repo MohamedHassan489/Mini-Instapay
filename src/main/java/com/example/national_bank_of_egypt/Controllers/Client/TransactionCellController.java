@@ -22,10 +22,48 @@ public class TransactionCellController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        sender_lbl.textProperty().bind(transaction.senderProperty());
-        receiver_lbl.textProperty().bind(transaction.receiverProperty());
-        amount_lbl.textProperty().bind(transaction.amountProperty().asString());
-        trans_date_lbl.textProperty().bind(transaction.dateProperty().asString());
-        status_lbl.textProperty().bind(transaction.statusProperty());
+        if (transaction != null) {
+            if (sender_lbl != null) {
+                sender_lbl.textProperty().bind(transaction.senderProperty());
+            }
+            if (receiver_lbl != null) {
+                receiver_lbl.textProperty().bind(transaction.receiverProperty());
+            }
+            if (amount_lbl != null) {
+                amount_lbl.textProperty().bind(javafx.beans.binding.Bindings.concat("$").concat(
+                    transaction.amountProperty().asString("%.2f")));
+            }
+            if (trans_date_lbl != null) {
+                trans_date_lbl.textProperty().bind(transaction.dateProperty().asString());
+            }
+            if (status_lbl != null) {
+                status_lbl.textProperty().bind(transaction.statusProperty());
+                // Color code status
+                transaction.statusProperty().addListener((obs, oldVal, newVal) -> {
+                    if (newVal != null) {
+                        if ("SUCCESS".equalsIgnoreCase(newVal)) {
+                            status_lbl.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+                        } else if ("FAILED".equalsIgnoreCase(newVal) || "SUSPICIOUS".equalsIgnoreCase(newVal)) {
+                            status_lbl.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                        } else if ("PENDING".equalsIgnoreCase(newVal)) {
+                            status_lbl.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
+                        } else {
+                            status_lbl.setStyle("-fx-text-fill: black;");
+                        }
+                    }
+                });
+                // Set initial color
+                String status = transaction.getStatus();
+                if (status != null) {
+                    if ("SUCCESS".equalsIgnoreCase(status)) {
+                        status_lbl.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+                    } else if ("FAILED".equalsIgnoreCase(status) || "SUSPICIOUS".equalsIgnoreCase(status)) {
+                        status_lbl.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                    } else if ("PENDING".equalsIgnoreCase(status)) {
+                        status_lbl.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
+                    }
+                }
+            }
+        }
     }
 }

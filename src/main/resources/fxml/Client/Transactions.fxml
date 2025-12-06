@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="750.0" prefWidth="850.0" styleClass="tranaction_container" stylesheets="@../../Styles/Transactions.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.TransactionsController">
-    <Text layoutX="273.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transactions" AnchorPane.leftAnchor="316.0" AnchorPane.topAnchor="22.0" />
-    <ListView fx:id="Transaction_ListView" layoutX="14.0" layoutY="86.0" prefHeight="640.0" prefWidth="830.0" stylesheets="@../../Styles/Transactions.css" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="100.0" />
+<AnchorPane prefHeight="960.0" prefWidth="810.0" styleClass="tranaction_container" stylesheets="@../../Styles/Transactions.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.TransactionsController">
+    <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Transactions" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
+    <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="View all your transaction history" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="40.0" />
+    <ListView fx:id="Transaction_ListView" prefHeight="895.0" prefWidth="780.0" stylesheets="@../../Styles/Transactions.css" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="60.0" AnchorPane.bottomAnchor="15.0" />
 </AnchorPane>

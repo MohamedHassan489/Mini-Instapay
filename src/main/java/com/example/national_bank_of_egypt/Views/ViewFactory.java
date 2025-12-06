@@ -24,6 +24,8 @@ public class ViewFactory {
     private AnchorPane disputesView;
     private AnchorPane notificationsView;
     private AnchorPane usersView;
+    private AnchorPane adminTransactionsView;
+    private AnchorPane adminDisputesView;
     private AnchorPane reportsView;
     private AnchorPane systemHealthView;
 
@@ -51,60 +53,134 @@ public class ViewFactory {
     public AnchorPane getDashboardview(){
         if (dashboardview == null){
             try {
-                dashboardview = new FXMLLoader(getClass().getResource("/fxml/Client/Dashboard.fxml")).load();
-
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Dashboard.fxml"));
+                dashboardview = loader.load();
             }catch (Exception e){
                 e.printStackTrace();
+                // Return empty AnchorPane if loading fails
+                dashboardview = new AnchorPane();
             }
         }
         return dashboardview;
     }
 
     public AnchorPane getTransactionsView() {
-        if (transactionsView == null){
-            try {
-                transactionsView = new FXMLLoader(getClass().getResource("/fxml/Client/Transactions.fxml")).load();
-
-            }catch (Exception e){
-                e.printStackTrace();
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Transactions.fxml"));
+            AnchorPane view = loader.load();
+            transactionsView = view;
+            System.out.println("Transactions view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading Transactions view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
             }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Transactions view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            transactionsView = errorPane;
+            return errorPane;
         }
-        return transactionsView;
     }
 
     public AnchorPane getAccountsView() {
-        if (accountsView == null){
-            try {
-                accountsView = new FXMLLoader(getClass().getResource("/fxml/Client/Accounts.fxml")).load();
-
-            }catch (Exception e){
-                e.printStackTrace();
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Accounts.fxml"));
+            AnchorPane view = loader.load();
+            accountsView = view;
+            System.out.println("Accounts view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading Accounts view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
             }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Accounts view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            accountsView = errorPane;
+            return errorPane;
         }
-        return accountsView;
     }
     public AnchorPane getSendMoneyView() {
-        if (sendMoneyView == null){
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/SendMoney.fxml"));
-                sendMoneyView = loader.load();
-            }catch (Exception e){
-                e.printStackTrace();
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/SendMoney.fxml"));
+            AnchorPane view = loader.load();
+            sendMoneyView = view;
+            System.out.println("SendMoney view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading SendMoney view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
             }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Send Money view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            sendMoneyView = errorPane;
+            return errorPane;
         }
-        return sendMoneyView;
     }
 
     public AnchorPane getProfileView() {
-        if (profileView == null){
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Profile.fxml"));
-                profileView = loader.load();
-            }catch (Exception e){
-                e.printStackTrace();
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Profile.fxml"));
+            AnchorPane view = loader.load();
+            profileView = view;
+            System.out.println("Profile view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading Profile view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
             }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Profile view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            profileView = errorPane;
+            return errorPane;
         }
-        return profileView;
     }
 
     public AnchorPane getDisputesView() {
@@ -191,19 +267,60 @@ public class ViewFactory {
         }
         return usersView;
     }
+
+    public AnchorPane getAdminTransactionsView(){
+        if (adminTransactionsView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/AdminTransactions.fxml"));
+                adminTransactionsView = loader.load();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return adminTransactionsView;
+    }
+
+    public AnchorPane getAdminDisputesView(){
+        if (adminDisputesView == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Admin/AdminDisputes.fxml"));
+                adminDisputesView = loader.load();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return adminDisputesView;
+    }
     private void CreateStage(FXMLLoader loader){
-        Scene scene = null;
         try {
-            scene = new Scene(loader.load());
+            javafx.scene.Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            try {
+                stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/images/icon.png"))));
+            } catch (Exception e) {
+                // Icon not critical, continue without it
+            }
+            stage.setResizable(true);
+            // Increased width by 50% more: 810x960 (was 540x960, originally 360x640)
+            stage.setWidth(810);
+            stage.setHeight(960);
+            stage.setMinWidth(600);
+            stage.setMinHeight(700);
+            stage.setMaxWidth(1200);
+            stage.setMaxHeight(1200);
+            stage.setScene(scene);
+            stage.setTitle("Mini-InstaPay");
+            stage.show();
         }catch (Exception e){
             e.printStackTrace();
+            // Show error dialog instead of blank page
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Failed to load window");
+            alert.setContentText("An error occurred while loading the window: " + e.getMessage());
+            alert.showAndWait();
         }
-        Stage stage = new Stage();
-        stage.getIcons().add(new Image(String.valueOf(getClass().getResource("/images/icon.png"))));
-        stage.setResizable(false);
-        stage.setScene(scene);
-        stage.setTitle("Mini-InstaPay");
-        stage.show();
     }
 
     public void closeStage(Stage stage){

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.AdminTransactionsController">
+    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="All Transactions" />
+        <HBox spacing="10.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Filter:" />
+            <ComboBox fx:id="filter_combo" prefHeight="30.0" prefWidth="200.0" />
+            <TextField fx:id="search_fld" prefHeight="30.0" prefWidth="300.0" promptText="Search by user, amount, or transaction ID" />
+            <Button fx:id="flagSuspicious_btn" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Flag Suspicious" />
+        </HBox>
+        <ListView fx:id="transactions_list" prefHeight="450.0" prefWidth="760.0" />
+        <Label fx:id="status_lbl" text="" />
+    </VBox>
+</AnchorPane>
+

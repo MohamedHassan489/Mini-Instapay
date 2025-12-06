@@ -89,9 +89,26 @@ public class DataBaseDriver {
                     "IsRead VARCHAR(5) DEFAULT 'false'" +
                     ")");
             
+            // Create default admin account if it doesn't exist
             ResultSet adminCheck = statement.executeQuery("SELECT COUNT(*) as count FROM Admins WHERE Username = 'admin'");
             if (adminCheck.getInt("count") == 0) {
                 statement.executeUpdate("INSERT INTO Admins (Username, Password) VALUES ('admin', 'admin123')");
+            }
+            
+            // Create default user account if it doesn't exist
+            ResultSet userCheck = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE UserName = 'user'");
+            if (userCheck.getInt("count") == 0) {
+                String defaultDate = LocalDate.now().toString();
+                statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated) " +
+                        "VALUES ('John', 'Doe', 'user@example.com', '1234567890', '123 Main St', 'user', 'user123', '" + defaultDate + "')");
+                
+                // Create a default bank account for the user
+                statement.executeUpdate("INSERT INTO BankAccounts(Owner, AccountNumber, BankName, Balance, AccountType) " +
+                        "VALUES ('user', 'ACC001', 'Mini-InstaPay Bank', 1000.0, 'Checking')");
+                
+                // Create default transaction limits for the user
+                statement.executeUpdate("INSERT INTO TransactionLimits(UserName, DailyLimit, WeeklyLimit, DailyUsed, WeeklyUsed) " +
+                        "VALUES ('user', 5000.0, 20000.0, 0.0, 0.0)");
             }
             
         } catch (SQLException e) {
@@ -102,7 +119,42 @@ public class DataBaseDriver {
     public ResultSet getUserData(String userName, String password) {
         try {
             Statement statement = this.con.createStatement();
-            return statement.executeQuery("SELECT * FROM Users WHERE UserName = '" + userName + "' AND Password='" + password + "';");
+            if (password == null || password.isEmpty()) {
+                // If no password provided, just get user by username
+                return statement.executeQuery("SELECT * FROM Users WHERE UserName = '" + userName + "';");
+            }
+            
+            // Encrypt the provided password to compare with stored encrypted password
+            com.example.national_bank_of_egypt.Security.EncryptionService encryptionService = 
+                com.example.national_bank_of_egypt.Security.EncryptionService.getInstance();
+            String encryptedPassword = encryptionService.encrypt(password);
+            
+            // Get user data
+            ResultSet rs = statement.executeQuery("SELECT * FROM Users WHERE UserName = '" + userName + "';");
+            if (rs != null && rs.next()) {
+                String storedPassword = rs.getString("Password");
+                // Try to decrypt stored password first (if it's encrypted)
+                String decryptedStoredPassword = encryptionService.decrypt(storedPassword);
+                
+                // Compare: either stored password is encrypted and matches, or it's plain text (for backward compatibility)
+                boolean passwordMatches = false;
+                if (decryptedStoredPassword != null) {
+                    // Stored password is encrypted, compare decrypted version
+                    passwordMatches = decryptedStoredPassword.equals(password);
+                } else {
+                    // Stored password might be plain text (backward compatibility)
+                    passwordMatches = storedPassword.equals(password);
+                }
+                
+                if (passwordMatches) {
+                    // Reset cursor and return result set
+                    rs.beforeFirst();
+                    return rs;
+                } else {
+                    return null; // Password doesn't match
+                }
+            }
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -132,10 +184,19 @@ public class DataBaseDriver {
     public boolean createUser(String firstName, String lastName, String email, String phoneNumber,
                               String address, String userName, String password, LocalDate dateCreated) {
         try {
+            // Encrypt password before storing
+            com.example.national_bank_of_egypt.Security.EncryptionService encryptionService = 
+                com.example.national_bank_of_egypt.Security.EncryptionService.getInstance();
+            String encryptedPassword = encryptionService.encrypt(password);
+            if (encryptedPassword == null) {
+                // If encryption fails, use plain password (fallback for compatibility)
+                encryptedPassword = password;
+            }
+            
             Statement statement = this.con.createStatement();
             statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated) " +
                     "VALUES ('" + firstName + "', '" + lastName + "', '" + email + "', '" + phoneNumber + 
-                    "', '" + address + "', '" + userName + "', '" + password + "', '" + dateCreated.toString() + "')");
+                    "', '" + address + "', '" + userName + "', '" + encryptedPassword + "', '" + dateCreated.toString() + "')");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,6 +210,18 @@ public class DataBaseDriver {
             statement.executeUpdate("UPDATE Users SET FirstName='" + firstName + "', LastName='" + lastName + 
                     "', Email='" + email + "', PhoneNumber='" + phoneNumber + "', Address='" + address + 
                     "' WHERE UserName='" + userName + "'");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean updateTwoFactorEnabled(String userName, boolean enabled) {
+        try {
+            Statement statement = this.con.createStatement();
+            String value = enabled ? "true" : "false";
+            statement.executeUpdate("UPDATE Users SET TwoFactorEnabled='" + value + "' WHERE UserName='" + userName + "'");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -178,18 +251,82 @@ public class DataBaseDriver {
         }
     }
 
+    public boolean emailExists(String email) {
+        try {
+            Statement statement = this.con.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE Email = '" + email + "'");
+            return rs.getInt("count") > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public ResultSet getAdminData(String username, String password) {
         try {
             Statement statement = this.con.createStatement();
-            return statement.executeQuery("SELECT * FROM Admins WHERE Username = '" + username + "' AND Password='" + password + "';");
+            // Encrypt password for comparison
+            com.example.national_bank_of_egypt.Security.EncryptionService encryptionService = 
+                com.example.national_bank_of_egypt.Security.EncryptionService.getInstance();
+            String encryptedPassword = encryptionService.encrypt(password);
+            
+            ResultSet rs = statement.executeQuery("SELECT * FROM Admins WHERE Username = '" + username + "';");
+            if (rs != null && rs.next()) {
+                String storedPassword = rs.getString("Password");
+                String decryptedStoredPassword = encryptionService.decrypt(storedPassword);
+                
+                boolean passwordMatches = false;
+                if (decryptedStoredPassword != null) {
+                    passwordMatches = decryptedStoredPassword.equals(password);
+                } else {
+                    // Backward compatibility: plain text password
+                    passwordMatches = storedPassword.equals(password);
+                }
+                
+                if (passwordMatches) {
+                    rs.beforeFirst();
+                    return rs;
+                } else {
+                    return null;
+                }
+            }
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
+    public ResultSet getUserByEmail(String email) {
+        try {
+            Statement statement = this.con.createStatement();
+            return statement.executeQuery("SELECT * FROM Users WHERE Email = '" + email + "';");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean accountNumberExists(String accountNumber) {
+        try {
+            Statement statement = this.con.createStatement();
+            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM BankAccounts WHERE AccountNumber = '" + accountNumber + "'");
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean createBankAccount(String owner, String accountNumber, String bankName, double balance, String accountType) {
         try {
+            // Check if account number already exists
+            if (accountNumberExists(accountNumber)) {
+                return false;
+            }
             Statement statement = this.con.createStatement();
             statement.executeUpdate("INSERT INTO BankAccounts(Owner, AccountNumber, BankName, Balance, AccountType) " +
                     "VALUES ('" + owner + "', '" + accountNumber + "', '" + bankName + "', " + balance + ", '" + accountType + "')");
@@ -224,6 +361,18 @@ public class DataBaseDriver {
         try {
             Statement statement = this.con.createStatement();
             statement.executeUpdate("UPDATE BankAccounts SET Balance = " + balance + " WHERE AccountNumber = '" + accountNumber + "'");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateBankAccount(String accountNumber, String bankName, String accountType) {
+        try {
+            Statement statement = this.con.createStatement();
+            statement.executeUpdate("UPDATE BankAccounts SET BankName = '" + bankName + "', AccountType = '" + accountType + 
+                    "' WHERE AccountNumber = '" + accountNumber + "'");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -424,6 +573,27 @@ public class DataBaseDriver {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public ResultSet getAllTransactions() {
+        try {
+            Statement statement = this.con.createStatement();
+            return statement.executeQuery("SELECT * FROM Transactions ORDER BY Date DESC");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean resolveDispute(String disputeId, String resolution) {
+        try {
+            Statement statement = this.con.createStatement();
+            statement.executeUpdate("UPDATE Disputes SET Status = 'RESOLVED', Resolution = '" + resolution + "' WHERE DisputeID = '" + disputeId + "'");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

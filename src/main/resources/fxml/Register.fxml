@@ -8,29 +8,29 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.RegistrationController">
-    <VBox layoutX="50.0" layoutY="30.0" prefHeight="550.0" prefWidth="600.0" spacing="10.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="Create New Account" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Name *" />
-        <TextField fx:id="firstName_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name *" />
-        <TextField fx:id="lastName_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email *" />
-        <TextField fx:id="email_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phone Number *" />
-        <TextField fx:id="phoneNumber_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Address" />
-        <TextField fx:id="address_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username *" />
-        <TextField fx:id="userName_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Password *" />
-        <PasswordField fx:id="password_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm Password *" />
-        <PasswordField fx:id="confirmPassword_fld" prefHeight="30.0" prefWidth="600.0" />
-        <Label fx:id="error_lbl" style="-fx-text-fill: red;" text="" />
-        <VBox spacing="10.0">
-            <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="600.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Register" />
-            <Button fx:id="cancel_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="600.0" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Cancel" />
+<AnchorPane prefHeight="640.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.RegistrationController">
+    <VBox spacing="6.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="15.0">
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 13; -fx-font-weight: bold;" text="Sign Up" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="First Name *" />
+        <TextField fx:id="firstName_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Last Name *" />
+        <TextField fx:id="lastName_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Email *" />
+        <TextField fx:id="email_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Phone *" />
+        <TextField fx:id="phoneNumber_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Address" />
+        <TextField fx:id="address_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Username *" />
+        <TextField fx:id="userName_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Password *" />
+        <PasswordField fx:id="password_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Confirm *" />
+        <PasswordField fx:id="confirmPassword_fld" prefHeight="22.0" prefWidth="340.0" />
+        <Label fx:id="error_lbl" style="-fx-text-fill: red; -fx-font-size: 9;" text="" wrapText="true" />
+        <VBox spacing="6.0">
+            <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="26.0" prefWidth="340.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 10;" text="Register" />
+            <Button fx:id="cancel_btn" mnemonicParsing="false" prefHeight="26.0" prefWidth="340.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 10;" text="Cancel" />
         </VBox>
     </VBox>
 </AnchorPane>

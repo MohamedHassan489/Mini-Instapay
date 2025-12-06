@@ -2,19 +2,21 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.DisputesController">
-    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="Disputes & Refunds" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction ID" />
-        <TextField fx:id="transactionId_fld" prefHeight="30.0" prefWidth="760.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Reason" />
-        <TextArea fx:id="reason_fld" prefHeight="100.0" prefWidth="760.0" />
-        <Button fx:id="submitDispute_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="760.0" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Submit Dispute" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="My Disputes" />
-        <ListView fx:id="disputes_list" prefHeight="300.0" prefWidth="760.0" />
-        <Label fx:id="error_lbl" style="-fx-text-fill: red;" text="" />
-    </VBox>
+<AnchorPane prefHeight="960.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.DisputesController">
+    <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Disputes" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="50.0">
+        <VBox spacing="15.0" style="-fx-padding: 10;">
+            <Label style="-fx-font-size: 14; -fx-font-weight: bold;" text="Submit Dispute:" />
+            <Label style="-fx-font-size: 11;" text="Transaction ID *" />
+            <TextField fx:id="transactionId_fld" prefHeight="32.0" prefWidth="780.0" promptText="Transaction ID" />
+            <Label style="-fx-font-size: 11;" text="Reason *" />
+            <TextArea fx:id="reason_fld" prefHeight="100.0" prefWidth="780.0" promptText="Explain the issue" wrapText="true" />
+            <Button fx:id="submitDispute_btn" mnemonicParsing="false" prefHeight="38.0" prefWidth="780.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold;" text="Submit Dispute" />
+            <Label fx:id="error_lbl" style="-fx-text-fill: red; -fx-font-size: 10;" text="" wrapText="true" />
+            <Label style="-fx-font-size: 14; -fx-font-weight: bold; -fx-padding: 15 0 0 0;" text="My Disputes" />
+            <ListView fx:id="disputes_list" prefHeight="400.0" prefWidth="780.0" />
+        </VBox>
+    </ScrollPane>
 </AnchorPane>
 

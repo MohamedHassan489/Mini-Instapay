@@ -31,28 +31,93 @@ public class LoginController implements Initializable {
     }
 
     private void onLogin(){
-        Stage stage = (Stage) error_lbl.getScene().getWindow();
-        if(Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT){
-            Model.getInstance().evaluateUserCred(Username_fld.getText(), password_fld.getText());
-            if (Model.getInstance().getUserLoginSuccessFlag()) {
-                Model.getInstance().getViewFactory().showClinetWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
-            }else {
-                Username_fld.setText("");
-                password_fld.setText("");
-                error_lbl.setText("Invalid credentials.");
+        try {
+            // Validate input
+            String username = Username_fld.getText();
+            String password = password_fld.getText();
+            
+            if (username == null || username.trim().isEmpty()) {
+                error_lbl.setText("Please enter username.");
+                return;
             }
-        }else {
-            Model.getInstance().evaluateAdminCred(Username_fld.getText(), password_fld.getText());
-            if (Model.getInstance().getAdminLoginSuccessFlag()) {
-                Model.getInstance().getViewFactory().showAdminWindow();
-                Model.getInstance().getViewFactory().closeStage(stage);
-            }else {
-                Username_fld.setText("");
-                password_fld.setText("");
-                error_lbl.setText("Invalid credentials.");
+            
+            if (password == null || password.trim().isEmpty()) {
+                error_lbl.setText("Please enter password.");
+                return;
             }
+            
+            Stage stage = (Stage) error_lbl.getScene().getWindow();
+            
+            if(Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT){
+                Model.getInstance().evaluateUserCred(username.trim(), password);
+                
+                // Check if account is suspended
+                if (Model.getInstance().getCurrentUser() != null && 
+                    "suspended".equalsIgnoreCase(Model.getInstance().getCurrentUser().twoFactorEnabledProperty().get())) {
+                    error_lbl.setText("Your account has been suspended. Please contact support.");
+                    Username_fld.setText("");
+                    password_fld.setText("");
+                    return;
+                }
+                
+                // Check if 2FA is enabled and OTP verification is needed
+                if (Model.getInstance().getCurrentUser() != null && 
+                    "true".equalsIgnoreCase(Model.getInstance().getCurrentUser().twoFactorEnabledProperty().get())) {
+                    // Show OTP verification dialog
+                    if (verifyOTP(username.trim())) {
+                        Model.getInstance().setUserLoginSuccessFlag(true);
+                        Model.getInstance().getViewFactory().showClinetWindow();
+                        Model.getInstance().getViewFactory().closeStage(stage);
+                    } else {
+                        error_lbl.setText("Invalid OTP. Please try again.");
+                        Model.getInstance().setCurrentUser(null);
+                        Model.getInstance().setUserLoginSuccessFlag(false);
+                    }
+                } else if (Model.getInstance().getUserLoginSuccessFlag() != null && Model.getInstance().getUserLoginSuccessFlag()) {
+                    Model.getInstance().getViewFactory().showClinetWindow();
+                    Model.getInstance().getViewFactory().closeStage(stage);
+                } else {
+                    Username_fld.setText("");
+                    password_fld.setText("");
+                    error_lbl.setText("Invalid credentials. Please check your username and password.");
+                }
+            } else {
+                Model.getInstance().evaluateAdminCred(username.trim(), password);
+                if (Model.getInstance().getAdminLoginSuccessFlag() != null && Model.getInstance().getAdminLoginSuccessFlag()) {
+                    Model.getInstance().getViewFactory().showAdminWindow();
+                    Model.getInstance().getViewFactory().closeStage(stage);
+                } else {
+                    Username_fld.setText("");
+                    password_fld.setText("");
+                    error_lbl.setText("Invalid admin credentials. Please check your username and password.");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            error_lbl.setText("An error occurred during login. Please try again.");
         }
+    }
+    
+    private boolean verifyOTP(String userName) {
+        com.example.national_bank_of_egypt.Security.OTPService otpService = 
+            com.example.national_bank_of_egypt.Security.OTPService.getInstance();
+        
+        // Generate and send OTP
+        String otp = otpService.generateOTP(userName);
+        
+        // Show OTP dialog
+        javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
+        dialog.setTitle("Two-Factor Authentication");
+        dialog.setHeaderText("Enter OTP");
+        dialog.setContentText("An OTP has been generated. Please enter it below:\nOTP: " + otp);
+        
+        java.util.Optional<String> result = dialog.showAndWait();
+        
+        if (result.isPresent()) {
+            return otpService.verifyOTP(userName, result.get());
+        }
+        
+        return false;
     }
 
     private void onRegister() {

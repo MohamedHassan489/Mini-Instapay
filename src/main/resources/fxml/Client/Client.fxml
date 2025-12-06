@@ -11,8 +11,4 @@
     <left>
         <fx:include source="ClientMenu.fxml" />
     </left>
-
-    <center>
-        <fx:include source="Dashboard.fxml" />
-    </center>
 </BorderPane>

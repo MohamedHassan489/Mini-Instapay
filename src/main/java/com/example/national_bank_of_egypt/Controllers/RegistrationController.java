@@ -41,31 +41,70 @@ public class RegistrationController implements Initializable {
         String password = password_fld.getText();
         String confirmPassword = confirmPassword_fld.getText();
 
+        // Clear previous error
+        error_lbl.setText("");
+
+        // Validate required fields
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || 
             phoneNumber.isEmpty() || userName.isEmpty() || password.isEmpty()) {
             error_lbl.setText("Please fill all required fields");
             return;
         }
 
+        // Validate email format
+        if (!isValidEmail(email)) {
+            error_lbl.setText("Please enter a valid email address");
+            return;
+        }
+
+        // Validate phone number (should be numeric and reasonable length)
+        if (!phoneNumber.matches("\\d{10,15}")) {
+            error_lbl.setText("Phone number must be 10-15 digits");
+            return;
+        }
+
+        // Validate username (alphanumeric and underscore, 3-20 chars)
+        if (!userName.matches("^[a-zA-Z0-9_]{3,20}$")) {
+            error_lbl.setText("Username must be 3-20 characters (letters, numbers, underscore only)");
+            return;
+        }
+
+        // Validate password match
         if (!password.equals(confirmPassword)) {
             error_lbl.setText("Passwords do not match");
             return;
         }
 
+        // Validate password strength
         if (password.length() < 6) {
             error_lbl.setText("Password must be at least 6 characters");
             return;
         }
 
+        // Attempt registration
         if (Model.getInstance().registerUser(firstName, lastName, email, phoneNumber, address, userName, password)) {
-            error_lbl.setText("Registration successful! You can now login.");
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Registration Successful");
+            successAlert.setHeaderText("Account Created");
+            successAlert.setContentText("Registration successful! You can now login with your credentials.");
+            successAlert.showAndWait();
+            
             clearFields();
             Stage stage = (Stage) error_lbl.getScene().getWindow();
             Model.getInstance().getViewFactory().closeStage(stage);
             Model.getInstance().getViewFactory().showLoginWindow();
         } else {
-            error_lbl.setText("Registration failed: Username or phone number already exists");
+            error_lbl.setText("Registration failed: Username, email, or phone number already exists");
         }
+    }
+
+    private boolean isValidEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return false;
+        }
+        // Basic email validation: contains @ and has domain
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
     }
 
     private void onCancel() {

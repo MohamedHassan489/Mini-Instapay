@@ -7,16 +7,39 @@
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.SystemHealthController">
     <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
         <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="System Health Monitoring" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="System Status: " />
-        <Label fx:id="status_lbl" text="Online" style="-fx-text-fill: green; -fx-font-size: 16;" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction Success Rate" />
-        <Label fx:id="successRate_lbl" text="0%" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Transactions Today" />
-        <Label fx:id="totalTransactions_lbl" text="0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Active Users" />
-        <Label fx:id="activeUsers_lbl" text="0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="System Uptime" />
-        <Label fx:id="uptime_lbl" text="0 hours" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 12; -fx-fill: #666;" text="Updates every 5 seconds" />
+        
+        <HBox spacing="30.0">
+            <VBox spacing="10.0" prefWidth="250.0">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="System Status" />
+                <Label fx:id="status_lbl" text="Online" style="-fx-text-fill: green; -fx-font-size: 16;" />
+                
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="System Uptime" />
+                <Label fx:id="uptime_lbl" text="0h 0m" style="-fx-font-size: 14;" />
+                
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Transaction Success Rate" />
+                <Label fx:id="successRate_lbl" text="0%" style="-fx-font-size: 14;" />
+            </VBox>
+            
+            <VBox spacing="10.0" prefWidth="250.0">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Transactions (Last 24h)" />
+                <Label fx:id="totalTransactions_lbl" text="0" style="-fx-font-size: 14;" />
+                
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Suspicious Transactions" />
+                <Label fx:id="suspiciousTransactions_lbl" text="0" style="-fx-font-size: 14;" />
+            </VBox>
+            
+            <VBox spacing="10.0" prefWidth="250.0">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Total Users" />
+                <Label fx:id="totalUsers_lbl" text="0" style="-fx-font-size: 14;" />
+                
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Active Users (Last 7 days)" />
+                <Label fx:id="activeUsers_lbl" text="0" style="-fx-font-size: 14;" />
+                
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Pending Disputes" />
+                <Label fx:id="pendingDisputes_lbl" text="0" style="-fx-font-size: 14;" />
+            </VBox>
+        </HBox>
     </VBox>
 </AnchorPane>
 

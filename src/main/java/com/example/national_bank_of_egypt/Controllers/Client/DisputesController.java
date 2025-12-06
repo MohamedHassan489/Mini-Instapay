@@ -2,7 +2,7 @@ package com.example.national_bank_of_egypt.Controllers.Client;
 
 import com.example.national_bank_of_egypt.Models.Dispute;
 import com.example.national_bank_of_egypt.Models.Model;
-import com.example.national_bank_of_egypt.Models.DataBaseDriver;
+import com.example.national_bank_of_egypt.Views.DisputeCellFactory;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
@@ -22,7 +22,10 @@ public class DisputesController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (Model.getInstance().getCurrentUser() != null) {
             Model.getInstance().loadDisputes();
-            disputes_list.setItems(Model.getInstance().getDisputes());
+            if (disputes_list != null) {
+                disputes_list.setItems(Model.getInstance().getDisputes());
+                disputes_list.setCellFactory(e -> new DisputeCellFactory());
+            }
         }
         
         if (submitDispute_btn != null) {
@@ -31,25 +34,100 @@ public class DisputesController implements Initializable {
     }
 
     private void onSubmitDispute() {
-        String transactionId = transactionId_fld.getText();
-        String reason = reason_fld.getText();
+        // Clear previous error
+        if (error_lbl != null) {
+            error_lbl.setText("");
+        }
         
+        String transactionId = transactionId_fld != null ? transactionId_fld.getText().trim() : "";
+        String reason = reason_fld != null ? reason_fld.getText().trim() : "";
+        
+        // Validate input
         if (transactionId.isEmpty() || reason.isEmpty()) {
-            error_lbl.setText("Please fill all fields");
+            if (error_lbl != null) {
+                error_lbl.setText("Please fill all fields");
+            }
             return;
+        }
+        
+        // Validate transaction exists and belongs to user
+        if (Model.getInstance().getCurrentUser() == null) {
+            if (error_lbl != null) {
+                error_lbl.setText("User not logged in");
+            }
+            return;
+        }
+        
+        // Check if transaction exists and belongs to current user
+        boolean transactionExists = false;
+        for (com.example.national_bank_of_egypt.Models.Transaction t : Model.getInstance().getTransactions()) {
+            if (t.getTransactionId().equals(transactionId) && 
+                (t.getSender().equals(Model.getInstance().getCurrentUser().getUserName()) ||
+                 t.getReceiver().equals(Model.getInstance().getCurrentUser().getUserName()))) {
+                transactionExists = true;
+                break;
+            }
+        }
+        
+        if (!transactionExists) {
+            // Load transactions to check
+            Model.getInstance().loadTransactions(-1);
+            for (com.example.national_bank_of_egypt.Models.Transaction t : Model.getInstance().getTransactions()) {
+                if (t.getTransactionId().equals(transactionId) && 
+                    (t.getSender().equals(Model.getInstance().getCurrentUser().getUserName()) ||
+                     t.getReceiver().equals(Model.getInstance().getCurrentUser().getUserName()))) {
+                    transactionExists = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!transactionExists) {
+            if (error_lbl != null) {
+                error_lbl.setText("Transaction not found or does not belong to you");
+            }
+            return;
+        }
+        
+        // Check if dispute already exists for this transaction
+        for (Dispute d : Model.getInstance().getDisputes()) {
+            if (d.getTransactionId().equals(transactionId) && 
+                d.getUserId().equals(Model.getInstance().getCurrentUser().getUserName())) {
+                if (error_lbl != null) {
+                    error_lbl.setText("A dispute already exists for this transaction");
+                }
+                return;
+            }
         }
         
         String disputeId = UUID.randomUUID().toString();
         String userId = Model.getInstance().getCurrentUser().getUserName();
         
         if (Model.getInstance().getDataBaseDriver().createDispute(disputeId, transactionId, userId, reason, "PENDING", LocalDate.now())) {
-            error_lbl.setText("Dispute submitted successfully");
-            transactionId_fld.setText("");
-            reason_fld.setText("");
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Success");
+            successAlert.setHeaderText("Dispute Submitted");
+            successAlert.setContentText("Your dispute has been submitted successfully. An admin will review it.");
+            successAlert.showAndWait();
+            
+            if (error_lbl != null) {
+                error_lbl.setText("Dispute submitted successfully");
+                error_lbl.setStyle("-fx-text-fill: green;");
+            }
+            
+            // Clear form and refresh list
+            if (transactionId_fld != null) transactionId_fld.setText("");
+            if (reason_fld != null) reason_fld.setText("");
             Model.getInstance().loadDisputes();
-            disputes_list.setItems(Model.getInstance().getDisputes());
+            if (disputes_list != null) {
+                disputes_list.setItems(Model.getInstance().getDisputes());
+                disputes_list.setCellFactory(e -> new DisputeCellFactory());
+            }
         } else {
-            error_lbl.setText("Failed to submit dispute");
+            if (error_lbl != null) {
+                error_lbl.setText("Failed to submit dispute. Please try again.");
+                error_lbl.setStyle("-fx-text-fill: red;");
+            }
         }
     }
 }
