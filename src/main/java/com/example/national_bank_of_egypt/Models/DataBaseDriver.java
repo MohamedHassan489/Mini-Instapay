@@ -89,13 +89,13 @@ public class DataBaseDriver {
                     "IsRead VARCHAR(5) DEFAULT 'false'" +
                     ")");
             
-            // Create default admin account if it doesn't exist
+            // Create default admin account if it doesn't exist (plain text password - encryption disabled)
             ResultSet adminCheck = statement.executeQuery("SELECT COUNT(*) as count FROM Admins WHERE Username = 'admin'");
             if (adminCheck.getInt("count") == 0) {
                 statement.executeUpdate("INSERT INTO Admins (Username, Password) VALUES ('admin', 'admin123')");
             }
             
-            // Create default user account if it doesn't exist
+            // Create default user account if it doesn't exist (plain text password - encryption disabled)
             ResultSet userCheck = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE UserName = 'user'");
             if (userCheck.getInt("count") == 0) {
                 String defaultDate = LocalDate.now().toString();
@@ -124,35 +124,12 @@ public class DataBaseDriver {
                 return statement.executeQuery("SELECT * FROM Users WHERE UserName = '" + userName + "';");
             }
             
-            // Encrypt the provided password to compare with stored encrypted password
-            com.example.national_bank_of_egypt.Security.EncryptionService encryptionService = 
-                com.example.national_bank_of_egypt.Security.EncryptionService.getInstance();
-            String encryptedPassword = encryptionService.encrypt(password);
-            
-            // Get user data
-            ResultSet rs = statement.executeQuery("SELECT * FROM Users WHERE UserName = '" + userName + "';");
-            if (rs != null && rs.next()) {
-                String storedPassword = rs.getString("Password");
-                // Try to decrypt stored password first (if it's encrypted)
-                String decryptedStoredPassword = encryptionService.decrypt(storedPassword);
-                
-                // Compare: either stored password is encrypted and matches, or it's plain text (for backward compatibility)
-                boolean passwordMatches = false;
-                if (decryptedStoredPassword != null) {
-                    // Stored password is encrypted, compare decrypted version
-                    passwordMatches = decryptedStoredPassword.equals(password);
-                } else {
-                    // Stored password might be plain text (backward compatibility)
-                    passwordMatches = storedPassword.equals(password);
-                }
-                
-                if (passwordMatches) {
-                    // Reset cursor and return result set
-                    rs.beforeFirst();
-                    return rs;
-                } else {
-                    return null; // Password doesn't match
-                }
+            // Get user data - using plain text password comparison (encryption disabled)
+            // First check if user exists with matching password
+            ResultSet checkRs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE UserName = '" + userName + "' AND Password='" + password + "';");
+            if (checkRs.next() && checkRs.getInt("count") > 0) {
+                // Password matches, return the user data
+                return statement.executeQuery("SELECT * FROM Users WHERE UserName = '" + userName + "' AND Password='" + password + "';");
             }
             return null;
         } catch (SQLException e) {
@@ -184,19 +161,11 @@ public class DataBaseDriver {
     public boolean createUser(String firstName, String lastName, String email, String phoneNumber,
                               String address, String userName, String password, LocalDate dateCreated) {
         try {
-            // Encrypt password before storing
-            com.example.national_bank_of_egypt.Security.EncryptionService encryptionService = 
-                com.example.national_bank_of_egypt.Security.EncryptionService.getInstance();
-            String encryptedPassword = encryptionService.encrypt(password);
-            if (encryptedPassword == null) {
-                // If encryption fails, use plain password (fallback for compatibility)
-                encryptedPassword = password;
-            }
-            
+            // Store password as plain text (encryption disabled)
             Statement statement = this.con.createStatement();
             statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated) " +
                     "VALUES ('" + firstName + "', '" + lastName + "', '" + email + "', '" + phoneNumber + 
-                    "', '" + address + "', '" + userName + "', '" + encryptedPassword + "', '" + dateCreated.toString() + "')");
+                    "', '" + address + "', '" + userName + "', '" + password + "', '" + dateCreated.toString() + "')");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -265,32 +234,8 @@ public class DataBaseDriver {
     public ResultSet getAdminData(String username, String password) {
         try {
             Statement statement = this.con.createStatement();
-            // Encrypt password for comparison
-            com.example.national_bank_of_egypt.Security.EncryptionService encryptionService = 
-                com.example.national_bank_of_egypt.Security.EncryptionService.getInstance();
-            String encryptedPassword = encryptionService.encrypt(password);
-            
-            ResultSet rs = statement.executeQuery("SELECT * FROM Admins WHERE Username = '" + username + "';");
-            if (rs != null && rs.next()) {
-                String storedPassword = rs.getString("Password");
-                String decryptedStoredPassword = encryptionService.decrypt(storedPassword);
-                
-                boolean passwordMatches = false;
-                if (decryptedStoredPassword != null) {
-                    passwordMatches = decryptedStoredPassword.equals(password);
-                } else {
-                    // Backward compatibility: plain text password
-                    passwordMatches = storedPassword.equals(password);
-                }
-                
-                if (passwordMatches) {
-                    rs.beforeFirst();
-                    return rs;
-                } else {
-                    return null;
-                }
-            }
-            return null;
+            // Using plain text password comparison (encryption disabled)
+            return statement.executeQuery("SELECT * FROM Admins WHERE Username = '" + username + "' AND Password='" + password + "';");
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

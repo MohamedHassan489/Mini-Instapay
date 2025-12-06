@@ -527,6 +527,16 @@ public class Model {
                     ResultSet recentRs = dataBaseDriver.getTransactions(currentUser.getUserName(), 20);
                     if (recentRs != null) {
                         while (recentRs.next()) {
+                            // Convert String date to LocalDate
+                            String dateStr = recentRs.getString("Date");
+                            LocalDate transactionDate = null;
+                            try {
+                                transactionDate = LocalDate.parse(dateStr);
+                            } catch (Exception dateEx) {
+                                // If parsing fails, use today's date as fallback
+                                transactionDate = LocalDate.now();
+                            }
+                            
                             Transaction recentTxn = new Transaction(
                                 recentRs.getString("TransactionID"),
                                 recentRs.getString("Sender"),
@@ -534,7 +544,7 @@ public class Model {
                                 recentRs.getString("SenderAccount"),
                                 recentRs.getString("ReceiverAccount"),
                                 recentRs.getDouble("Amount"),
-                                recentRs.getString("Date"),
+                                transactionDate,
                                 recentRs.getString("Message"),
                                 recentRs.getString("Status"),
                                 recentRs.getString("TransactionType")
