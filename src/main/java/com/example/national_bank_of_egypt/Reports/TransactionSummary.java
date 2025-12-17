@@ -37,5 +37,14 @@ public class TransactionSummary {
     public LocalDate getEndDate() {
         return endDate;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Transaction Summary (%s to %s):\n" +
+                "Total Transactions: %d\n" +
+                "Total Amount: $%.2f\n" +
+                "Average Amount: $%.2f",
+                startDate, endDate, totalTransactions, totalAmount, averageAmount);
+    }
 }
 

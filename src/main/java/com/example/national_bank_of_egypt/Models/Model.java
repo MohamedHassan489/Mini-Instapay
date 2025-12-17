@@ -110,6 +110,11 @@ public class Model {
                         }
                         loadUserBankAccounts(user);
                         this.currentUser = user;
+                        
+                        // Load notifications for the user
+                        com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                            .loadUserNotifications(userName);
+                        
                         // Don't set login success flag yet - need OTP verification if 2FA is enabled
                         if (twoFactorEnabled == null || !"true".equalsIgnoreCase(twoFactorEnabled)) {
                             this.userLoginSuccessFlag = true;

@@ -502,8 +502,13 @@ public class DataBaseDriver {
     public ResultSet getTransactionStats(String startDate, String endDate) {
         try {
             Statement statement = this.con.createStatement();
-            return statement.executeQuery("SELECT COUNT(*) as total, SUM(Amount) as totalAmount, " +
-                    "AVG(Amount) as avgAmount FROM Transactions WHERE Date >= '" + startDate + "' AND Date <= '" + endDate + "' AND Status = 'SUCCESS'");
+            String query = "SELECT COUNT(*) as total, " +
+                    "COALESCE(SUM(Amount), 0) as totalAmount, " +
+                    "COALESCE(AVG(Amount), 0) as avgAmount, " +
+                    "COALESCE(MAX(Amount), 0) as maxAmount, " +
+                    "COALESCE(MIN(Amount), 0) as minAmount " +
+                    "FROM Transactions WHERE Date >= '" + startDate + "' AND Date <= '" + endDate + "' AND Status = 'SUCCESS'";
+            return statement.executeQuery(query);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -513,8 +518,44 @@ public class DataBaseDriver {
     public ResultSet getUserActivityStats() {
         try {
             Statement statement = this.con.createStatement();
-            return statement.executeQuery("SELECT COUNT(DISTINCT UserName) as totalUsers, " +
-                    "COUNT(DISTINCT Sender) + COUNT(DISTINCT Receiver) as activeUsers FROM Users, Transactions");
+            // Calculate date 30 days ago as string (YYYY-MM-DD format)
+            LocalDate thirtyDaysAgo = LocalDate.now().minusDays(30);
+            String dateThreshold = thirtyDaysAgo.toString();
+            
+            // Count total users
+            // Count active users (users who have made or received transactions in the last 30 days)
+            String query = "SELECT " +
+                    "(SELECT COUNT(*) FROM Users) as totalUsers, " +
+                    "(SELECT COUNT(DISTINCT CASE WHEN t.Date >= '" + dateThreshold + "' THEN t.Sender END) + " +
+                    "COUNT(DISTINCT CASE WHEN t.Date >= '" + dateThreshold + "' THEN t.Receiver END) " +
+                    "FROM Transactions t) as activeUsers, " +
+                    "(SELECT COUNT(*) FROM Transactions WHERE Date >= '" + dateThreshold + "') as recentTransactions, " +
+                    "(SELECT COUNT(*) FROM Transactions) as totalTransactions, " +
+                    "(SELECT COALESCE(AVG(Amount), 0) FROM Transactions WHERE Status = 'SUCCESS') as avgTransactionAmount";
+            return statement.executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public ResultSet getAccountUsageDetails() {
+        try {
+            Statement statement = this.con.createStatement();
+            // Get detailed account usage statistics
+            String query = "SELECT " +
+                    "u.UserName, " +
+                    "u.DateCreated, " +
+                    "COUNT(DISTINCT t.TransactionID) as transactionCount, " +
+                    "COALESCE(SUM(CASE WHEN t.Sender = u.UserName THEN t.Amount ELSE 0 END), 0) as totalSent, " +
+                    "COALESCE(SUM(CASE WHEN t.Receiver = u.UserName THEN t.Amount ELSE 0 END), 0) as totalReceived, " +
+                    "COUNT(DISTINCT ba.AccountNumber) as accountCount " +
+                    "FROM Users u " +
+                    "LEFT JOIN Transactions t ON (t.Sender = u.UserName OR t.Receiver = u.UserName) " +
+                    "LEFT JOIN BankAccounts ba ON ba.Owner = u.UserName " +
+                    "GROUP BY u.UserName, u.DateCreated " +
+                    "ORDER BY transactionCount DESC";
+            return statement.executeQuery(query);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -535,6 +576,40 @@ public class DataBaseDriver {
         try {
             Statement statement = this.con.createStatement();
             statement.executeUpdate("UPDATE Disputes SET Status = 'RESOLVED', Resolution = '" + resolution + "' WHERE DisputeID = '" + disputeId + "'");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean createNotification(String notificationId, String userId, String title, String message, String type, String timestamp) {
+        try {
+            Statement statement = this.con.createStatement();
+            statement.executeUpdate("INSERT INTO Notifications(NotificationID, UserId, Title, Message, Type, Timestamp, IsRead) " +
+                    "VALUES ('" + notificationId + "', '" + userId + "', '" + title.replace("'", "''") + "', '" + 
+                    message.replace("'", "''") + "', '" + type + "', '" + timestamp + "', 'false')");
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public ResultSet getNotifications(String userId) {
+        try {
+            Statement statement = this.con.createStatement();
+            return statement.executeQuery("SELECT * FROM Notifications WHERE UserId = '" + userId + "' ORDER BY Timestamp DESC");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean markNotificationAsRead(String notificationId) {
+        try {
+            Statement statement = this.con.createStatement();
+            statement.executeUpdate("UPDATE Notifications SET IsRead = 'true' WHERE NotificationID = '" + notificationId + "'");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
