@@ -8,8 +8,10 @@
     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="50.0">
         <VBox spacing="15.0" style="-fx-padding: 10;">
             <Label style="-fx-font-size: 14; -fx-font-weight: bold;" text="Submit Dispute:" />
-            <Label style="-fx-font-size: 11;" text="Transaction ID *" />
-            <TextField fx:id="transactionId_fld" prefHeight="32.0" prefWidth="780.0" promptText="Transaction ID" />
+            <Label style="-fx-font-size: 11;" text="Select Transaction *" />
+            <ComboBox fx:id="transaction_combo" prefHeight="32.0" prefWidth="780.0" promptText="Select transaction" />
+            <Label style="-fx-font-size: 11;" text="Or enter Transaction ID manually:" />
+            <TextField fx:id="transactionId_fld" prefHeight="32.0" prefWidth="780.0" promptText="Transaction ID (optional if transaction selected above)" />
             <Label style="-fx-font-size: 11;" text="Reason *" />
             <TextArea fx:id="reason_fld" prefHeight="100.0" prefWidth="780.0" promptText="Explain the issue" wrapText="true" />
             <Button fx:id="submitDispute_btn" mnemonicParsing="false" prefHeight="38.0" prefWidth="780.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold;" text="Submit Dispute" />

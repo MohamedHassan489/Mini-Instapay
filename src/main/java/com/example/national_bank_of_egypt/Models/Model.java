@@ -78,6 +78,13 @@ public class Model {
         }
         
         ResultSet resultSet = dataBaseDriver.getUserData(userName, password);
+        // #region agent log
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:80\",\"message\":\"getUserData ResultSet created\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + userName + "\",\"resultSetNull\":" + (resultSet == null) + "}}\n").getBytes(), 
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception logEx) {}
+        // #endregion
         try {
             if (resultSet != null && resultSet.next()) {
                 String firstName = resultSet.getString("FirstName");
@@ -110,6 +117,11 @@ public class Model {
                         }
                         loadUserBankAccounts(user);
                         this.currentUser = user;
+                        
+                        // Load notifications for the user
+                        com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                            .loadUserNotifications(userName);
+                        
                         // Don't set login success flag yet - need OTP verification if 2FA is enabled
                         if (twoFactorEnabled == null || !"true".equalsIgnoreCase(twoFactorEnabled)) {
                             this.userLoginSuccessFlag = true;
@@ -123,12 +135,36 @@ public class Model {
             e.printStackTrace();
             this.userLoginSuccessFlag = false;
             this.currentUser = null;
+        } finally {
+            // #region agent log
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:132\",\"message\":\"getUserData ResultSet closed\",\"timestamp\":" + System.currentTimeMillis() + "}\n").getBytes(), 
+                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                }
+            } catch (Exception closeEx) {
+                try {
+                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:135\",\"message\":\"getUserData ResultSet close failed\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage() + "\"}}\n").getBytes(), 
+                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                } catch (Exception logEx) {}
+            }
+            // #endregion
         }
     }
 
     private void loadUserBankAccounts(User user) {
         user.getBankAccounts().clear();
         ResultSet rs = dataBaseDriver.getBankAccounts(user.getUserName());
+        // #region agent log
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:136\",\"message\":\"getBankAccounts ResultSet created\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + user.getUserName() + "\",\"resultSetNull\":" + (rs == null) + "}}\n").getBytes(), 
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception logEx) {}
+        // #endregion
         try {
             if (rs != null) {
                 while (rs.next()) {
@@ -142,6 +178,23 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            // #region agent log
+            try {
+                if (rs != null) {
+                    rs.close();
+                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:151\",\"message\":\"getBankAccounts ResultSet closed\",\"timestamp\":" + System.currentTimeMillis() + "}\n").getBytes(), 
+                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                }
+            } catch (Exception closeEx) {
+                try {
+                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:154\",\"message\":\"getBankAccounts ResultSet close failed\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage() + "\"}}\n").getBytes(), 
+                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                } catch (Exception logEx) {}
+            }
+            // #endregion
         }
     }
     
@@ -169,6 +222,14 @@ public class Model {
         } catch (Exception e) {
             e.printStackTrace();
             this.adminLoginSuccessFlag = false;
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
 
@@ -271,6 +332,14 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
 
@@ -279,10 +348,11 @@ public class Model {
     }
 
     public void loadAllUsers() {
+        ResultSet rs = null;
         try {
             // Create temporary list to avoid clearing while being accessed
             ObservableList<User> tempUsers = FXCollections.observableArrayList();
-            ResultSet rs = dataBaseDriver.getAllUsers();
+            rs = dataBaseDriver.getAllUsers();
             if (rs != null) {
                 while (rs.next()) {
                     String firstName = rs.getString("FirstName");
@@ -312,6 +382,14 @@ public class Model {
             users.setAll(tempUsers);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
 
@@ -346,6 +424,14 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
 
@@ -373,6 +459,14 @@ public class Model {
         } catch (Exception e) {
             e.printStackTrace();
             return new TransactionLimit(userName, 5000.0, 20000.0);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
     
@@ -429,13 +523,31 @@ public class Model {
                     receiver = receiverRs.getString("UserName");
                     if (receiverAccount == null) {
                         ResultSet accRs = dataBaseDriver.getBankAccounts(receiver);
-                        if (accRs != null && accRs.next()) {
-                            receiverAccount = accRs.getString("AccountNumber");
+                        try {
+                            if (accRs != null && accRs.next()) {
+                                receiverAccount = accRs.getString("AccountNumber");
+                            }
+                        } finally {
+                            try {
+                                if (accRs != null) {
+                                    accRs.close();
+                                }
+                            } catch (Exception closeEx) {
+                                closeEx.printStackTrace();
+                            }
                         }
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (receiverRs != null) {
+                        receiverRs.close();
+                    }
+                } catch (Exception closeEx) {
+                    closeEx.printStackTrace();
+                }
             }
         }
         
@@ -506,10 +618,20 @@ public class Model {
                 dataBaseDriver.updateBankAccountBalance(senderAccount, newSenderBalance);
                 
                 ResultSet receiverAccRs = dataBaseDriver.getBankAccountByNumber(receiverAccount);
-                if (receiverAccRs != null && receiverAccRs.next()) {
-                    double receiverBalance = receiverAccRs.getDouble("Balance");
-                    double newReceiverBalance = receiverBalance + amount;
-                    dataBaseDriver.updateBankAccountBalance(receiverAccount, newReceiverBalance);
+                try {
+                    if (receiverAccRs != null && receiverAccRs.next()) {
+                        double receiverBalance = receiverAccRs.getDouble("Balance");
+                        double newReceiverBalance = receiverBalance + amount;
+                        dataBaseDriver.updateBankAccountBalance(receiverAccount, newReceiverBalance);
+                    }
+                } finally {
+                    try {
+                        if (receiverAccRs != null) {
+                            receiverAccRs.close();
+                        }
+                    } catch (Exception closeEx) {
+                        closeEx.printStackTrace();
+                    }
                 }
                 
                 // Create instant transaction
@@ -521,10 +643,11 @@ public class Model {
                 com.example.national_bank_of_egypt.Security.FraudDetectionService fraudService = 
                     com.example.national_bank_of_egypt.Security.FraudDetectionService.getInstance();
                 
-                // Get recent transactions for frequency-based detection
+                // Get recent transactions for pattern analysis
                 java.util.List<Transaction> recentTransactions = new java.util.ArrayList<>();
+                ResultSet recentRs = null;
                 try {
-                    ResultSet recentRs = dataBaseDriver.getTransactions(currentUser.getUserName(), 20);
+                    recentRs = dataBaseDriver.getTransactions(currentUser.getUserName(), 20);
                     if (recentRs != null) {
                         while (recentRs.next()) {
                             // Convert String date to LocalDate
@@ -556,27 +679,72 @@ public class Model {
                     e.printStackTrace();
                 }
                 
-                // Add frequency-based strategy for this check
-                if (!recentTransactions.isEmpty()) {
-                    fraudService.addStrategy(new com.example.national_bank_of_egypt.Security.FrequencyBasedFraudDetection(recentTransactions));
-                }
+                // Assess risk using new risk-based system
+                com.example.national_bank_of_egypt.Security.FraudRiskResult riskResult = 
+                    fraudService.assessRisk(transaction, currentUser.getUserName(), recentTransactions);
                 
-                // Detect fraud
-                boolean isSuspicious = fraudService.detectFraud(transaction, currentUser.getUserName(), recentTransactions);
-                String transactionStatus = isSuspicious ? "SUSPICIOUS" : "SUCCESS";
+                String transactionStatus;
+                String riskFactorsDescription = riskResult.getRiskFactors().stream()
+                    .map(f -> f.getDescription())
+                    .reduce((a, b) -> a + "; " + b)
+                    .orElse("No specific factors");
                 
-                // If suspicious, send alerts but still process transaction (admin can review later)
-                if (isSuspicious) {
-                    // Notify user
+                // Handle based on risk level
+                if (riskResult.shouldBlock()) {
+                    // CRITICAL RISK - Block transaction
+                    transactionStatus = "BLOCKED";
+                    String notificationMessage = String.format(
+                        "Transaction BLOCKED for security. Risk Score: %d/100. Reasons: %s",
+                        riskResult.getRiskScore(), riskFactorsDescription
+                    );
+                    
+                    com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                        .sendNotification(currentUser.getUserName(), "Transaction Blocked", 
+                            notificationMessage, "FRAUD");
+                    
+                    com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                        .sendNotification("admin", "CRITICAL: Transaction Blocked", 
+                            String.format("Transaction %s from %s for $%.2f was BLOCKED. Risk Score: %d. %s",
+                                transaction.getTransactionId(), currentUser.getUserName(), amount, 
+                                riskResult.getRiskScore(), riskFactorsDescription), "FRAUD");
+                    
+                    return false; // Block the transaction
+                    
+                } else if (riskResult.requiresConfirmation()) {
+                    // HIGH RISK - Flag as suspicious but process
+                    transactionStatus = "SUSPICIOUS";
+                    String notificationMessage = String.format(
+                        "Transaction flagged for review. Risk Score: %d/100. Please verify this transaction is legitimate.",
+                        riskResult.getRiskScore()
+                    );
+                    
+                    com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                        .sendNotification(currentUser.getUserName(), "Transaction Requires Confirmation", 
+                            notificationMessage, "FRAUD");
+                    
+                    com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                        .sendNotification("admin", "High Risk Transaction Alert", 
+                            String.format("Transaction %s from %s for $%.2f flagged. Risk Score: %d. %s",
+                                transaction.getTransactionId(), currentUser.getUserName(), amount,
+                                riskResult.getRiskScore(), riskFactorsDescription), "FRAUD");
+                    
+                } else if (riskResult.isSuspicious()) {
+                    // MEDIUM RISK - Flag but process
+                    transactionStatus = "SUSPICIOUS";
+                    
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
                         .sendNotification(currentUser.getUserName(), "Suspicious Transaction Detected", 
                             "Your transaction of $" + amount + " has been flagged for review. Please contact support if this is legitimate.", "FRAUD");
                     
-                    // Notify admin - send to "admin" user (admin notifications go to admin account)
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
                         .sendNotification("admin", "Suspicious Transaction Alert", 
-                            "Transaction " + transaction.getTransactionId() + " from " + currentUser.getUserName() + 
-                            " for $" + amount + " has been flagged as suspicious. Please review.", "FRAUD");
+                            String.format("Transaction %s from %s for $%.2f flagged. Risk Score: %d.",
+                                transaction.getTransactionId(), currentUser.getUserName(), amount,
+                                riskResult.getRiskScore()), "FRAUD");
+                    
+                } else {
+                    // LOW RISK - Process normally
+                    transactionStatus = "SUCCESS";
                 }
                 
                 dataBaseDriver.createTransaction(transaction.getTransactionId(), transaction.getSender(), 
@@ -601,6 +769,14 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (senderAccRs != null) {
+                    senderAccRs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
         
         return false;
@@ -636,6 +812,14 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
 
@@ -665,6 +849,14 @@ public class Model {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
 

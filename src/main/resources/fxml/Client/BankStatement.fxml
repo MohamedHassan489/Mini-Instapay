@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.BankStatementController">
+   <ScrollPane fitToWidth="true" fitToHeight="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox spacing="20.0" style="-fx-padding: 30;">
+         <Label style="-fx-font-size: 28; -fx-font-weight: bold;" text="Bank Statement" />
+         <Label style="-fx-font-size: 14; -fx-text-fill: #666;" text="Generate a detailed bank statement for your account transactions" />
+         
+         <Separator />
+         
+         <VBox spacing="15.0">
+            <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Account Selection" />
+            <ComboBox fx:id="account_combo" prefHeight="40.0" prefWidth="1140.0" promptText="Select Account (or leave for all accounts)" />
+         </VBox>
+         
+         <HBox spacing="20.0" alignment="CENTER_LEFT">
+            <Label text="Start Date:" style="-fx-font-size: 14;" />
+            <DatePicker fx:id="startDate_picker" prefHeight="35.0" prefWidth="250.0" />
+            <Label text="End Date:" style="-fx-font-size: 14;" />
+            <DatePicker fx:id="endDate_picker" prefHeight="35.0" prefWidth="250.0" />
+         </HBox>
+         
+         <HBox spacing="15.0">
+            <Button fx:id="generate_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" 
+                    style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" 
+                    text="Generate Statement" />
+            <Label fx:id="error_lbl" style="-fx-font-size: 12;" />
+         </HBox>
+         
+         <Separator />
+         
+         <VBox spacing="10.0">
+            <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Statement" />
+            <TextArea fx:id="statement_area" prefHeight="500.0" prefWidth="1140.0" 
+                     style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 11;" 
+                     wrapText="true" />
+         </VBox>
+      </VBox>
+   </ScrollPane>
+</AnchorPane>

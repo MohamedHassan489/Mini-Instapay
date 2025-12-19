@@ -59,6 +59,26 @@ public class Notification {
         return userId.get();
     }
 
+    public String getTitle() {
+        return title.get();
+    }
+
+    public String getMessage() {
+        return message.get();
+    }
+
+    public String getType() {
+        return type.get();
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp.get();
+    }
+
+    public boolean isRead() {
+        return isRead.get();
+    }
+
     public void markAsRead() {
         isRead.set(true);
     }

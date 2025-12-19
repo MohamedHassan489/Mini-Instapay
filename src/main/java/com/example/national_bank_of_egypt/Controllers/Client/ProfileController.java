@@ -7,6 +7,9 @@ import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class ProfileController implements Initializable {
     public TextField firstName_fld;
@@ -56,11 +59,17 @@ public class ProfileController implements Initializable {
             }
             
             if (update_btn != null) {
-                update_btn.setOnAction(event -> onUpdateProfile());
+                update_btn.setOnAction(event -> {
+                    logDebug("ProfileController.java:59", "update_btn clicked", "A", "buttonClick", new java.util.HashMap<String, Object>() {{ put("button", "update_btn"); put("disabled", update_btn.isDisabled()); }});
+                    onUpdateProfile();
+                });
             }
             
             if (updateLimits_btn != null) {
-                updateLimits_btn.setOnAction(event -> onUpdateLimits());
+                updateLimits_btn.setOnAction(event -> {
+                    logDebug("ProfileController.java:64", "updateLimits_btn clicked", "B", "buttonClick", new java.util.HashMap<String, Object>() {{ put("button", "updateLimits_btn"); put("disabled", updateLimits_btn.isDisabled()); }});
+                    onUpdateLimits();
+                });
             }
             
             if (update2FA_btn != null) {
@@ -158,12 +167,14 @@ public class ProfileController implements Initializable {
     }
     
     private void onUpdateLimits() {
+        logDebug("ProfileController.java:160", "onUpdateLimits entry", "B", "methodEntry", new java.util.HashMap<String, Object>() {{ put("currentUser", Model.getInstance().getCurrentUser() != null ? Model.getInstance().getCurrentUser().getUserName() : "null"); }});
         // Clear previous error
         if (limits_error_lbl != null) {
             limits_error_lbl.setText("");
         }
         
         if (Model.getInstance().getCurrentUser() == null) {
+            logDebug("ProfileController.java:166", "currentUser is null", "B", "validation", new java.util.HashMap<String, Object>() {{ put("result", "earlyReturn"); }});
             if (limits_error_lbl != null) {
                 limits_error_lbl.setText("User not logged in");
             }
@@ -172,6 +183,7 @@ public class ProfileController implements Initializable {
         
         String dailyLimitStr = dailyLimit_fld != null ? dailyLimit_fld.getText().trim() : "";
         String weeklyLimitStr = weeklyLimit_fld != null ? weeklyLimit_fld.getText().trim() : "";
+        logDebug("ProfileController.java:174", "field values extracted", "B", "values", new java.util.HashMap<String, Object>() {{ put("dailyLimitStr", dailyLimitStr); put("weeklyLimitStr", weeklyLimitStr); put("dailyLimit_fld_null", dailyLimit_fld == null); put("weeklyLimit_fld_null", weeklyLimit_fld == null); }});
         
         // Validate input
         if (dailyLimitStr.isEmpty() || weeklyLimitStr.isEmpty()) {
@@ -214,8 +226,11 @@ public class ProfileController implements Initializable {
         }
         
         // Update limits
-        if (Model.getInstance().getDataBaseDriver().updateTransactionLimit(
-                Model.getInstance().getCurrentUser().getUserName(), dailyLimit, weeklyLimit)) {
+        logDebug("ProfileController.java:216", "calling updateTransactionLimit", "B", "databaseCall", new java.util.HashMap<String, Object>() {{ put("userName", Model.getInstance().getCurrentUser().getUserName()); put("dailyLimit", dailyLimit); put("weeklyLimit", weeklyLimit); }});
+        boolean updateResult = Model.getInstance().getDataBaseDriver().updateTransactionLimit(
+                Model.getInstance().getCurrentUser().getUserName(), dailyLimit, weeklyLimit);
+        logDebug("ProfileController.java:218", "updateTransactionLimit result", "B", "databaseResult", new java.util.HashMap<String, Object>() {{ put("success", updateResult); }});
+        if (updateResult) {
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Success");
             successAlert.setHeaderText("Limits Updated");
@@ -238,6 +253,7 @@ public class ProfileController implements Initializable {
     }
 
     private void onUpdateProfile() {
+        logDebug("ProfileController.java:240", "onUpdateProfile entry", "A", "methodEntry", new java.util.HashMap<String, Object>() {{ put("currentUser", Model.getInstance().getCurrentUser() != null ? Model.getInstance().getCurrentUser().getUserName() : "null"); }});
         // Clear previous error
         if (error_lbl != null) {
             error_lbl.setText("");
@@ -248,6 +264,7 @@ public class ProfileController implements Initializable {
         String email = email_fld != null ? email_fld.getText().trim() : "";
         String phoneNumber = phoneNumber_fld != null ? phoneNumber_fld.getText().trim() : "";
         String address = address_fld != null ? address_fld.getText().trim() : "";
+        logDebug("ProfileController.java:250", "field values extracted", "A", "values", new java.util.HashMap<String, Object>() {{ put("firstName", firstName); put("lastName", lastName); put("email", email); put("phoneNumber", phoneNumber); put("address", address); }});
         
         // Validate required fields
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty()) {
@@ -276,16 +293,81 @@ public class ProfileController implements Initializable {
         // Check if email is being changed and if new email already exists
         if (Model.getInstance().getCurrentUser() != null && 
             !email.equals(Model.getInstance().getCurrentUser().getEmail())) {
+            // #region agent log
+            logDebug("ProfileController.java:295", "before emailExists check", "H2", "timing", new java.util.HashMap<String, Object>() {{ put("email", email); put("timestamp", System.currentTimeMillis()); }});
+            // #endregion
             if (Model.getInstance().getDataBaseDriver().emailExists(email)) {
+                // #region agent log
+                logDebug("ProfileController.java:298", "emailExists returned true", "H2", "validation", new java.util.HashMap<String, Object>() {{ put("email", email); }});
+                // #endregion
                 if (error_lbl != null) {
                     error_lbl.setText("Email already exists. Please use a different email.");
                 }
                 return;
             }
+            // #region agent log
+            logDebug("ProfileController.java:304", "after emailExists check", "H2", "timing", new java.util.HashMap<String, Object>() {{ put("email", email); put("timestamp", System.currentTimeMillis()); }});
+            // #endregion
+        }
+        
+        // Store old values before update for notification
+        String oldFirstName = null;
+        String oldLastName = null;
+        String oldEmail = null;
+        String oldPhoneNumber = null;
+        String oldAddress = null;
+        if (Model.getInstance().getCurrentUser() != null) {
+            oldFirstName = Model.getInstance().getCurrentUser().getFirstName();
+            oldLastName = Model.getInstance().getCurrentUser().getLastName();
+            oldEmail = Model.getInstance().getCurrentUser().getEmail();
+            oldPhoneNumber = Model.getInstance().getCurrentUser().getPhoneNumber();
+            oldAddress = Model.getInstance().getCurrentUser().getAddress();
         }
         
         // Update profile
-        if (Model.getInstance().updateUserProfile(firstName, lastName, email, phoneNumber, address)) {
+        // #region agent log
+        logDebug("ProfileController.java:308", "calling updateUserProfile", "H1,H2,H3", "databaseCall", new java.util.HashMap<String, Object>() {{ put("firstName", firstName); put("lastName", lastName); put("email", email); put("phoneNumber", phoneNumber); put("timestamp", System.currentTimeMillis()); }});
+        // #endregion
+        boolean updateResult = Model.getInstance().updateUserProfile(firstName, lastName, email, phoneNumber, address);
+        // #region agent log
+        logDebug("ProfileController.java:311", "updateUserProfile result", "H1,H2,H3", "databaseResult", new java.util.HashMap<String, Object>() {{ put("success", updateResult); put("timestamp", System.currentTimeMillis()); }});
+        // #endregion
+        if (updateResult) {
+            // Send notification about profile update
+            if (Model.getInstance().getCurrentUser() != null) {
+                String userName = Model.getInstance().getCurrentUser().getUserName();
+                java.util.List<String> changedFields = new java.util.ArrayList<>();
+                
+                if (oldFirstName != null && !firstName.equals(oldFirstName)) {
+                    changedFields.add("First Name");
+                }
+                if (oldLastName != null && !lastName.equals(oldLastName)) {
+                    changedFields.add("Last Name");
+                }
+                if (oldEmail != null && !email.equals(oldEmail)) {
+                    changedFields.add("Email");
+                }
+                if (oldPhoneNumber != null && !phoneNumber.equals(oldPhoneNumber)) {
+                    changedFields.add("Phone Number");
+                }
+                if (oldAddress != null && !address.equals(oldAddress)) {
+                    changedFields.add("Address");
+                }
+                
+                String changesMessage;
+                if (changedFields.isEmpty()) {
+                    changesMessage = "Your profile information has been updated successfully.";
+                } else if (changedFields.size() == 1) {
+                    changesMessage = "Your " + changedFields.get(0) + " has been updated successfully.";
+                } else {
+                    changesMessage = "Your " + String.join(", ", changedFields.subList(0, changedFields.size() - 1)) + 
+                        " and " + changedFields.get(changedFields.size() - 1) + " have been updated successfully.";
+                }
+                
+                com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                    .sendNotification(userName, "Profile Updated", changesMessage, "PROFILE");
+            }
+            
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Success");
             successAlert.setHeaderText("Profile Updated");
@@ -297,6 +379,14 @@ public class ProfileController implements Initializable {
                 error_lbl.setStyle("-fx-text-fill: green;");
             }
         } else {
+            // Send notification about profile update failure
+            if (Model.getInstance().getCurrentUser() != null) {
+                String userName = Model.getInstance().getCurrentUser().getUserName();
+                com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                    .sendNotification(userName, "Profile Update Failed", 
+                        "Failed to update your profile. The database may be temporarily locked. Please try again in a moment.", "PROFILE");
+            }
+            
             if (error_lbl != null) {
                 error_lbl.setText("Failed to update profile. Please try again.");
                 error_lbl.setStyle("-fx-text-fill: red;");
@@ -311,5 +401,37 @@ public class ProfileController implements Initializable {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
     }
+    
+    // #region agent log
+    private void logDebug(String location, String message, String hypothesisId, String type, java.util.Map<String, Object> data) {
+        try {
+            StringBuilder json = new StringBuilder();
+            json.append("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"").append(hypothesisId)
+                .append("\",\"location\":\"").append(location.replace("\"", "\\\""))
+                .append("\",\"message\":\"").append(message.replace("\"", "\\\""))
+                .append("\",\"timestamp\":").append(System.currentTimeMillis())
+                .append(",\"data\":{");
+            boolean first = true;
+            for (java.util.Map.Entry<String, Object> entry : data.entrySet()) {
+                if (!first) json.append(",");
+                json.append("\"").append(entry.getKey()).append("\":");
+                Object val = entry.getValue();
+                if (val instanceof String) {
+                    json.append("\"").append(val.toString().replace("\"", "\\\"")).append("\"");
+                } else if (val instanceof Boolean || val instanceof Number) {
+                    json.append(val);
+                } else {
+                    json.append("\"").append(String.valueOf(val).replace("\"", "\\\"")).append("\"");
+                }
+                first = false;
+            }
+            json.append("}}\n");
+            Files.write(Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                json.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            // Silently fail to avoid disrupting the application
+        }
+    }
+    // #endregion
 }
 

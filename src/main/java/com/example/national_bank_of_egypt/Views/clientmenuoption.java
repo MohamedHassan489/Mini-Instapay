@@ -7,5 +7,6 @@ public enum clientmenuoption {
     SEND_MONEY,
     PROFILE,
     DISPUTES,
-    NOTIFICATIONS
+    NOTIFICATIONS,
+    BANK_STATEMENT
 }

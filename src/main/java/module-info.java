@@ -3,6 +3,8 @@ module com.example.national_bank_of_egypt {
     requires javafx.fxml;
     requires java.sql;
     requires org.xerial.sqlitejdbc;
+    requires java.mail;
+    requires java.net.http;
 
     opens com.example.national_bank_of_egypt to javafx.fxml;
     opens com.example.national_bank_of_egypt.Controllers to javafx.fxml;
