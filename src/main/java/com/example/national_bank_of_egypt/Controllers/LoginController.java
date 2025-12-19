@@ -102,14 +102,32 @@ public class LoginController implements Initializable {
         com.example.national_bank_of_egypt.Security.OTPService otpService = 
             com.example.national_bank_of_egypt.Security.OTPService.getInstance();
         
-        // Generate and send OTP
-        String otp = otpService.generateOTP(userName);
+        // Get user's email from current user
+        com.example.national_bank_of_egypt.Models.User currentUser = Model.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            error_lbl.setText("Error: User information not available.");
+            return false;
+        }
+        
+        String userEmail = currentUser.getEmail();
+        String userDisplayName = currentUser.getFirstName() + " " + currentUser.getLastName();
+        
+        // Generate and send OTP via email
+        boolean emailSent = otpService.generateAndSendOTP(userName, userEmail, userDisplayName);
         
         // Show OTP dialog
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
         dialog.setTitle("Two-Factor Authentication");
         dialog.setHeaderText("Enter OTP");
-        dialog.setContentText("An OTP has been generated. Please enter it below:\nOTP: " + otp);
+        
+        if (emailSent) {
+            dialog.setContentText("An OTP has been sent to your email address: " + userEmail + 
+                "\n\nPlease check your email and enter the OTP code below.\n" +
+                "The OTP is valid for 5 minutes.");
+        } else {
+            dialog.setContentText("Failed to send OTP email. Please contact support.\n" +
+                "For testing purposes, check the console for the OTP code.");
+        }
         
         java.util.Optional<String> result = dialog.showAndWait();
         

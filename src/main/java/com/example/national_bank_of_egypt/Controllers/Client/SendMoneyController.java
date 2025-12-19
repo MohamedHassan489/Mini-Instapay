@@ -258,6 +258,17 @@ public class SendMoneyController implements Initializable {
             return;
         }
         
+        // Check if 2FA is required for transactions over $100
+        if (amount > 100) {
+            if (!verifyOTPForTransaction()) {
+                if (error_lbl != null) {
+                    error_lbl.setText("2FA verification failed. Transaction cancelled.");
+                    error_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 9;");
+                }
+                return;
+            }
+        }
+        
         // Disable button during processing
         if (send_btn != null) {
             send_btn.setDisable(true);
@@ -335,6 +346,56 @@ public class SendMoneyController implements Initializable {
                 error_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 9;");
             }
         }
+    }
+    
+    private boolean verifyOTPForTransaction() {
+        com.example.national_bank_of_egypt.Security.OTPService otpService = 
+            com.example.national_bank_of_egypt.Security.OTPService.getInstance();
+        
+        // Get current user
+        com.example.national_bank_of_egypt.Models.User currentUser = Model.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            if (error_lbl != null) {
+                error_lbl.setText("Error: User information not available.");
+            }
+            return false;
+        }
+        
+        String userName = currentUser.getUserName();
+        String userEmail = currentUser.getEmail();
+        String userDisplayName = currentUser.getFirstName() + " " + currentUser.getLastName();
+        
+        // Generate and send OTP via email
+        boolean emailSent = otpService.generateAndSendOTP(userName, userEmail, userDisplayName);
+        
+        // Show OTP dialog
+        javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
+        dialog.setTitle("Two-Factor Authentication Required");
+        dialog.setHeaderText("Transaction Amount Exceeds $100");
+        
+        if (emailSent) {
+            dialog.setContentText("This transaction exceeds $100 and requires 2FA verification.\n\n" +
+                "An OTP has been sent to your email address: " + userEmail + 
+                "\n\nPlease check your email and enter the OTP code below.\n" +
+                "The OTP is valid for 5 minutes.");
+        } else {
+            dialog.setContentText("This transaction exceeds $100 and requires 2FA verification.\n\n" +
+                "Failed to send OTP email. Please contact support.\n" +
+                "For testing purposes, check the console for the OTP code.");
+        }
+        
+        java.util.Optional<String> result = dialog.showAndWait();
+        
+        if (result.isPresent()) {
+            boolean verified = otpService.verifyOTP(userName, result.get());
+            if (!verified && error_lbl != null) {
+                error_lbl.setText("Invalid OTP. Please try again.");
+                error_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 9;");
+            }
+            return verified;
+        }
+        
+        return false;
     }
 }
 

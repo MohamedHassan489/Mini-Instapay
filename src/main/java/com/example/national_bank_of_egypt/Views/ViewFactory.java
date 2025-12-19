@@ -23,6 +23,7 @@ public class ViewFactory {
     private AnchorPane profileView;
     private AnchorPane disputesView;
     private AnchorPane notificationsView;
+    private AnchorPane bankStatementView;
     private AnchorPane usersView;
     private AnchorPane adminTransactionsView;
     private AnchorPane adminDisputesView;
@@ -51,17 +52,58 @@ public class ViewFactory {
 
 
     public AnchorPane getDashboardview(){
-        if (dashboardview == null){
+        // #region agent log
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"D1\",\"location\":\"ViewFactory.java:54\",\"message\":\"getDashboardview entry\",\"timestamp\":" + System.currentTimeMillis() + "}\n").getBytes(), 
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception logEx) {}
+        // #endregion
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            // #region agent log
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Dashboard.fxml"));
-                dashboardview = loader.load();
-            }catch (Exception e){
-                e.printStackTrace();
-                // Return empty AnchorPane if loading fails
-                dashboardview = new AnchorPane();
-            }
+                java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"D1\",\"location\":\"ViewFactory.java:57\",\"message\":\"loading Dashboard.fxml\",\"timestamp\":" + System.currentTimeMillis() + "}\n").getBytes(), 
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception logEx) {}
+            // #endregion
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Dashboard.fxml"));
+            AnchorPane view = loader.load();
+            // #region agent log
+            try {
+                java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"D1\",\"location\":\"ViewFactory.java:59\",\"message\":\"Dashboard.fxml loaded successfully\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"viewNull\":" + (view == null) + "}}\n").getBytes(), 
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception logEx) {}
+            // #endregion
+            dashboardview = view;
+            System.out.println("Dashboard view loaded successfully");
+            return view;
+        }catch (Exception e){
+            // #region agent log
+            try {
+                java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"D1\",\"location\":\"ViewFactory.java:63\",\"message\":\"Dashboard.fxml load exception\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + e.getMessage() + "\",\"class\":\"" + e.getClass().getName() + "\"}}\n").getBytes(), 
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception logEx) {}
+            // #endregion
+            e.printStackTrace();
+            System.err.println("Error loading Dashboard view: " + e.getMessage());
+            // Return error pane with message
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Dashboard view: " + e.getMessage() + "\nPlease check the console for details."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 14; -fx-padding: 20;");
+            errorLabel.setWrapText(true);
+            AnchorPane errorPane = new AnchorPane();
+            errorPane.getChildren().add(errorLabel);
+            javafx.scene.layout.AnchorPane.setLeftAnchor(errorLabel, 20.0);
+            javafx.scene.layout.AnchorPane.setTopAnchor(errorLabel, 20.0);
+            javafx.scene.layout.AnchorPane.setRightAnchor(errorLabel, 20.0);
+            dashboardview = errorPane;
+            return errorPane;
         }
-        return dashboardview;
     }
 
     public AnchorPane getTransactionsView() {
@@ -184,27 +226,93 @@ public class ViewFactory {
     }
 
     public AnchorPane getDisputesView() {
-        if (disputesView == null){
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Disputes.fxml"));
-                disputesView = loader.load();
-            }catch (Exception e){
-                e.printStackTrace();
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Disputes.fxml"));
+            AnchorPane view = loader.load();
+            disputesView = view;
+            System.out.println("Disputes view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading Disputes view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
             }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Disputes view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            disputesView = errorPane;
+            return errorPane;
         }
-        return disputesView;
     }
 
     public AnchorPane getNotificationsView() {
-        if (notificationsView == null){
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Notifications.fxml"));
-                notificationsView = loader.load();
-            }catch (Exception e){
-                e.printStackTrace();
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/Notifications.fxml"));
+            AnchorPane view = loader.load();
+            notificationsView = view;
+            System.out.println("Notifications view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading Notifications view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
             }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Notifications view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            notificationsView = errorPane;
+            return errorPane;
         }
-        return notificationsView;
+    }
+
+    public AnchorPane getBankStatementView() {
+        // Always reload to ensure fresh state and proper initialization
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Client/BankStatement.fxml"));
+            AnchorPane view = loader.load();
+            bankStatementView = view;
+            System.out.println("Bank Statement view loaded successfully");
+            return view;
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Error loading Bank Statement view: " + e.getMessage());
+            System.err.println("Exception type: " + e.getClass().getName());
+            if (e.getCause() != null) {
+                System.err.println("Caused by: " + e.getCause().getMessage());
+            }
+            // Return empty AnchorPane with error message if loading fails
+            AnchorPane errorPane = new AnchorPane();
+            javafx.scene.control.Label errorLabel = new javafx.scene.control.Label(
+                "Error loading Bank Statement view.\n" + 
+                "Error: " + e.getMessage() + "\n" +
+                "Please check the console for details and restart the application."
+            );
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11; -fx-padding: 20; -fx-wrap-text: true;");
+            errorLabel.setWrapText(true);
+            errorPane.getChildren().add(errorLabel);
+            bankStatementView = errorPane;
+            return errorPane;
+        }
     }
 
     public AnchorPane getReportsView() {

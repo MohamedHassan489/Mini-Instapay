@@ -2,9 +2,11 @@ package com.example.national_bank_of_egypt.Controllers.Client;
 
 import com.example.national_bank_of_egypt.Models.Dispute;
 import com.example.national_bank_of_egypt.Models.Model;
+import com.example.national_bank_of_egypt.Models.Transaction;
 import com.example.national_bank_of_egypt.Views.DisputeCellFactory;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 public class DisputesController implements Initializable {
+    public ComboBox<Transaction> transaction_combo;
     public TextField transactionId_fld;
     public TextArea reason_fld;
     public Button submitDispute_btn;
@@ -26,10 +29,72 @@ public class DisputesController implements Initializable {
                 disputes_list.setItems(Model.getInstance().getDisputes());
                 disputes_list.setCellFactory(e -> new DisputeCellFactory());
             }
+            
+            // Load user's transactions for the dropdown
+            loadUserTransactions();
+        }
+        
+        // Set up transaction combo box
+        if (transaction_combo != null) {
+            transaction_combo.setConverter(new StringConverter<Transaction>() {
+                @Override
+                public String toString(Transaction transaction) {
+                    if (transaction == null) return "";
+                    String role = transaction.getSender().equals(Model.getInstance().getCurrentUser().getUserName()) 
+                        ? "Sent" : "Received";
+                    return String.format("%s - %s $%.2f on %s (ID: %s)", 
+                        role, 
+                        role.equals("Sent") ? transaction.getReceiver() : transaction.getSender(),
+                        transaction.getAmount(),
+                        transaction.getDate() != null ? transaction.getDate().toString() : "N/A",
+                        transaction.getTransactionId());
+                }
+                
+                @Override
+                public Transaction fromString(String string) {
+                    return null;
+                }
+            });
+            
+            // When a transaction is selected, populate the transaction ID field
+            transaction_combo.setOnAction(e -> {
+                Transaction selected = transaction_combo.getSelectionModel().getSelectedItem();
+                if (selected != null && transactionId_fld != null) {
+                    transactionId_fld.setText(selected.getTransactionId());
+                }
+            });
         }
         
         if (submitDispute_btn != null) {
             submitDispute_btn.setOnAction(event -> onSubmitDispute());
+        }
+    }
+    
+    private void loadUserTransactions() {
+        if (transaction_combo == null || Model.getInstance().getCurrentUser() == null) {
+            return;
+        }
+        
+        try {
+            // Load all transactions for the current user
+            Model.getInstance().loadTransactions(-1);
+            
+            // Filter transactions that belong to the current user (as sender or receiver)
+            javafx.collections.ObservableList<Transaction> userTransactions = 
+                javafx.collections.FXCollections.observableArrayList();
+            
+            String currentUsername = Model.getInstance().getCurrentUser().getUserName();
+            for (Transaction t : Model.getInstance().getTransactions()) {
+                if (t.getSender() != null && t.getSender().equals(currentUsername) ||
+                    t.getReceiver() != null && t.getReceiver().equals(currentUsername)) {
+                    userTransactions.add(t);
+                }
+            }
+            
+            transaction_combo.setItems(userTransactions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error loading transactions for dispute: " + e.getMessage());
         }
     }
 
@@ -118,7 +183,9 @@ public class DisputesController implements Initializable {
             // Clear form and refresh list
             if (transactionId_fld != null) transactionId_fld.setText("");
             if (reason_fld != null) reason_fld.setText("");
+            if (transaction_combo != null) transaction_combo.getSelectionModel().clearSelection();
             Model.getInstance().loadDisputes();
+            loadUserTransactions(); // Reload transactions in case new ones were added
             if (disputes_list != null) {
                 disputes_list.setItems(Model.getInstance().getDisputes());
                 disputes_list.setCellFactory(e -> new DisputeCellFactory());

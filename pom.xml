@@ -33,6 +33,18 @@
             <version>3.45.3.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+        <!-- SLF4J Simple implementation to eliminate warnings -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -70,6 +82,7 @@
                             <mainClass>
                                 com.example.national_bank_of_egypt.App
                             </mainClass>
+                            <module>com.example.national_bank_of_egypt</module>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

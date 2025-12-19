@@ -12,6 +12,7 @@ public class OTPService {
     private final ConcurrentHashMap<String, Long> otpExpiry;
     private final Random random;
     private final ScheduledExecutorService scheduler;
+    private final EmailService emailService;
     private static final int OTP_LENGTH = 6;
     private static final long OTP_EXPIRY_MINUTES = 5;
 
@@ -20,6 +21,7 @@ public class OTPService {
         this.otpExpiry = new ConcurrentHashMap<>();
         this.random = new Random();
         this.scheduler = Executors.newScheduledThreadPool(1);
+        this.emailService = EmailService.getInstance();
     }
 
     public static synchronized OTPService getInstance() {
@@ -29,6 +31,11 @@ public class OTPService {
         return instance;
     }
 
+    /**
+     * Generates OTP and stores it
+     * @param userId User ID
+     * @return Generated OTP
+     */
     public String generateOTP(String userId) {
         String otp = String.format("%06d", random.nextInt(1000000));
         otpStore.put(userId, otp);
@@ -40,6 +47,18 @@ public class OTPService {
         }, OTP_EXPIRY_MINUTES, TimeUnit.MINUTES);
         
         return otp;
+    }
+    
+    /**
+     * Generates OTP and sends it via email
+     * @param userId User ID
+     * @param userEmail User's email address
+     * @param userName User's display name
+     * @return true if OTP generated and email sent successfully
+     */
+    public boolean generateAndSendOTP(String userId, String userEmail, String userName) {
+        String otp = generateOTP(userId);
+        return emailService.sendOTPEmail(userEmail, userName, otp);
     }
 
     public boolean verifyOTP(String userId, String otp) {

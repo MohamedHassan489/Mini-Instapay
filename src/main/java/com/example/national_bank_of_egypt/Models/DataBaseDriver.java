@@ -2,13 +2,27 @@ package com.example.national_bank_of_egypt.Models;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class DataBaseDriver {
     private Connection con;
 
     public DataBaseDriver(){
         try {
+            // Configure SQLite connection for better concurrency
+            // Enable WAL mode for better concurrent access
+            // Set busy timeout to 30 seconds (30000ms) to wait for locks to be released
             this.con = DriverManager.getConnection("jdbc:sqlite:MiniInstaPay.db");
+            
+            // Set busy timeout - SQLite will wait up to 30 seconds for locks to be released
+            try (Statement stmt = this.con.createStatement()) {
+                stmt.execute("PRAGMA busy_timeout = 30000"); // 30 seconds
+                stmt.execute("PRAGMA journal_mode = WAL"); // Write-Ahead Logging for better concurrency
+                stmt.execute("PRAGMA synchronous = NORMAL"); // Balance between safety and performance
+            }
+            
             initializeDatabase();
         }catch (SQLException e){
             e.printStackTrace();
@@ -99,8 +113,8 @@ public class DataBaseDriver {
             ResultSet userCheck = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE UserName = 'user'");
             if (userCheck.getInt("count") == 0) {
                 String defaultDate = LocalDate.now().toString();
-                statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated) " +
-                        "VALUES ('John', 'Doe', 'user@example.com', '1234567890', '123 Main St', 'user', 'user123', '" + defaultDate + "')");
+                statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated, TwoFactorEnabled) " +
+                        "VALUES ('John', 'Doe', 'user@example.com', '1234567890', '123 Main St', 'user', 'user123', '" + defaultDate + "', 'false')");
                 
                 // Create a default bank account for the user
                 statement.executeUpdate("INSERT INTO BankAccounts(Owner, AccountNumber, BankName, Balance, AccountType) " +
@@ -163,9 +177,9 @@ public class DataBaseDriver {
         try {
             // Store password as plain text (encryption disabled)
             Statement statement = this.con.createStatement();
-            statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated) " +
-                    "VALUES ('" + firstName + "', '" + lastName + "', '" + email + "', '" + phoneNumber + 
-                    "', '" + address + "', '" + userName + "', '" + password + "', '" + dateCreated.toString() + "')");
+            statement.executeUpdate("INSERT INTO Users(FirstName, LastName, Email, PhoneNumber, Address, UserName, Password, DateCreated, TwoFactorEnabled) " +
+                    "VALUES ('" + firstName.replace("'", "''") + "', '" + lastName.replace("'", "''") + "', '" + email.replace("'", "''") + "', '" + phoneNumber.replace("'", "''") + 
+                    "', '" + address.replace("'", "''") + "', '" + userName.replace("'", "''") + "', '" + password.replace("'", "''") + "', '" + dateCreated.toString() + "', 'false')");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -174,35 +188,90 @@ public class DataBaseDriver {
     }
 
     public boolean updateUser(String userName, String firstName, String lastName, String email, String phoneNumber, String address) {
-        try {
-            Statement statement = this.con.createStatement();
-            statement.executeUpdate("UPDATE Users SET FirstName='" + firstName + "', LastName='" + lastName + 
-                    "', Email='" + email + "', PhoneNumber='" + phoneNumber + "', Address='" + address + 
-                    "' WHERE UserName='" + userName + "'");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        // #region agent log
+        long updateStartTime = System.currentTimeMillis();
+        logDbDebug("DataBaseDriver.java:179", "updateUser entry", "updateUser_start", "H1,H2,H3");
+        // #endregion
+        int maxRetries = 5;
+        int baseRetryDelay = 200; // milliseconds
+        
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            // #region agent log
+            logDbDebug("DataBaseDriver.java:186", "updateUser attempt", "attempt=" + attempt, "H1,H2,H3");
+            // #endregion
+            try (Statement statement = this.con.createStatement()) {
+                String sql = "UPDATE Users SET FirstName='" + firstName.replace("'", "''") + "', LastName='" + lastName.replace("'", "''") + 
+                        "', Email='" + email.replace("'", "''") + "', PhoneNumber='" + phoneNumber.replace("'", "''") + "', Address='" + address.replace("'", "''") + 
+                        "' WHERE UserName='" + userName.replace("'", "''") + "'";
+                logDbDebug("DataBaseDriver.java:189", "updateUser SQL", sql, userName);
+                int rowsAffected = statement.executeUpdate(sql);
+                logDbDebug("DataBaseDriver.java:191", "updateUser result", "rowsAffected=" + rowsAffected, userName);
+                // #region agent log
+                long updateEndTime = System.currentTimeMillis();
+                logDbDebug("DataBaseDriver.java:193", "updateUser success", "duration=" + (updateEndTime - updateStartTime) + "ms", "H1,H2,H3");
+                // #endregion
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                if (e.getMessage() != null && e.getMessage().contains("database is locked") && attempt < maxRetries - 1) {
+                    logDbDebug("DataBaseDriver.java:197", "updateUser SQLITE_BUSY retry", "attempt " + (attempt + 1) + " of " + maxRetries, userName);
+                    try {
+                        // Exponential backoff: 200ms, 400ms, 800ms, 1600ms, 3200ms
+                        Thread.sleep(baseRetryDelay * (1L << attempt));
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                } else {
+                    logDbDebug("DataBaseDriver.java:204", "updateUser SQLException", e.getMessage(), userName);
+                    // #region agent log
+                    long updateEndTime = System.currentTimeMillis();
+                    logDbDebug("DataBaseDriver.java:206", "updateUser failed", "duration=" + (updateEndTime - updateStartTime) + "ms, error=" + e.getMessage(), "H1,H2,H3");
+                    // #endregion
+                    e.printStackTrace();
+                    return false;
+                }
+            }
         }
+        // #region agent log
+        long updateEndTime = System.currentTimeMillis();
+        logDbDebug("DataBaseDriver.java:214", "updateUser exhausted retries", "duration=" + (updateEndTime - updateStartTime) + "ms", "H1,H2,H3");
+        // #endregion
+        return false;
     }
     
     public boolean updateTwoFactorEnabled(String userName, boolean enabled) {
-        try {
-            Statement statement = this.con.createStatement();
-            String value = enabled ? "true" : "false";
-            statement.executeUpdate("UPDATE Users SET TwoFactorEnabled='" + value + "' WHERE UserName='" + userName + "'");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        int maxRetries = 3;
+        int retryDelay = 100; // milliseconds
+        
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            try (Statement statement = this.con.createStatement()) {
+                String value = enabled ? "true" : "false";
+                String sql = "UPDATE Users SET TwoFactorEnabled='" + value + "' WHERE UserName='" + userName.replace("'", "''") + "'";
+                int rowsAffected = statement.executeUpdate(sql);
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                if (e.getMessage() != null && e.getMessage().contains("database is locked") && attempt < maxRetries - 1) {
+                    try {
+                        Thread.sleep(retryDelay * (attempt + 1)); // Exponential backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                } else {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
         }
+        return false;
     }
 
     public boolean userExists(String userName) {
-        try {
-            Statement statement = this.con.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE UserName = '" + userName + "'");
-            return rs.getInt("count") > 0;
+        try (Statement statement = this.con.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE UserName = '" + userName.replace("'", "''") + "'");
+            boolean exists = rs.getInt("count") > 0;
+            rs.close();
+            return exists;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -210,10 +279,11 @@ public class DataBaseDriver {
     }
 
     public boolean phoneNumberExists(String phoneNumber) {
-        try {
-            Statement statement = this.con.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE PhoneNumber = '" + phoneNumber + "'");
-            return rs.getInt("count") > 0;
+        try (Statement statement = this.con.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE PhoneNumber = '" + phoneNumber.replace("'", "''") + "'");
+            boolean exists = rs.getInt("count") > 0;
+            rs.close();
+            return exists;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -221,11 +291,21 @@ public class DataBaseDriver {
     }
 
     public boolean emailExists(String email) {
-        try {
-            Statement statement = this.con.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE Email = '" + email + "'");
-            return rs.getInt("count") > 0;
+        // #region agent log
+        logDbDebug("DataBaseDriver.java:262", "emailExists entry", "emailExists_start", "H1,H2");
+        // #endregion
+        try (Statement statement = this.con.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM Users WHERE Email = '" + email.replace("'", "''") + "'");
+            boolean exists = rs.getInt("count") > 0;
+            rs.close();
+            // #region agent log
+            logDbDebug("DataBaseDriver.java:267", "emailExists exit", "emailExists_end", "H1,H2");
+            // #endregion
+            return exists;
         } catch (SQLException e) {
+            // #region agent log
+            logDbDebug("DataBaseDriver.java:270", "emailExists exception", e.getMessage(), "H1,H2");
+            // #endregion
             e.printStackTrace();
             return false;
         }
@@ -253,13 +333,11 @@ public class DataBaseDriver {
     }
 
     public boolean accountNumberExists(String accountNumber) {
-        try {
-            Statement statement = this.con.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM BankAccounts WHERE AccountNumber = '" + accountNumber + "'");
-            if (rs.next()) {
-                return rs.getInt("count") > 0;
-            }
-            return false;
+        try (Statement statement = this.con.createStatement()) {
+            ResultSet rs = statement.executeQuery("SELECT COUNT(*) as count FROM BankAccounts WHERE AccountNumber = '" + accountNumber.replace("'", "''") + "'");
+            boolean exists = rs.next() && rs.getInt("count") > 0;
+            rs.close();
+            return exists;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -355,11 +433,49 @@ public class DataBaseDriver {
     public ResultSet getTransactions(String userId, int limit) {
         try {
             Statement statement = this.con.createStatement();
-            String query = "SELECT * FROM Transactions WHERE Sender = '" + userId + "' OR Receiver = '" + userId + "' ORDER BY Date DESC";
+            String query = "SELECT * FROM Transactions WHERE Sender = '" + userId.replace("'", "''") + "' OR Receiver = '" + userId.replace("'", "''") + "' ORDER BY Date DESC";
             if (limit > 0) {
                 query += " LIMIT " + limit;
             }
             return statement.executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public ResultSet getTransactionsByDateRange(String userId, String startDate, String endDate, String accountNumber) {
+        try {
+            Statement statement = this.con.createStatement();
+            StringBuilder query = new StringBuilder("SELECT * FROM Transactions WHERE (Sender = '");
+            query.append(userId.replace("'", "''"));
+            query.append("' OR Receiver = '");
+            query.append(userId.replace("'", "''"));
+            query.append("')");
+            
+            if (accountNumber != null && !accountNumber.isEmpty()) {
+                query.append(" AND (SenderAccount = '");
+                query.append(accountNumber.replace("'", "''"));
+                query.append("' OR ReceiverAccount = '");
+                query.append(accountNumber.replace("'", "''"));
+                query.append("')");
+            }
+            
+            if (startDate != null && !startDate.isEmpty()) {
+                query.append(" AND Date >= '");
+                query.append(startDate.replace("'", "''"));
+                query.append("'");
+            }
+            
+            if (endDate != null && !endDate.isEmpty()) {
+                query.append(" AND Date <= '");
+                query.append(endDate.replace("'", "''"));
+                query.append("'");
+            }
+            
+            query.append(" ORDER BY Date ASC");
+            
+            return statement.executeQuery(query.toString());
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -410,15 +526,34 @@ public class DataBaseDriver {
     }
 
     public boolean updateTransactionLimit(String userName, double dailyLimit, double weeklyLimit) {
-        try {
-            Statement statement = this.con.createStatement();
-            statement.executeUpdate("UPDATE TransactionLimits SET DailyLimit = " + dailyLimit + ", WeeklyLimit = " + weeklyLimit + 
-                    " WHERE UserName = '" + userName + "'");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        int maxRetries = 3;
+        int retryDelay = 100; // milliseconds
+        
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            try (Statement statement = this.con.createStatement()) {
+                String sql = "UPDATE TransactionLimits SET DailyLimit = " + dailyLimit + ", WeeklyLimit = " + weeklyLimit + 
+                        " WHERE UserName = '" + userName.replace("'", "''") + "'";
+                logDbDebug("DataBaseDriver.java:415", "updateTransactionLimit SQL", sql, userName);
+                int rowsAffected = statement.executeUpdate(sql);
+                logDbDebug("DataBaseDriver.java:417", "updateTransactionLimit result", "rowsAffected=" + rowsAffected, userName);
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                if (e.getMessage() != null && e.getMessage().contains("database is locked") && attempt < maxRetries - 1) {
+                    logDbDebug("DataBaseDriver.java:419", "updateTransactionLimit SQLITE_BUSY retry", "attempt " + (attempt + 1) + " of " + maxRetries, userName);
+                    try {
+                        Thread.sleep(retryDelay * (attempt + 1)); // Exponential backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                } else {
+                    logDbDebug("DataBaseDriver.java:419", "updateTransactionLimit SQLException", e.getMessage(), userName);
+                    e.printStackTrace();
+                    return false;
+                }
+            }
         }
+        return false;
     }
 
     public boolean updateTransactionLimitUsage(String userName, double dailyUsed, double weeklyUsed) {
@@ -597,10 +732,40 @@ public class DataBaseDriver {
     }
 
     public ResultSet getNotifications(String userId) {
+        // #region agent log
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"N4\",\"location\":\"DataBaseDriver.java:734\",\"message\":\"getNotifications entry\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"userId\":\"" + userId + "\"}}\n").getBytes(), 
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception logEx) {}
+        // #endregion
         try {
             Statement statement = this.con.createStatement();
-            return statement.executeQuery("SELECT * FROM Notifications WHERE UserId = '" + userId + "' ORDER BY Timestamp DESC");
+            String query = "SELECT * FROM Notifications WHERE UserId = '" + userId.replace("'", "''") + "' ORDER BY Timestamp DESC";
+            // #region agent log
+            try {
+                java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"N4\",\"location\":\"DataBaseDriver.java:738\",\"message\":\"getNotifications SQL\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"query\":\"" + query + "\"}}\n").getBytes(), 
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception logEx) {}
+            // #endregion
+            ResultSet rs = statement.executeQuery(query);
+            // #region agent log
+            try {
+                java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"N4\",\"location\":\"DataBaseDriver.java:741\",\"message\":\"getNotifications ResultSet created\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"resultSetNull\":" + (rs == null) + "}}\n").getBytes(), 
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception logEx) {}
+            // #endregion
+            return rs;
         } catch (SQLException e) {
+            // #region agent log
+            try {
+                java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"N4\",\"location\":\"DataBaseDriver.java:745\",\"message\":\"getNotifications SQLException\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + e.getMessage() + "\"}}\n").getBytes(), 
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception logEx) {}
+            // #endregion
             e.printStackTrace();
             return null;
         }
@@ -616,4 +781,21 @@ public class DataBaseDriver {
             return false;
         }
     }
+    
+    // #region agent log
+    private void logDbDebug(String location, String message, String data, String userName) {
+        try {
+            StringBuilder json = new StringBuilder();
+            json.append("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"C\",\"location\":\"").append(location.replace("\"", "\\\""))
+                .append("\",\"message\":\"").append(message.replace("\"", "\\\""))
+                .append("\",\"timestamp\":").append(System.currentTimeMillis())
+                .append(",\"data\":{\"sqlOrError\":\"").append(data.replace("\"", "\\\"").replace("\n", " ").replace("\r", ""))
+                .append("\",\"userName\":\"").append(userName != null ? userName.replace("\"", "\\\"") : "null").append("\"}}\n");
+            Files.write(Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
+                json.toString().getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            // Silently fail to avoid disrupting the application
+        }
+    }
+    // #endregion
 }
