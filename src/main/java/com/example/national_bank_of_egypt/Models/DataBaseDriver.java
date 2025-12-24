@@ -498,7 +498,6 @@ public class DataBaseDriver {
             if (limit > 0) {
                 query.append(" LIMIT ").append(limit);
             }
-            System.out.println("DEBUG SQL: " + query.toString());
             return statement.executeQuery(query.toString());
         } catch (SQLException e) {
             e.printStackTrace();

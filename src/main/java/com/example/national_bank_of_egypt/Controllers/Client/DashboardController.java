@@ -267,15 +267,7 @@ public class DashboardController implements Initializable {
         // Load transactions for the first account (the one displayed)
         if (!Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
             String accountNumber = Model.getInstance().getCurrentUser().getBankAccounts().get(0).getAccountNumber();
-            String username = Model.getInstance().getCurrentUser().getUserName();
-            System.out.println(
-                    "DEBUG initLatestTransactions: Loading for user=" + username + ", account=" + accountNumber);
             Model.getInstance().loadTransactionsByAccount(accountNumber, 4);
-            System.out.println("DEBUG initLatestTransactions: Loaded " + Model.getInstance().getTransactions().size()
-                    + " transactions");
-            for (Transaction t : Model.getInstance().getTransactions()) {
-                System.out.println("  - " + t.getSender() + " -> " + t.getReceiver() + " ($" + t.getAmount() + ")");
-            }
         } else {
             // Fallback to all transactions if no accounts
             Model.getInstance().loadTransactions(4);

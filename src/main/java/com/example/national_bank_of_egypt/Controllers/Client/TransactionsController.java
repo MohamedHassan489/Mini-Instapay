@@ -65,9 +65,6 @@ public class TransactionsController implements Initializable {
                         .addListener((javafx.collections.ListChangeListener.Change<? extends Transaction> c) -> {
                             updateEmptyState();
                         });
-
-                System.out.println("TransactionsController initialized successfully. Loaded " +
-                        allTransactions.size() + " transactions.");
             } else {
                 System.err.println("Warning: No current user found. Cannot load transactions.");
                 if (Transaction_ListView != null) {
@@ -153,19 +150,7 @@ public class TransactionsController implements Initializable {
             // Load transactions for the current user
             // -1 means load all transactions for the current user
             if (Model.getInstance().getCurrentUser() != null) {
-                String currentUsername = Model.getInstance().getCurrentUser().getUserName();
-                System.out.println("Loading transactions for user: " + currentUsername);
                 Model.getInstance().loadTransactions(-1);
-                System.out.println("Loaded " + Model.getInstance().getTransactions().size() + " transactions");
-
-                // Debug: Print first few transactions
-                int count = 0;
-                for (Transaction t : Model.getInstance().getTransactions()) {
-                    if (count++ < 3) {
-                        System.out.println("  Transaction: " + t.getSender() + " -> " + t.getReceiver() + " ($"
-                                + t.getAmount() + ")");
-                    }
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
