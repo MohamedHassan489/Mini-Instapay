@@ -343,6 +343,47 @@ public class Model {
         }
     }
 
+    public void loadTransactionsByAccount(String accountNumber, int limit) {
+        if (currentUser == null || accountNumber == null || accountNumber.isEmpty()) return;
+        transactions.clear();
+        ResultSet rs = dataBaseDriver.getTransactionsByAccount(currentUser.getUserName(), accountNumber, limit);
+        try {
+            if (rs != null) {
+                while (rs.next()) {
+                    String transactionId = rs.getString("TransactionID");
+                    String sender = rs.getString("Sender");
+                    String receiver = rs.getString("Receiver");
+                    String senderAccount = rs.getString("SenderAccount");
+                    String receiverAccount = rs.getString("ReceiverAccount");
+                    double amount = rs.getDouble("Amount");
+                    String[] dateParts = rs.getString("Date").split("-");
+                    LocalDate date = LocalDate.of(
+                        Integer.parseInt(dateParts[0]),
+                        Integer.parseInt(dateParts[1]),
+                        Integer.parseInt(dateParts[2])
+                    );
+                    String message = rs.getString("Message");
+                    String status = rs.getString("Status");
+                    String transactionType = rs.getString("TransactionType");
+                    
+                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount, 
+                        receiverAccount, amount, date, message, status, transactionType);
+                    transactions.add(transaction);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception closeEx) {
+                closeEx.printStackTrace();
+            }
+        }
+    }
+
     public ObservableList<Transaction> getTransactions() {
         return transactions;
     }

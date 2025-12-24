@@ -6,5 +6,9 @@
 <AnchorPane prefHeight="960.0" prefWidth="810.0" styleClass="tranaction_container" stylesheets="@../../Styles/Transactions.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.TransactionsController">
     <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Transactions" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
     <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="View all your transaction history" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="40.0" />
-    <ListView fx:id="Transaction_ListView" prefHeight="895.0" prefWidth="780.0" stylesheets="@../../Styles/Transactions.css" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="60.0" AnchorPane.bottomAnchor="15.0" />
+    <HBox spacing="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="60.0">
+        <Label style="-fx-font-size: 12; -fx-font-weight: bold;" text="Filter by Account:" />
+        <ComboBox fx:id="account_filter_combo" prefWidth="300.0" />
+    </HBox>
+    <ListView fx:id="Transaction_ListView" prefHeight="870.0" prefWidth="780.0" stylesheets="@../../Styles/Transactions.css" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="95.0" AnchorPane.bottomAnchor="15.0" />
 </AnchorPane>

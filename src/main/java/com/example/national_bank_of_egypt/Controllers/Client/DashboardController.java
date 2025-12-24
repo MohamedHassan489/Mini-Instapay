@@ -210,7 +210,16 @@ public class DashboardController implements Initializable {
     }
 
     private void initLatestTransactions(){
-        Model.getInstance().loadTransactions(4);
+        if (Model.getInstance().getCurrentUser() == null) return;
+        
+        // Load transactions for the first account (the one displayed)
+        if (!Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
+            String accountNumber = Model.getInstance().getCurrentUser().getBankAccounts().get(0).getAccountNumber();
+            Model.getInstance().loadTransactionsByAccount(accountNumber, 4);
+        } else {
+            // Fallback to all transactions if no accounts
+            Model.getInstance().loadTransactions(4);
+        }
     }
 
     private void accountSummary(){
@@ -219,7 +228,16 @@ public class DashboardController implements Initializable {
             
             double income = 0;
             double expenses = 0;
-            Model.getInstance().loadTransactions(-1);
+            
+            // Calculate income/expenses for the displayed account (first account)
+            if (!Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
+                String accountNumber = Model.getInstance().getCurrentUser().getBankAccounts().get(0).getAccountNumber();
+                Model.getInstance().loadTransactionsByAccount(accountNumber, -1);
+            } else {
+                // Fallback to all transactions if no accounts
+                Model.getInstance().loadTransactions(-1);
+            }
+            
             for (Transaction transaction : Model.getInstance().getTransactions()){
                 if (transaction.getSender() != null && transaction.getSender().equals(Model.getInstance().getCurrentUser().getUserName())){
                     expenses += transaction.getAmount();

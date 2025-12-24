@@ -2,6 +2,7 @@ package com.example.national_bank_of_egypt.Controllers.Admin;
 
 import com.example.national_bank_of_egypt.Models.Dispute;
 import com.example.national_bank_of_egypt.Models.Model;
+import com.example.national_bank_of_egypt.Views.DisputeCellFactory;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
@@ -18,6 +19,9 @@ public class AdminDisputesController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Model.getInstance().loadAllDisputes();
         disputes_list.setItems(Model.getInstance().getAllDisputes());
+        
+        // Use DisputeCellFactory to display dispute details including user-provided reason
+        disputes_list.setCellFactory(e -> new DisputeCellFactory());
         
         if (resolve_btn != null) {
             resolve_btn.setOnAction(event -> onResolveDispute());

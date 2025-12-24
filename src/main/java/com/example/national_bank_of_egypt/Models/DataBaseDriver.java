@@ -444,6 +444,28 @@ public class DataBaseDriver {
         }
     }
 
+    public ResultSet getTransactionsByAccount(String userId, String accountNumber, int limit) {
+        try {
+            Statement statement = this.con.createStatement();
+            StringBuilder query = new StringBuilder("SELECT * FROM Transactions WHERE (Sender = '");
+            query.append(userId.replace("'", "''"));
+            query.append("' OR Receiver = '");
+            query.append(userId.replace("'", "''"));
+            query.append("') AND (SenderAccount = '");
+            query.append(accountNumber.replace("'", "''"));
+            query.append("' OR ReceiverAccount = '");
+            query.append(accountNumber.replace("'", "''"));
+            query.append("') ORDER BY Date DESC");
+            if (limit > 0) {
+                query.append(" LIMIT ").append(limit);
+            }
+            return statement.executeQuery(query.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public ResultSet getTransactionsByDateRange(String userId, String startDate, String endDate, String accountNumber) {
         try {
             Statement statement = this.con.createStatement();

@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 public class DisputeCellController implements Initializable {
     public Label dispute_id_lbl;
+    public Label user_id_lbl;
     public Label transaction_id_lbl;
     public Label reason_lbl;
     public Label status_lbl;
@@ -25,6 +26,9 @@ public class DisputeCellController implements Initializable {
         if (dispute != null) {
             if (dispute_id_lbl != null) {
                 dispute_id_lbl.setText("ID: " + dispute.getDisputeId().substring(0, Math.min(8, dispute.getDisputeId().length())));
+            }
+            if (user_id_lbl != null) {
+                user_id_lbl.setText("User: " + dispute.getUserId());
             }
             if (transaction_id_lbl != null) {
                 transaction_id_lbl.setText("Transaction: " + dispute.getTransactionId());
