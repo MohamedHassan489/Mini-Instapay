@@ -1,0 +1,130 @@
+/* ============================================
+   Send Money Screen Styles
+   ============================================ */
+
+/* Import global animations and common styles */
+@import url("animations.css");
+@import url("common.css");
+
+/* Root container */
+.sendmoney_container {
+    -fx-background-color: linear-gradient(to bottom, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+/* ScrollPane */
+.sendmoney_container ScrollPane {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.sendmoney_container ScrollPane .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+/* Form Container */
+.sendmoney_form_container {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 30 40;
+    -fx-spacing: 20;
+}
+
+/* Page Title */
+.sendmoney_title {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 5 0;
+}
+
+.sendmoney_subtitle {
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 0 0 15 0;
+}
+
+/* Section Headers */
+.section_header {
+    -fx-font-size: 1.3em;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 15 0 8 0;
+}
+
+.section_description {
+    -fx-font-size: 1em;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 0 0 8 0;
+}
+
+/* Form Fields */
+.sendmoney_form_container TextField,
+.sendmoney_form_container ComboBox,
+.sendmoney_form_container DatePicker {
+    -fx-pref-height: 45;
+    -fx-pref-width: 780;
+}
+
+.sendmoney_form_container TextArea {
+    -fx-pref-height: 100;
+    -fx-pref-width: 780;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d0d0d0;
+    -fx-border-width: 1.5;
+    -fx-padding: 12 16;
+    -fx-font-size: 1em;
+}
+
+.sendmoney_form_container TextArea:focused {
+    -fx-border-color: #132A13;
+    -fx-border-width: 2;
+}
+
+/* Scheduled Date Container */
+.scheduled_date_container {
+    -fx-spacing: 8;
+    -fx-padding: 10 0;
+}
+
+/* Buttons */
+.sendmoney_btn_primary {
+    -fx-background-color: linear-gradient(to right, #132A13 0%, #1a3a1a 100%);
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-pref-width: 780;
+    -fx-pref-height: 50;
+    -fx-font-size: 1.2em;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.3), 10, 0, 0, 4);
+    -fx-transition: all 0.2s ease-out;
+}
+
+.sendmoney_btn_primary:hover {
+    -fx-background-color: linear-gradient(to right, #1a3a1a 0%, #224422 100%);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.4), 14, 0, 0, 5);
+}
+
+.sendmoney_btn_primary:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Error Label */
+.sendmoney_error_lbl {
+    -fx-text-fill: #e74c3c;
+    -fx-font-size: 0.95em;
+    -fx-font-weight: 500;
+    -fx-padding: 12 16;
+    -fx-wrap-text: true;
+    -fx-background-color: rgba(231, 76, 60, 0.1);
+    -fx-background-radius: 8;
+    -fx-border-color: #e74c3c;
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+    -fx-min-height: 50;
+    -fx-pref-height: 50;
+}
+

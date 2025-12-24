@@ -2,48 +2,93 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="960.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.ProfileController">
+<AnchorPane prefHeight="960.0" prefWidth="810.0" styleClass="profile_container" stylesheets="@../../Styles/Profile.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.ProfileController">
     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-        <VBox spacing="15.0" style="-fx-padding: 15;">
-        <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Profile" />
-        <Label style="-fx-font-size: 11;" text="First Name *" />
-        <TextField fx:id="firstName_fld" prefHeight="32.0" prefWidth="780.0" />
-        <Label style="-fx-font-size: 11;" text="Last Name *" />
-        <TextField fx:id="lastName_fld" prefHeight="32.0" prefWidth="780.0" />
-        <Label style="-fx-font-size: 11;" text="Email *" />
-        <TextField fx:id="email_fld" prefHeight="32.0" prefWidth="780.0" />
-        <Label style="-fx-font-size: 11;" text="Phone *" />
-        <TextField fx:id="phoneNumber_fld" prefHeight="32.0" prefWidth="780.0" />
-        <Label style="-fx-font-size: 11;" text="Address" />
-        <TextField fx:id="address_fld" prefHeight="32.0" prefWidth="780.0" />
-        <Button fx:id="update_btn" mnemonicParsing="false" prefHeight="38.0" prefWidth="780.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold;" text="Update Profile" />
-        <Label fx:id="error_lbl" style="-fx-text-fill: red; -fx-font-size: 10;" text="" wrapText="true" />
-        <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 15 0 0 0;" text="Security Settings" />
-        <VBox spacing="6.0" style="-fx-padding: 10; -fx-background-color: #f5f5f5; -fx-background-radius: 5;">
-            <Label style="-fx-font-size: 13; -fx-font-weight: bold;" text="Two-Factor Authentication (2FA)" />
-            <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="Enable 2FA to add an extra layer of security to your account. You'll need to enter an OTP code when logging in." wrapText="true" />
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <CheckBox fx:id="twoFactor_checkbox" text="Enable Two-Factor Authentication" />
-                <Label fx:id="twoFactor_status_lbl" style="-fx-font-size: 11; -fx-text-fill: #666;" text="" />
-            </HBox>
-            <Button fx:id="update2FA_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 11; -fx-font-weight: bold;" text="Update 2FA Setting" />
-            <Label fx:id="twoFactor_error_lbl" style="-fx-text-fill: red; -fx-font-size: 10;" text="" wrapText="true" />
-        </VBox>
-        <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 15 0 0 0;" text="Transaction Limits" />
-        <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="Set your daily and weekly transaction limits" wrapText="true" />
-        <Label style="-fx-font-size: 11;" text="Daily Limit ($) *" />
-        <TextField fx:id="dailyLimit_fld" prefHeight="32.0" prefWidth="780.0" />
-        <Label style="-fx-font-size: 11;" text="Weekly Limit ($) *" />
-        <TextField fx:id="weeklyLimit_fld" prefHeight="32.0" prefWidth="780.0" />
-        <VBox spacing="6.0" style="-fx-padding: 10; -fx-background-color: #f5f5f5; -fx-background-radius: 5;">
-            <Label style="-fx-font-size: 12; -fx-font-weight: bold;" text="Current Usage:" />
-            <Label fx:id="dailyUsed_lbl" style="-fx-font-size: 11;" text="Daily: $0.00 / $0.00" />
-            <Label fx:id="weeklyUsed_lbl" style="-fx-font-size: 11;" text="Weekly: $0.00 / $0.00" />
-        </VBox>
-            <Button fx:id="updateLimits_btn" mnemonicParsing="false" prefHeight="38.0" prefWidth="780.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 12; -fx-font-weight: bold;" text="Update Limits" />
-            <Label fx:id="limits_error_lbl" style="-fx-text-fill: red; -fx-font-size: 10;" text="" wrapText="true" />
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            
+            <Label styleClass="label-title" text="Profile" />
+            
+            <!-- Personal Information Section -->
+            <VBox styleClass="card-standard" spacing="15.0">
+                <Label styleClass="section_header" text="Personal Information" />
+                <VBox spacing="12.0">
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="First Name *" />
+                        <TextField fx:id="firstName_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter your first name" />
+                    </VBox>
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Last Name *" />
+                        <TextField fx:id="lastName_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter your last name" />
+                    </VBox>
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Email *" />
+                        <TextField fx:id="email_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter your email address" />
+                    </VBox>
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Phone *" />
+                        <TextField fx:id="phoneNumber_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter your phone number (10-15 digits)" />
+                    </VBox>
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Address" />
+                        <TextField fx:id="address_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter your address (optional)" />
+                    </VBox>
+                    <Button fx:id="update_btn" mnemonicParsing="false" styleClass="btn-primary" text="Update Profile">
+                       <tooltip>
+                          <Tooltip text="Update your personal information. Changes will be saved to your profile." />
+                       </tooltip>
+                    </Button>
+                    <Label fx:id="error_lbl" styleClass="label-error" text="" wrapText="true" visible="false" managed="false" />
+                </VBox>
+            </VBox>
+            
+            <!-- Security Settings Section -->
+            <VBox styleClass="card-standard" spacing="15.0">
+                <Label styleClass="section_header" text="Security Settings" />
+                <VBox spacing="12.0">
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Two-Factor Authentication (2FA)" />
+                        <Label styleClass="label-caption" text="Enable 2FA to add an extra layer of security to your account. You'll need to enter an OTP code when logging in." wrapText="true" />
+                    </VBox>
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <CheckBox fx:id="twoFactor_checkbox" text="Enable Two-Factor Authentication" />
+                        <Label fx:id="twoFactor_status_lbl" styleClass="label-caption" text="" />
+                    </HBox>
+                    <Button fx:id="update2FA_btn" mnemonicParsing="false" styleClass="btn-secondary" text="Update 2FA Setting">
+                       <tooltip>
+                          <Tooltip text="Enable or disable two-factor authentication for enhanced security" />
+                       </tooltip>
+                    </Button>
+                    <Label fx:id="twoFactor_error_lbl" styleClass="label-error" text="" wrapText="true" visible="false" managed="false" />
+                </VBox>
+            </VBox>
+            
+            <!-- Transaction Limits Section -->
+            <VBox styleClass="card-standard" spacing="15.0">
+                <Label styleClass="section_header" text="Transaction Limits" />
+                <Label styleClass="label-caption" text="Set your daily and weekly transaction limits" wrapText="true" />
+                <VBox spacing="12.0">
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Daily Limit ($) *" />
+                        <TextField fx:id="dailyLimit_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter daily transaction limit" />
+                    </VBox>
+                    <VBox spacing="5.0">
+                        <Label styleClass="label-body" text="Weekly Limit ($) *" />
+                        <TextField fx:id="weeklyLimit_fld" styleClass="input-standard" prefHeight="45.0" prefWidth="780.0" promptText="Enter weekly transaction limit" />
+                    </VBox>
+                    <VBox styleClass="usage_display" spacing="8.0">
+                        <Label styleClass="label-body" text="Current Usage:" />
+                        <Label fx:id="dailyUsed_lbl" styleClass="label-caption" text="Daily: $0.00 / $0.00" />
+                        <Label fx:id="weeklyUsed_lbl" styleClass="label-caption" text="Weekly: $0.00 / $0.00" />
+                    </VBox>
+                    <Button fx:id="updateLimits_btn" mnemonicParsing="false" styleClass="btn-primary" text="Update Limits" />
+                    <Label fx:id="limits_error_lbl" styleClass="label-error" text="" wrapText="true" visible="false" managed="false" />
+                </VBox>
+            </VBox>
         </VBox>
     </ScrollPane>
 </AnchorPane>
-

@@ -18,7 +18,7 @@ public class Model {
     private Boolean userLoginSuccessFlag;
     private Boolean adminLoginSuccessFlag;
 
-    private Model(){
+    private Model() {
         this.viewFactory = new ViewFactory();
         this.dataBaseDriver = new DataBaseDriver();
         this.userLoginSuccessFlag = false;
@@ -29,8 +29,8 @@ public class Model {
         this.users = FXCollections.observableArrayList();
     }
 
-    public static synchronized Model getInstance(){
-        if (model == null){
+    public static synchronized Model getInstance() {
+        if (model == null) {
             model = new Model();
         }
         return model;
@@ -72,18 +72,23 @@ public class Model {
         // Reset login flag
         this.userLoginSuccessFlag = false;
         this.currentUser = null;
-        
+
         if (userName == null || userName.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             return;
         }
-        
+
         ResultSet resultSet = dataBaseDriver.getUserData(userName, password);
         // #region agent log
         try {
-            java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
-                ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:80\",\"message\":\"getUserData ResultSet created\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + userName + "\",\"resultSetNull\":" + (resultSet == null) + "}}\n").getBytes(), 
-                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-        } catch (Exception logEx) {}
+            java.nio.file.Files.write(
+                    java.nio.file.Paths
+                            .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:80\",\"message\":\"getUserData ResultSet created\",\"timestamp\":"
+                            + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + userName
+                            + "\",\"resultSetNull\":" + (resultSet == null) + "}}\n").getBytes(),
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception logEx) {
+        }
         // #endregion
         try {
             if (resultSet != null && resultSet.next()) {
@@ -94,34 +99,34 @@ public class Model {
                 String address = resultSet.getString("Address");
                 String dateCreatedStr = resultSet.getString("DateCreated");
                 String twoFactorEnabled = resultSet.getString("TwoFactorEnabled");
-                
+
                 // Check if account is suspended
                 if ("suspended".equalsIgnoreCase(twoFactorEnabled)) {
                     this.userLoginSuccessFlag = false;
                     this.currentUser = null;
                     return;
                 }
-                
+
                 if (dateCreatedStr != null && !dateCreatedStr.isEmpty()) {
                     String[] dateParts = dateCreatedStr.split("-");
                     if (dateParts.length == 3) {
                         LocalDate dateCreated = LocalDate.of(
-                            Integer.parseInt(dateParts[0]),
-                            Integer.parseInt(dateParts[1]),
-                            Integer.parseInt(dateParts[2])
-                        );
-                        
-                        User user = new User(firstName, lastName, email, phoneNumber, address, userName, password, dateCreated);
+                                Integer.parseInt(dateParts[0]),
+                                Integer.parseInt(dateParts[1]),
+                                Integer.parseInt(dateParts[2]));
+
+                        User user = new User(firstName, lastName, email, phoneNumber, address, userName, password,
+                                dateCreated);
                         if (twoFactorEnabled != null && "true".equalsIgnoreCase(twoFactorEnabled)) {
                             user.twoFactorEnabledProperty().set("true");
                         }
                         loadUserBankAccounts(user);
                         this.currentUser = user;
-                        
+
                         // Load notifications for the user
                         com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                            .loadUserNotifications(userName);
-                        
+                                .loadUserNotifications(userName);
+
                         // Don't set login success flag yet - need OTP verification if 2FA is enabled
                         if (twoFactorEnabled == null || !"true".equalsIgnoreCase(twoFactorEnabled)) {
                             this.userLoginSuccessFlag = true;
@@ -140,16 +145,24 @@ public class Model {
             try {
                 if (resultSet != null) {
                     resultSet.close();
-                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
-                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:132\",\"message\":\"getUserData ResultSet closed\",\"timestamp\":" + System.currentTimeMillis() + "}\n").getBytes(), 
-                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                    java.nio.file.Files.write(
+                            java.nio.file.Paths
+                                    .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
+                            ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:132\",\"message\":\"getUserData ResultSet closed\",\"timestamp\":"
+                                    + System.currentTimeMillis() + "}\n").getBytes(),
+                            java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
                 }
             } catch (Exception closeEx) {
                 try {
-                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
-                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:135\",\"message\":\"getUserData ResultSet close failed\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage() + "\"}}\n").getBytes(), 
-                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-                } catch (Exception logEx) {}
+                    java.nio.file.Files.write(
+                            java.nio.file.Paths
+                                    .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
+                            ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:135\",\"message\":\"getUserData ResultSet close failed\",\"timestamp\":"
+                                    + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage()
+                                    + "\"}}\n").getBytes(),
+                            java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                } catch (Exception logEx) {
+                }
             }
             // #endregion
         }
@@ -160,10 +173,15 @@ public class Model {
         ResultSet rs = dataBaseDriver.getBankAccounts(user.getUserName());
         // #region agent log
         try {
-            java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
-                ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:136\",\"message\":\"getBankAccounts ResultSet created\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + user.getUserName() + "\",\"resultSetNull\":" + (rs == null) + "}}\n").getBytes(), 
-                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-        } catch (Exception logEx) {}
+            java.nio.file.Files.write(
+                    java.nio.file.Paths
+                            .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
+                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:136\",\"message\":\"getBankAccounts ResultSet created\",\"timestamp\":"
+                            + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + user.getUserName()
+                            + "\",\"resultSetNull\":" + (rs == null) + "}}\n").getBytes(),
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception logEx) {
+        }
         // #endregion
         try {
             if (rs != null) {
@@ -172,7 +190,8 @@ public class Model {
                     String bankName = rs.getString("BankName");
                     double balance = rs.getDouble("Balance");
                     String accountType = rs.getString("AccountType");
-                    BankAccount account = new BankAccount(user.getUserName(), accountNumber, bankName, balance, accountType);
+                    BankAccount account = new BankAccount(user.getUserName(), accountNumber, bankName, balance,
+                            accountType);
                     user.getBankAccounts().add(account);
                 }
             }
@@ -183,21 +202,29 @@ public class Model {
             try {
                 if (rs != null) {
                     rs.close();
-                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
-                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:151\",\"message\":\"getBankAccounts ResultSet closed\",\"timestamp\":" + System.currentTimeMillis() + "}\n").getBytes(), 
-                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                    java.nio.file.Files.write(
+                            java.nio.file.Paths
+                                    .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
+                            ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:151\",\"message\":\"getBankAccounts ResultSet closed\",\"timestamp\":"
+                                    + System.currentTimeMillis() + "}\n").getBytes(),
+                            java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
                 }
             } catch (Exception closeEx) {
                 try {
-                    java.nio.file.Files.write(java.nio.file.Paths.get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"), 
-                        ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:154\",\"message\":\"getBankAccounts ResultSet close failed\",\"timestamp\":" + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage() + "\"}}\n").getBytes(), 
-                        java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-                } catch (Exception logEx) {}
+                    java.nio.file.Files.write(
+                            java.nio.file.Paths
+                                    .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
+                            ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:154\",\"message\":\"getBankAccounts ResultSet close failed\",\"timestamp\":"
+                                    + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage()
+                                    + "\"}}\n").getBytes(),
+                            java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+                } catch (Exception logEx) {
+                }
             }
             // #endregion
         }
     }
-    
+
     public void reloadUserBankAccounts() {
         if (currentUser != null) {
             loadUserBankAccounts(currentUser);
@@ -207,11 +234,11 @@ public class Model {
     public void evaluateAdminCred(String userName, String password) {
         // Reset login flag
         this.adminLoginSuccessFlag = false;
-        
+
         if (userName == null || userName.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             return;
         }
-        
+
         ResultSet resultSet = dataBaseDriver.getAdminData(userName, password);
         try {
             if (resultSet != null && resultSet.next()) {
@@ -234,7 +261,7 @@ public class Model {
     }
 
     public boolean registerUser(String firstName, String lastName, String email, String phoneNumber,
-                                String address, String userName, String password) {
+            String address, String userName, String password) {
         // Check if username already exists
         if (dataBaseDriver.userExists(userName)) {
             return false;
@@ -247,21 +274,25 @@ public class Model {
         if (dataBaseDriver.emailExists(email)) {
             return false;
         }
-        
+
         // Create user
-        boolean success = dataBaseDriver.createUser(firstName, lastName, email, phoneNumber, address, userName, password, LocalDate.now());
-        
+        boolean success = dataBaseDriver.createUser(firstName, lastName, email, phoneNumber, address, userName,
+                password, LocalDate.now());
+
         if (success) {
             // Create default transaction limits for new user (daily: $5000, weekly: $20000)
             dataBaseDriver.createTransactionLimit(userName, 5000.0, 20000.0);
         }
-        
+
         return success;
     }
 
-    public boolean updateUserProfile(String firstName, String lastName, String email, String phoneNumber, String address) {
-        if (currentUser == null) return false;
-        boolean success = dataBaseDriver.updateUser(currentUser.getUserName(), firstName, lastName, email, phoneNumber, address);
+    public boolean updateUserProfile(String firstName, String lastName, String email, String phoneNumber,
+            String address) {
+        if (currentUser == null)
+            return false;
+        boolean success = dataBaseDriver.updateUser(currentUser.getUserName(), firstName, lastName, email, phoneNumber,
+                address);
         if (success) {
             currentUser.firstNameProperty().set(firstName);
             currentUser.lastNameProperty().set(lastName);
@@ -273,8 +304,10 @@ public class Model {
     }
 
     public boolean addBankAccount(String accountNumber, String bankName, double balance, String accountType) {
-        if (currentUser == null) return false;
-        boolean success = dataBaseDriver.createBankAccount(currentUser.getUserName(), accountNumber, bankName, balance, accountType);
+        if (currentUser == null)
+            return false;
+        boolean success = dataBaseDriver.createBankAccount(currentUser.getUserName(), accountNumber, bankName, balance,
+                accountType);
         if (success) {
             // Reload from database to ensure consistency
             loadUserBankAccounts(currentUser);
@@ -283,7 +316,8 @@ public class Model {
     }
 
     public boolean removeBankAccount(String accountNumber) {
-        if (currentUser == null) return false;
+        if (currentUser == null)
+            return false;
         boolean success = dataBaseDriver.deleteBankAccount(accountNumber);
         if (success) {
             // Reload from database to ensure consistency
@@ -293,7 +327,8 @@ public class Model {
     }
 
     public boolean updateBankAccount(String accountNumber, String bankName, String accountType) {
-        if (currentUser == null) return false;
+        if (currentUser == null)
+            return false;
         boolean success = dataBaseDriver.updateBankAccount(accountNumber, bankName, accountType);
         if (success) {
             // Reload from database to ensure consistency
@@ -303,7 +338,8 @@ public class Model {
     }
 
     public void loadTransactions(int limit) {
-        if (currentUser == null) return;
+        if (currentUser == null)
+            return;
         transactions.clear();
         ResultSet rs = dataBaseDriver.getTransactions(currentUser.getUserName(), limit);
         try {
@@ -317,16 +353,15 @@ public class Model {
                     double amount = rs.getDouble("Amount");
                     String[] dateParts = rs.getString("Date").split("-");
                     LocalDate date = LocalDate.of(
-                        Integer.parseInt(dateParts[0]),
-                        Integer.parseInt(dateParts[1]),
-                        Integer.parseInt(dateParts[2])
-                    );
+                            Integer.parseInt(dateParts[0]),
+                            Integer.parseInt(dateParts[1]),
+                            Integer.parseInt(dateParts[2]));
                     String message = rs.getString("Message");
                     String status = rs.getString("Status");
                     String transactionType = rs.getString("TransactionType");
-                    
-                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount, 
-                        receiverAccount, amount, date, message, status, transactionType);
+
+                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount,
+                            receiverAccount, amount, date, message, status, transactionType);
                     transactions.add(transaction);
                 }
             }
@@ -344,7 +379,8 @@ public class Model {
     }
 
     public void loadTransactionsByAccount(String accountNumber, int limit) {
-        if (currentUser == null || accountNumber == null || accountNumber.isEmpty()) return;
+        if (currentUser == null || accountNumber == null || accountNumber.isEmpty())
+            return;
         transactions.clear();
         ResultSet rs = dataBaseDriver.getTransactionsByAccount(currentUser.getUserName(), accountNumber, limit);
         try {
@@ -358,16 +394,15 @@ public class Model {
                     double amount = rs.getDouble("Amount");
                     String[] dateParts = rs.getString("Date").split("-");
                     LocalDate date = LocalDate.of(
-                        Integer.parseInt(dateParts[0]),
-                        Integer.parseInt(dateParts[1]),
-                        Integer.parseInt(dateParts[2])
-                    );
+                            Integer.parseInt(dateParts[0]),
+                            Integer.parseInt(dateParts[1]),
+                            Integer.parseInt(dateParts[2]));
                     String message = rs.getString("Message");
                     String status = rs.getString("Status");
                     String transactionType = rs.getString("TransactionType");
-                    
-                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount, 
-                        receiverAccount, amount, date, message, status, transactionType);
+
+                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount,
+                            receiverAccount, amount, date, message, status, transactionType);
                     transactions.add(transaction);
                 }
             }
@@ -406,19 +441,25 @@ public class Model {
                     String twoFactorEnabled = rs.getString("TwoFactorEnabled");
                     String[] dateParts = rs.getString("DateCreated").split("-");
                     LocalDate dateCreated = LocalDate.of(
-                        Integer.parseInt(dateParts[0]),
-                        Integer.parseInt(dateParts[1]),
-                        Integer.parseInt(dateParts[2])
-                    );
-                    User user = new User(firstName, lastName, email, phoneNumber, address, userName, password, dateCreated);
-                    if (twoFactorEnabled != null && "true".equalsIgnoreCase(twoFactorEnabled)) {
-                        user.twoFactorEnabledProperty().set("true");
+                            Integer.parseInt(dateParts[0]),
+                            Integer.parseInt(dateParts[1]),
+                            Integer.parseInt(dateParts[2]));
+                    User user = new User(firstName, lastName, email, phoneNumber, address, userName, password,
+                            dateCreated);
+                    if (twoFactorEnabled != null) {
+                        if ("suspended".equalsIgnoreCase(twoFactorEnabled)) {
+                            continue; // Skip suspended users
+                        }
+                        if ("true".equalsIgnoreCase(twoFactorEnabled)) {
+                            user.twoFactorEnabledProperty().set("true");
+                        }
                     }
                     loadUserBankAccounts(user);
                     tempUsers.add(user);
                 }
             }
-            // Replace all items at once using setAll() instead of clear() to avoid IndexOutOfBoundsException
+            // Replace all items at once using setAll() instead of clear() to avoid
+            // IndexOutOfBoundsException
             // This is thread-safe and avoids issues with FilteredList
             users.setAll(tempUsers);
         } catch (Exception e) {
@@ -439,7 +480,8 @@ public class Model {
     }
 
     public void loadDisputes() {
-        if (currentUser == null) return;
+        if (currentUser == null)
+            return;
         disputes.clear();
         ResultSet rs = dataBaseDriver.getDisputes(currentUser.getUserName());
         try {
@@ -452,10 +494,9 @@ public class Model {
                     String status = rs.getString("Status");
                     String[] dateParts = rs.getString("DateCreated").split("-");
                     LocalDate dateCreated = LocalDate.of(
-                        Integer.parseInt(dateParts[0]),
-                        Integer.parseInt(dateParts[1]),
-                        Integer.parseInt(dateParts[2])
-                    );
+                            Integer.parseInt(dateParts[0]),
+                            Integer.parseInt(dateParts[1]),
+                            Integer.parseInt(dateParts[2]));
                     Dispute dispute = new Dispute(disputeId, transactionId, userId, reason, status, dateCreated);
                     if (rs.getString("Resolution") != null) {
                         dispute.setResolution(rs.getString("Resolution"));
@@ -510,22 +551,25 @@ public class Model {
             }
         }
     }
-    
+
     public boolean updateTransactionLimits(String userName, double dailyLimit, double weeklyLimit) {
         return dataBaseDriver.updateTransactionLimit(userName, dailyLimit, weeklyLimit);
     }
 
-    public boolean sendMoney(String receiverIdentifier, String senderAccount, double amount, String message, String transactionType) {
+    public boolean sendMoney(String receiverIdentifier, String senderAccount, double amount, String message,
+            String transactionType) {
         return sendMoney(receiverIdentifier, senderAccount, amount, message, transactionType, null);
     }
-    
-    public boolean sendMoney(String receiverIdentifier, String senderAccount, double amount, String message, String transactionType, LocalDate scheduledDate) {
-        if (currentUser == null) return false;
-        
+
+    public boolean sendMoney(String receiverIdentifier, String senderAccount, double amount, String message,
+            String transactionType, LocalDate scheduledDate) {
+        if (currentUser == null)
+            return false;
+
         ResultSet receiverRs = null;
         String receiver = null;
         String receiverAccount = null;
-        
+
         // Try to find receiver by different identifiers
         if (receiverIdentifier.startsWith("@")) {
             // Username format: @username
@@ -557,7 +601,7 @@ public class Model {
             // Try as username
             receiverRs = dataBaseDriver.getUserData(receiverIdentifier, "");
         }
-        
+
         if (receiverRs != null) {
             try {
                 if (receiverRs.next()) {
@@ -591,73 +635,78 @@ public class Model {
                 }
             }
         }
-        
+
         if (receiver == null || receiverAccount == null) {
             return false;
         }
-        
+
         TransactionLimit limit = getTransactionLimit(currentUser.getUserName());
-        
+
         // Check if limit is approaching (80% threshold)
         if (limit.isDailyLimitApproaching(amount)) {
             double remaining = limit.getDailyLimitRemaining() - amount;
             com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                .sendNotification(currentUser.getUserName(), "Daily Limit Approaching", 
-                    String.format("You are approaching your daily limit. Remaining: $%.2f", remaining), "LIMIT");
+                    .sendNotification(currentUser.getUserName(), "Daily Limit Approaching",
+                            String.format("You are approaching your daily limit. Remaining: $%.2f", remaining),
+                            "LIMIT");
         }
-        
+
         if (limit.isWeeklyLimitApproaching(amount)) {
             double remaining = limit.getWeeklyLimitRemaining() - amount;
             com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                .sendNotification(currentUser.getUserName(), "Weekly Limit Approaching", 
-                    String.format("You are approaching your weekly limit. Remaining: $%.2f", remaining), "LIMIT");
+                    .sendNotification(currentUser.getUserName(), "Weekly Limit Approaching",
+                            String.format("You are approaching your weekly limit. Remaining: $%.2f", remaining),
+                            "LIMIT");
         }
-        
+
         // Check if limit is exceeded
         if (limit.isDailyLimitExceeded(amount) || limit.isWeeklyLimitExceeded(amount)) {
             com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                .sendNotification(currentUser.getUserName(), "Transaction Limit Exceeded", 
-                    "Your transaction exceeds your daily or weekly limit", "LIMIT");
+                    .sendNotification(currentUser.getUserName(), "Transaction Limit Exceeded",
+                            "Your transaction exceeds your daily or weekly limit", "LIMIT");
             return false;
         }
-        
+
         // Handle scheduled transactions differently - don't transfer money immediately
         if ("SCHEDULED".equals(transactionType) && scheduledDate != null) {
             // For scheduled transactions, just create the transaction record
             // Don't transfer money or check balance yet
             Transaction transaction = com.example.national_bank_of_egypt.Transactions.TransactionFactory
-                .createScheduledTransaction(currentUser.getUserName(), receiver, senderAccount, 
-                    receiverAccount, amount, scheduledDate, message);
-            
-            if (dataBaseDriver.createTransaction(transaction.getTransactionId(), transaction.getSender(), 
+                    .createScheduledTransaction(currentUser.getUserName(), receiver, senderAccount,
+                            receiverAccount, amount, scheduledDate, message);
+
+            if (dataBaseDriver.createTransaction(transaction.getTransactionId(), transaction.getSender(),
                     transaction.getReceiver(), transaction.getSenderAccount(), transaction.getReceiverAccount(),
                     transaction.getAmount(), transaction.getDate(), transaction.getMessage(),
                     "SCHEDULED", transaction.getTransactionType())) {
-                
+
                 // Send notification about scheduled transaction
                 com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                    .sendNotification(currentUser.getUserName(), "Transaction Scheduled", 
-                        "Your transaction of $" + amount + " to " + receiver + " is scheduled for " + scheduledDate, "TRANSACTION");
-                
+                        .sendNotification(currentUser.getUserName(), "Transaction Scheduled",
+                                "Your transaction of $" + amount + " to " + receiver + " is scheduled for "
+                                        + scheduledDate,
+                                "TRANSACTION");
+
                 return true;
             }
             return false;
         }
-        
+
         // For instant transactions, proceed with balance check and transfer
         ResultSet senderAccRs = dataBaseDriver.getBankAccountByNumber(senderAccount);
-        if (senderAccRs == null) return false;
-        
+        if (senderAccRs == null)
+            return false;
+
         try {
             if (senderAccRs.next()) {
                 double senderBalance = senderAccRs.getDouble("Balance");
                 if (senderBalance < amount) {
                     return false;
                 }
-                
+
                 double newSenderBalance = senderBalance - amount;
                 dataBaseDriver.updateBankAccountBalance(senderAccount, newSenderBalance);
-                
+
                 ResultSet receiverAccRs = dataBaseDriver.getBankAccountByNumber(receiverAccount);
                 try {
                     if (receiverAccRs != null && receiverAccRs.next()) {
@@ -674,16 +723,16 @@ public class Model {
                         closeEx.printStackTrace();
                     }
                 }
-                
+
                 // Create instant transaction
                 Transaction transaction = com.example.national_bank_of_egypt.Transactions.TransactionFactory
-                    .createInstantTransaction(currentUser.getUserName(), receiver, senderAccount, 
-                        receiverAccount, amount, message);
-                
+                        .createInstantTransaction(currentUser.getUserName(), receiver, senderAccount,
+                                receiverAccount, amount, message);
+
                 // Fraud Detection - Check for suspicious activity before processing
-                com.example.national_bank_of_egypt.Security.FraudDetectionService fraudService = 
-                    com.example.national_bank_of_egypt.Security.FraudDetectionService.getInstance();
-                
+                com.example.national_bank_of_egypt.Security.FraudDetectionService fraudService = com.example.national_bank_of_egypt.Security.FraudDetectionService
+                        .getInstance();
+
                 // Get recent transactions for pattern analysis
                 java.util.List<Transaction> recentTransactions = new java.util.ArrayList<>();
                 ResultSet recentRs = null;
@@ -700,111 +749,113 @@ public class Model {
                                 // If parsing fails, use today's date as fallback
                                 transactionDate = LocalDate.now();
                             }
-                            
+
                             Transaction recentTxn = new Transaction(
-                                recentRs.getString("TransactionID"),
-                                recentRs.getString("Sender"),
-                                recentRs.getString("Receiver"),
-                                recentRs.getString("SenderAccount"),
-                                recentRs.getString("ReceiverAccount"),
-                                recentRs.getDouble("Amount"),
-                                transactionDate,
-                                recentRs.getString("Message"),
-                                recentRs.getString("Status"),
-                                recentRs.getString("TransactionType")
-                            );
+                                    recentRs.getString("TransactionID"),
+                                    recentRs.getString("Sender"),
+                                    recentRs.getString("Receiver"),
+                                    recentRs.getString("SenderAccount"),
+                                    recentRs.getString("ReceiverAccount"),
+                                    recentRs.getDouble("Amount"),
+                                    transactionDate,
+                                    recentRs.getString("Message"),
+                                    recentRs.getString("Status"),
+                                    recentRs.getString("TransactionType"));
                             recentTransactions.add(recentTxn);
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                
+
                 // Assess risk using new risk-based system
-                com.example.national_bank_of_egypt.Security.FraudRiskResult riskResult = 
-                    fraudService.assessRisk(transaction, currentUser.getUserName(), recentTransactions);
-                
+                com.example.national_bank_of_egypt.Security.FraudRiskResult riskResult = fraudService
+                        .assessRisk(transaction, currentUser.getUserName(), recentTransactions);
+
                 String transactionStatus;
                 String riskFactorsDescription = riskResult.getRiskFactors().stream()
-                    .map(f -> f.getDescription())
-                    .reduce((a, b) -> a + "; " + b)
-                    .orElse("No specific factors");
-                
+                        .map(f -> f.getDescription())
+                        .reduce((a, b) -> a + "; " + b)
+                        .orElse("No specific factors");
+
                 // Handle based on risk level
                 if (riskResult.shouldBlock()) {
                     // CRITICAL RISK - Block transaction
                     transactionStatus = "BLOCKED";
                     String notificationMessage = String.format(
-                        "Transaction BLOCKED for security. Risk Score: %d/100. Reasons: %s",
-                        riskResult.getRiskScore(), riskFactorsDescription
-                    );
-                    
+                            "Transaction BLOCKED for security. Risk Score: %d/100. Reasons: %s",
+                            riskResult.getRiskScore(), riskFactorsDescription);
+
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                        .sendNotification(currentUser.getUserName(), "Transaction Blocked", 
-                            notificationMessage, "FRAUD");
-                    
+                            .sendNotification(currentUser.getUserName(), "Transaction Blocked",
+                                    notificationMessage, "FRAUD");
+
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                        .sendNotification("admin", "CRITICAL: Transaction Blocked", 
-                            String.format("Transaction %s from %s for $%.2f was BLOCKED. Risk Score: %d. %s",
-                                transaction.getTransactionId(), currentUser.getUserName(), amount, 
-                                riskResult.getRiskScore(), riskFactorsDescription), "FRAUD");
-                    
+                            .sendNotification("admin", "CRITICAL: Transaction Blocked",
+                                    String.format("Transaction %s from %s for $%.2f was BLOCKED. Risk Score: %d. %s",
+                                            transaction.getTransactionId(), currentUser.getUserName(), amount,
+                                            riskResult.getRiskScore(), riskFactorsDescription),
+                                    "FRAUD");
+
                     return false; // Block the transaction
-                    
+
                 } else if (riskResult.requiresConfirmation()) {
                     // HIGH RISK - Flag as suspicious but process
                     transactionStatus = "SUSPICIOUS";
                     String notificationMessage = String.format(
-                        "Transaction flagged for review. Risk Score: %d/100. Please verify this transaction is legitimate.",
-                        riskResult.getRiskScore()
-                    );
-                    
+                            "Transaction flagged for review. Risk Score: %d/100. Please verify this transaction is legitimate.",
+                            riskResult.getRiskScore());
+
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                        .sendNotification(currentUser.getUserName(), "Transaction Requires Confirmation", 
-                            notificationMessage, "FRAUD");
-                    
+                            .sendNotification(currentUser.getUserName(), "Transaction Requires Confirmation",
+                                    notificationMessage, "FRAUD");
+
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                        .sendNotification("admin", "High Risk Transaction Alert", 
-                            String.format("Transaction %s from %s for $%.2f flagged. Risk Score: %d. %s",
-                                transaction.getTransactionId(), currentUser.getUserName(), amount,
-                                riskResult.getRiskScore(), riskFactorsDescription), "FRAUD");
-                    
+                            .sendNotification("admin", "High Risk Transaction Alert",
+                                    String.format("Transaction %s from %s for $%.2f flagged. Risk Score: %d. %s",
+                                            transaction.getTransactionId(), currentUser.getUserName(), amount,
+                                            riskResult.getRiskScore(), riskFactorsDescription),
+                                    "FRAUD");
+
                 } else if (riskResult.isSuspicious()) {
                     // MEDIUM RISK - Flag but process
                     transactionStatus = "SUSPICIOUS";
-                    
+
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                        .sendNotification(currentUser.getUserName(), "Suspicious Transaction Detected", 
-                            "Your transaction of $" + amount + " has been flagged for review. Please contact support if this is legitimate.", "FRAUD");
-                    
+                            .sendNotification(currentUser.getUserName(), "Suspicious Transaction Detected",
+                                    "Your transaction of $" + amount
+                                            + " has been flagged for review. Please contact support if this is legitimate.",
+                                    "FRAUD");
+
                     com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                        .sendNotification("admin", "Suspicious Transaction Alert", 
-                            String.format("Transaction %s from %s for $%.2f flagged. Risk Score: %d.",
-                                transaction.getTransactionId(), currentUser.getUserName(), amount,
-                                riskResult.getRiskScore()), "FRAUD");
-                    
+                            .sendNotification("admin", "Suspicious Transaction Alert",
+                                    String.format("Transaction %s from %s for $%.2f flagged. Risk Score: %d.",
+                                            transaction.getTransactionId(), currentUser.getUserName(), amount,
+                                            riskResult.getRiskScore()),
+                                    "FRAUD");
+
                 } else {
                     // LOW RISK - Process normally
                     transactionStatus = "SUCCESS";
                 }
-                
-                dataBaseDriver.createTransaction(transaction.getTransactionId(), transaction.getSender(), 
-                    transaction.getReceiver(), transaction.getSenderAccount(), transaction.getReceiverAccount(),
-                    transaction.getAmount(), transaction.getDate(), transaction.getMessage(),
-                    transactionStatus, transaction.getTransactionType());
-                
+
+                dataBaseDriver.createTransaction(transaction.getTransactionId(), transaction.getSender(),
+                        transaction.getReceiver(), transaction.getSenderAccount(), transaction.getReceiverAccount(),
+                        transaction.getAmount(), transaction.getDate(), transaction.getMessage(),
+                        transactionStatus, transaction.getTransactionType());
+
                 limit.addToDailyUsed(amount);
                 limit.addToWeeklyUsed(amount);
-                dataBaseDriver.updateTransactionLimitUsage(currentUser.getUserName(), 
-                    limit.getDailyUsed(), limit.getWeeklyUsed());
-                
+                dataBaseDriver.updateTransactionLimitUsage(currentUser.getUserName(),
+                        limit.getDailyUsed(), limit.getWeeklyUsed());
+
                 com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                    .sendNotification(currentUser.getUserName(), "Transaction Successful", 
-                        "You sent $" + amount + " to " + receiver, "TRANSACTION");
+                        .sendNotification(currentUser.getUserName(), "Transaction Successful",
+                                "You sent $" + amount + " to " + receiver, "TRANSACTION");
                 com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
-                    .sendNotification(receiver, "Money Received", 
-                        "You received $" + amount + " from " + currentUser.getUserName(), "TRANSACTION");
-                
+                        .sendNotification(receiver, "Money Received",
+                                "You received $" + amount + " from " + currentUser.getUserName(), "TRANSACTION");
+
                 loadUserBankAccounts(currentUser);
                 return true;
             }
@@ -819,7 +870,7 @@ public class Model {
                 closeEx.printStackTrace();
             }
         }
-        
+
         return false;
     }
 
@@ -838,16 +889,15 @@ public class Model {
                     double amount = rs.getDouble("Amount");
                     String[] dateParts = rs.getString("Date").split("-");
                     LocalDate date = LocalDate.of(
-                        Integer.parseInt(dateParts[0]),
-                        Integer.parseInt(dateParts[1]),
-                        Integer.parseInt(dateParts[2])
-                    );
+                            Integer.parseInt(dateParts[0]),
+                            Integer.parseInt(dateParts[1]),
+                            Integer.parseInt(dateParts[2]));
                     String message = rs.getString("Message");
                     String status = rs.getString("Status");
                     String transactionType = rs.getString("TransactionType");
-                    
-                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount, 
-                        receiverAccount, amount, date, message, status, transactionType);
+
+                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount,
+                            receiverAccount, amount, date, message, status, transactionType);
                     transactions.add(transaction);
                 }
             }
@@ -877,10 +927,9 @@ public class Model {
                     String status = rs.getString("Status");
                     String[] dateParts = rs.getString("DateCreated").split("-");
                     LocalDate dateCreated = LocalDate.of(
-                        Integer.parseInt(dateParts[0]),
-                        Integer.parseInt(dateParts[1]),
-                        Integer.parseInt(dateParts[2])
-                    );
+                            Integer.parseInt(dateParts[0]),
+                            Integer.parseInt(dateParts[1]),
+                            Integer.parseInt(dateParts[2]));
                     Dispute dispute = new Dispute(disputeId, transactionId, userId, reason, status, dateCreated);
                     if (rs.getString("Resolution") != null) {
                         dispute.setResolution(rs.getString("Resolution"));

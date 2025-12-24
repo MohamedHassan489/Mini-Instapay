@@ -1,0 +1,183 @@
+/* Admin CSS - Premium Modern Design */
+@import "ClientMenu.css";
+/* Inherit menu styles */
+
+.root {
+    -fx-font-family: 'Inter', sans-serif;
+    -fx-background-color: #F4F6F9;
+    /* Light Gray Background */
+}
+
+/* --- Typography --- */
+.section_title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+.table_header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6c757d;
+}
+
+/* --- Cards & Containers --- */
+.content_area {
+    -fx-background-color: transparent;
+    -fx-padding: 30;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 15, 0, 0, 5);
+    -fx-padding: 20;
+}
+
+/* --- Search & Filters --- */
+.search_container {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #E0E0E0;
+    -fx-padding: 5 15;
+}
+
+.search_field {
+    -fx-background-color: transparent;
+    -fx-prompt-text-fill: #999;
+    -fx-font-size: 14px;
+}
+
+.filter_combo {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8;
+    -fx-padding: 2;
+}
+
+/* --- Buttons --- */
+.action_btn {
+    -fx-background-color: #16423C;
+    /* Dark Green */
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(22, 66, 60, 0.3), 10, 0, 0, 4);
+    -fx-transition: all 0.2s;
+}
+
+.action_btn:hover {
+    -fx-background-color: #1e5c54;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.secondary_btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #16423C;
+    -fx-border-radius: 8;
+    -fx-text-fill: #16423C;
+    -fx-background-radius: 8;
+    -fx-padding: 9 19;
+    /* compensate for border */
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.secondary_btn:hover {
+    -fx-background-color: rgba(22, 66, 60, 0.05);
+}
+
+.danger_btn {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #d32f2f;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.danger_btn:hover {
+    -fx-background-color: #ffcdd2;
+}
+
+/* --- Tables (ListView as Table) --- */
+.modern_list_view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 10;
+}
+
+.modern_list_view .list-cell {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.03), 5, 0, 0, 2);
+    -fx-padding: 15;
+    -fx-margin: 0 0 10 0;
+    /* Space between items */
+    -fx-border-width: 0;
+}
+
+.modern_list_view .list-cell:filled:selected,
+.modern_list_view .list-cell:filled:hover {
+    -fx-background-color: #F8F9FA;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 8, 0, 0, 3);
+}
+
+.list_cell_container {
+    -fx-spacing: 15;
+    -fx-alignment: center-left;
+}
+
+.cell_title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.cell_subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6c757d;
+}
+
+.status_badge {
+    -fx-padding: 4 10;
+    -fx-background-radius: 20;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.status_success {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #2e7d32;
+}
+
+.status_pending {
+    -fx-background-color: #fff3e0;
+    -fx-text-fill: #ef6c00;
+}
+
+.status_failed {
+    -fx-background-color: #ffebee;
+    -fx-text-fill: #c62828;
+}
+
+/* --- ScrollBar (Hidden/Modern) --- */
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #E0E0E0;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #BDBDBD;
+}

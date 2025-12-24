@@ -165,19 +165,16 @@ public class ReportService {
                     String message = rs.getString("Message");
                     String transactionType = rs.getString("TransactionType");
                     
-                    String type;
                     String fromTo;
                     String account;
                     double displayAmount;
                     
                     if (userId.equals(sender)) {
-                        type = "DEBIT";
                         fromTo = "To: " + receiver;
                         account = receiverAccount != null ? receiverAccount : "N/A";
                         displayAmount = -amount;
                         totalDebits += amount;
                     } else {
-                        type = "CREDIT";
                         fromTo = "From: " + sender;
                         account = senderAccount != null ? senderAccount : "N/A";
                         displayAmount = amount;

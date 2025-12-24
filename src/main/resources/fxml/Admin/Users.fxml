@@ -3,19 +3,48 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import java.lang.String?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.ClientsController">
-    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="User Management" />
-        <HBox spacing="10.0">
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search Users:" />
-            <TextField fx:id="search_fld" prefHeight="30.0" prefWidth="300.0" promptText="Search by name, username, email, or phone" />
+<AnchorPane prefHeight="750.0" prefWidth="850.0" styleClass="content_area" stylesheets="@../../Styles/Admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.ClientsController">
+    <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <!-- Header Section -->
+        <HBox alignment="CENTER_LEFT" spacing="20.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="section_title" text="User Management" />
+            <Region HBox.hgrow="ALWAYS" />
+            <!-- Search Bar -->
+            <HBox alignment="CENTER_LEFT" styleClass="search_container">
+                <Text text="🔍" style="-fx-fill: #999; -fx-font-size: 14;" />
+                <TextField fx:id="search_fld" promptText="Search users..." styleClass="search_field" prefWidth="250.0" />
+            </HBox>
         </HBox>
-        <HBox prefHeight="400.0" prefWidth="760.0" spacing="15.0">
-            <ListView fx:id="Clients_ListView" prefHeight="400.0" prefWidth="400.0" />
-            <VBox prefHeight="400.0" prefWidth="345.0" spacing="10.0">
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text="User Profile Details" />
-                <Label fx:id="userDetails_lbl" prefHeight="380.0" prefWidth="345.0" wrapText="true" style="-fx-background-color: #f5f5f5; -fx-padding: 10;" />
+
+        <!-- Main Content -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <!-- User List -->
+            <VBox styleClass="card" spacing="10.0" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Registered Users" styleClass="table_header" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label text="Online">
+                        <styleClass>
+                            <String fx:value="status_badge"/>
+                            <String fx:value="status_success"/>
+                        </styleClass>
+                    </Label>
+                </HBox>
+                <ListView fx:id="Clients_ListView" styleClass="modern_list_view" VBox.vgrow="ALWAYS" />
+            </VBox>
+            
+            <!-- User Details Panel -->
+            <VBox minWidth="300.0" prefWidth="350.0" styleClass="card" spacing="15.0">
+                <Label text="User Details" styleClass="section_title" style="-fx-font-size: 18;" />
+                <Label fx:id="userDetails_lbl" wrapText="true" VBox.vgrow="ALWAYS" alignment="TOP_LEFT" style="-fx-font-size: 14; -fx-text-fill: #555;" />
+                
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                     <Button fx:id="suspend_btn" text="Suspend User" styleClass="danger_btn" />
+                     <Button fx:id="editProfile_btn" text="Edit Profile" styleClass="secondary_btn" />
+                </HBox>
             </VBox>
         </HBox>
     </VBox>

@@ -1,0 +1,120 @@
+/* ============================================
+   Bank Statement Screen Styles
+   ============================================ */
+
+/* Import global animations and common styles */
+@import url("animations.css");
+@import url("common.css");
+
+/* Root container */
+.bankstatement_container {
+    -fx-background-color: linear-gradient(to bottom, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+/* ScrollPane */
+.bankstatement_container ScrollPane {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.bankstatement_container ScrollPane .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+/* Form Container */
+.bankstatement_form_container {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 30 40;
+    -fx-spacing: 25;
+}
+
+/* Page Title */
+.bankstatement_title {
+    -fx-font-size: 2.2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 5 0;
+}
+
+.bankstatement_subtitle {
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 0 0 20 0;
+}
+
+/* Section Headers */
+.bankstatement_section_header {
+    -fx-font-size: 1.4em;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 15 0 10 0;
+}
+
+/* Form Labels */
+.bankstatement_form_container Label {
+    -fx-font-size: 1.1em;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Form Fields */
+.bankstatement_form_container ComboBox,
+.bankstatement_form_container DatePicker {
+    -fx-pref-height: 45;
+}
+
+.bankstatement_form_container TextArea {
+    -fx-pref-height: 500;
+    -fx-pref-width: 1140;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d0d0d0;
+    -fx-border-width: 1.5;
+    -fx-padding: 15;
+    -fx-font-family: 'Courier New', monospace;
+    -fx-font-size: 1em;
+}
+
+.bankstatement_form_container TextArea:focused {
+    -fx-border-color: #132A13;
+    -fx-border-width: 2;
+}
+
+/* Buttons */
+.bankstatement_btn_primary {
+    -fx-background-color: linear-gradient(to right, #132A13 0%, #1a3a1a 100%);
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-pref-width: 200;
+    -fx-pref-height: 50;
+    -fx-font-size: 1.2em;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.3), 10, 0, 0, 4);
+    -fx-transition: all 0.2s ease-out;
+}
+
+.bankstatement_btn_primary:hover {
+    -fx-background-color: linear-gradient(to right, #1a3a1a 0%, #224422 100%);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.4), 14, 0, 0, 5);
+}
+
+.bankstatement_btn_primary:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Separator */
+.bankstatement_separator {
+    -fx-padding: 10 0;
+}
+
+/* Error Label */
+.bankstatement_error_lbl {
+    -fx-font-size: 1em;
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: 500;
+}
+

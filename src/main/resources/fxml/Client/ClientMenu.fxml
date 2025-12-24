@@ -8,60 +8,60 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="70.0" styleClass="m" stylesheets="@../../Styles/ClientMenu.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.ClientMenuController">
-   <AnchorPane prefHeight="640.0" prefWidth="70.0" styleClass="left_container">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="250.0" styleClass="m" stylesheets="@../../Styles/ClientMenu.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.ClientMenuController">
+   <AnchorPane prefHeight="640.0" prefWidth="250.0" styleClass="left_container">
       <children>
-          <VBox prefHeight="50.0" prefWidth="70.0" styleClass="title_container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <Text text="🏦" style="-fx-font-size: 18;" />
-              <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Pay" />
+          <VBox prefHeight="80.0" prefWidth="250.0" styleClass="title_container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <Text styleClass="title_icon" text="🏦" />
+              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title_text" text="Mini-InstaPay" />
           </VBox>
-          <VBox prefHeight="550.0" prefWidth="70.0" styleClass="menu_container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" spacing="3.0">
-              <Button fx:id="dashboard_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" style="-fx-font-size: 9;" text="Home">
+          <VBox fx:id="menu_container" prefHeight="520.0" prefWidth="250.0" styleClass="menu_container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" spacing="3.0">
+              <Button fx:id="dashboard_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="menu_btn" text="Home">
                  <graphic>
-                     <Text text="🏠" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="🏠" />
                  </graphic>
               </Button>
-              <Button fx:id="transaction_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" style="-fx-font-size: 9;" text="Trans">
+              <Button fx:id="transaction_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="menu_btn" text="Transactions">
                  <graphic>
-                     <Text text="💳" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="💳" />
                  </graphic>
               </Button>
-              <Button fx:id="accounts_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" style="-fx-font-size: 9;" text="Accts">
+              <Button fx:id="accounts_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="menu_btn" text="Accounts">
                  <graphic>
-                     <Text text="🏦" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="🏦" />
                  </graphic>
               </Button>
-              <Button fx:id="send_money_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" style="-fx-font-size: 9;" text="Send">
+              <Button fx:id="send_money_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="menu_btn" text="Send Money">
                  <graphic>
-                     <Text text="💰" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="💰" />
                  </graphic>
               </Button>
-              <Button fx:id="disputes_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" style="-fx-font-size: 9;" text="Dispute">
+              <Button fx:id="disputes_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="menu_btn" text="Disputes">
                  <graphic>
-                     <Text text="⚠️" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="⚠️" />
                  </graphic>
               </Button>
-              <Button fx:id="notifications_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" style="-fx-font-size: 9;" text="Notif">
+              <Button fx:id="notifications_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="menu_btn" text="Notifications">
                  <graphic>
-                     <Text text="🔔" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="🔔" />
                  </graphic>
               </Button>
-              <Line endX="60.0" />
-              <Button fx:id="profile_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" styleClass="alt_menu_btn" style="-fx-font-size: 9;" text="Profile">
+              <Line styleClass="menu_separator" endX="200.0" />
+              <Button fx:id="profile_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="alt_menu_btn" text="Profile">
                  <graphic>
-                     <Text text="👤" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="👤" />
                  </graphic>
               </Button>
-              <Button fx:id="logout_btn" mnemonicParsing="false" prefHeight="35.0" prefWidth="70.0" styleClass="alt_menu_btn" style="-fx-font-size: 9;" text="Exit">
+              <Button fx:id="logout_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="250.0" styleClass="alt_menu_btn" text="Exit">
                  <graphic>
-                     <Text text="🚪" style="-fx-font-size: 14;" />
+                     <Text styleClass="menu_icon" text="🚪" />
                  </graphic>
               </Button>
           </VBox>
-          <VBox prefHeight="40.0" prefWidth="70.0" styleClass="report_container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-              <Button fx:id="report_btn" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0" style="-fx-font-size: 8;" text="Report">
+          <VBox prefHeight="40.0" prefWidth="250.0" styleClass="report_container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+              <Button fx:id="report_btn" mnemonicParsing="false" prefHeight="30.0" prefWidth="120.0" styleClass="report_btn" text="Report">
                  <graphic>
-                     <Text text="📝" style="-fx-font-size: 12;" />
+                     <Text styleClass="report_icon" text="📝" />
                  </graphic>
               </Button>
           </VBox>

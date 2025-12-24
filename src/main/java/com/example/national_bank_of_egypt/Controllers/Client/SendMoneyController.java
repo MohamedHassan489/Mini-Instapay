@@ -4,12 +4,12 @@ import com.example.national_bank_of_egypt.Models.BankAccount;
 import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Models.TransactionLimit;
 import com.example.national_bank_of_egypt.Transactions.TransactionType;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -27,6 +27,9 @@ public class SendMoneyController implements Initializable {
     public Button send_btn;
     public Label error_lbl;
 
+    @FXML
+    private VBox sendmoney_form_container;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -38,7 +41,7 @@ public class SendMoneyController implements Initializable {
                 }
                 return;
             }
-            
+
             // Initialize source account combo
             if (sourceAccount_combo != null) {
                 var accounts = Model.getInstance().getCurrentUser().getBankAccounts();
@@ -47,7 +50,7 @@ public class SendMoneyController implements Initializable {
                     Model.getInstance().reloadUserBankAccounts();
                     accounts = Model.getInstance().getCurrentUser().getBankAccounts();
                 }
-                
+
                 if (accounts != null && !accounts.isEmpty()) {
                     sourceAccount_combo.setItems(FXCollections.observableArrayList(accounts));
                     sourceAccount_combo.setValue(accounts.get(0));
@@ -58,12 +61,13 @@ public class SendMoneyController implements Initializable {
                     }
                 }
             }
-            
+
             // Initialize transaction type combo
             if (transactionType_combo != null) {
-                transactionType_combo.setItems(FXCollections.observableArrayList(TransactionType.INSTANT, TransactionType.SCHEDULED));
+                transactionType_combo.setItems(
+                        FXCollections.observableArrayList(TransactionType.INSTANT, TransactionType.SCHEDULED));
                 transactionType_combo.setValue(TransactionType.INSTANT);
-                
+
                 // Set cell factory to display readable names
                 transactionType_combo.setButtonCell(new ListCell<TransactionType>() {
                     @Override
@@ -76,7 +80,7 @@ public class SendMoneyController implements Initializable {
                         }
                     }
                 });
-                
+
                 transactionType_combo.setCellFactory(listView -> new ListCell<TransactionType>() {
                     @Override
                     protected void updateItem(TransactionType item, boolean empty) {
@@ -88,7 +92,7 @@ public class SendMoneyController implements Initializable {
                         }
                     }
                 });
-                
+
                 // Show/hide scheduled date picker based on transaction type
                 transactionType_combo.valueProperty().addListener((observable, oldValue, newValue) -> {
                     if (scheduledDate_container != null) {
@@ -99,12 +103,13 @@ public class SendMoneyController implements Initializable {
                     }
                 });
             }
-            
+
             // Initialize scheduled date picker
             if (scheduledDate_picker != null) {
                 try {
                     scheduledDate_picker.setValue(LocalDate.now().plusDays(1));
                     scheduledDate_picker.setDayCellFactory(picker -> new DateCell() {
+
                         @Override
                         public void updateItem(LocalDate date, boolean empty) {
                             super.updateItem(date, empty);
@@ -118,7 +123,7 @@ public class SendMoneyController implements Initializable {
                     System.err.println("Error initializing DatePicker: " + e.getMessage());
                 }
             }
-            
+
             // Set up account combo display
             if (sourceAccount_combo != null) {
                 sourceAccount_combo.setButtonCell(new ListCell<BankAccount>() {
@@ -128,11 +133,12 @@ public class SendMoneyController implements Initializable {
                         if (empty || item == null) {
                             setText("Select account");
                         } else {
-                            setText(item.getBankName() + " - " + item.getAccountNumber() + " ($" + String.format("%.2f", item.getBalance()) + ")");
+                            setText(item.getBankName() + " - " + item.getAccountNumber() + " ($"
+                                    + String.format("%.2f", item.getBalance()) + ")");
                         }
                     }
                 });
-                
+
                 sourceAccount_combo.setCellFactory(listView -> new ListCell<BankAccount>() {
                     @Override
                     protected void updateItem(BankAccount item, boolean empty) {
@@ -140,21 +146,31 @@ public class SendMoneyController implements Initializable {
                         if (empty || item == null) {
                             setText("");
                         } else {
-                            setText(item.getBankName() + " - " + item.getAccountNumber() + " ($" + String.format("%.2f", item.getBalance()) + ")");
+                            setText(item.getBankName() + " - " + item.getAccountNumber() + " ($"
+                                    + String.format("%.2f", item.getBalance()) + ")");
                         }
                     }
                 });
             }
-            
+
             // Setup send button
             if (send_btn != null) {
                 send_btn.setOnAction(event -> onSendMoney());
             }
-            
+
             // Initialize error label
             if (error_lbl != null) {
                 error_lbl.setText("");
             }
+
+            hideMessage(); // Call hideMessage() as per instruction
+
+            // Add page load animations
+            Platform.runLater(() ->
+
+            {
+                animatePageLoad();
+            });
         } catch (Exception e) {
             e.printStackTrace();
             if (error_lbl != null) {
@@ -168,126 +184,117 @@ public class SendMoneyController implements Initializable {
         }
     }
 
+    /**
+     * Animate page load with fade-in and slide-up
+     */
+    private void animatePageLoad() {
+        if (sendmoney_form_container != null) {
+            sendmoney_form_container.setOpacity(0);
+            sendmoney_form_container.setTranslateY(20);
+            AnimationUtils.fadeInSlideUp(sendmoney_form_container, 20, AnimationUtils.ENTRANCE_DURATION).play();
+        }
+    }
+
     private void onSendMoney() {
         // Clear previous error
-        if (error_lbl != null) {
-            error_lbl.setText("");
-        }
-        
+        hideMessage();
+
         String receiver = receiver_fld != null ? receiver_fld.getText().trim() : "";
         BankAccount sourceAccount = sourceAccount_combo != null ? sourceAccount_combo.getValue() : null;
         TransactionType transactionType = transactionType_combo != null ? transactionType_combo.getValue() : null;
         String amountStr = amount_fld != null ? amount_fld.getText().trim() : "";
         String message = message_fld != null ? message_fld.getText() : "";
-        
+
         // Validate required fields
         if (receiver.isEmpty()) {
-            if (error_lbl != null) {
-                error_lbl.setText("Please enter receiver (phone number, account number, or username)");
-            }
+            showError("Please enter receiver (phone number, account number, or username)");
             return;
         }
-        
+
         if (sourceAccount == null) {
-            if (error_lbl != null) {
-                error_lbl.setText("Please select a source account");
-            }
+            showError("Please select a source account");
             return;
         }
-        
+
         if (amountStr.isEmpty()) {
-            if (error_lbl != null) {
-                error_lbl.setText("Please enter an amount");
-            }
+            showError("Please enter an amount");
             return;
         }
-        
+
         if (transactionType == null) {
-            if (error_lbl != null) {
-                error_lbl.setText("Please select a transaction type");
-            }
+            showError("Please select a transaction type");
             return;
         }
-        
+
         // Validate scheduled date if scheduled transaction
         LocalDate scheduledDate = null;
         if (transactionType == TransactionType.SCHEDULED) {
             if (scheduledDate_picker == null || scheduledDate_picker.getValue() == null) {
-                if (error_lbl != null) {
-                    error_lbl.setText("Please select a scheduled date");
-                }
+                showError("Please select a scheduled date");
                 return;
             }
             scheduledDate = scheduledDate_picker.getValue();
             if (scheduledDate.isBefore(LocalDate.now().plusDays(1))) {
-                if (error_lbl != null) {
-                    error_lbl.setText("Scheduled date must be at least tomorrow");
-                }
+                showError("Scheduled date must be at least tomorrow");
                 return;
             }
         }
-        
+
         // Validate amount
         double amount;
         try {
             amount = Double.parseDouble(amountStr);
             if (amount <= 0) {
-                if (error_lbl != null) {
-                    error_lbl.setText("Amount must be greater than 0");
-                }
+                showError("Amount must be greater than 0");
                 return;
             }
             if (amount > 100000) {
-                if (error_lbl != null) {
-                    error_lbl.setText("Amount exceeds maximum limit of $100,000");
-                }
+                showError("Amount exceeds maximum limit of $100,000");
                 return;
             }
         } catch (NumberFormatException e) {
-            if (error_lbl != null) {
-                error_lbl.setText("Please enter a valid amount");
-            }
+            showError("Please enter a valid amount");
             return;
         }
-        
+
         // Check if sender has sufficient balance
         if (sourceAccount.getBalance() < amount) {
-            if (error_lbl != null) {
-                error_lbl.setText("Insufficient balance. Available: $" + String.format("%.2f", sourceAccount.getBalance()));
-            }
+            showError(
+                    "Insufficient balance. Available: $" + String.format("%.2f", sourceAccount.getBalance()));
             return;
         }
-        
+
         // Check if 2FA is required for transactions over $100
         if (amount > 100) {
             if (!verifyOTPForTransaction()) {
-                if (error_lbl != null) {
-                    error_lbl.setText("2FA verification failed. Transaction cancelled.");
-                    error_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 9;");
-                }
+                showError("2FA verification failed. Transaction cancelled.");
                 return;
             }
         }
-        
+
         // Disable button during processing
         if (send_btn != null) {
             send_btn.setDisable(true);
             send_btn.setText("Processing...");
         }
-        
+
         // Send money
         String transactionTypeStr = transactionType.toString();
         boolean success = false;
         String errorMessage = "";
-        
+
         try {
-            success = Model.getInstance().sendMoney(receiver, sourceAccount.getAccountNumber(), amount, message, transactionTypeStr, scheduledDate);
-            
+            success = Model.getInstance().sendMoney(receiver, sourceAccount.getAccountNumber(), amount, message,
+                    transactionTypeStr, scheduledDate);
+
             if (!success) {
                 // Try to get more specific error information
-                TransactionLimit limit = Model.getInstance().getTransactionLimit(Model.getInstance().getCurrentUser().getUserName());
+                TransactionLimit limit = Model.getInstance()
+                        .getTransactionLimit(Model.getInstance().getCurrentUser().getUserName());
                 if (limit != null && (limit.isDailyLimitExceeded(amount) || limit.isWeeklyLimitExceeded(amount))) {
-                    errorMessage = "Transaction limit exceeded. Daily: $" + String.format("%.2f", limit.getDailyLimitRemaining()) + " remaining, Weekly: $" + String.format("%.2f", limit.getWeeklyLimitRemaining()) + " remaining";
+                    errorMessage = "Transaction limit exceeded. Daily: $"
+                            + String.format("%.2f", limit.getDailyLimitRemaining()) + " remaining, Weekly: $"
+                            + String.format("%.2f", limit.getWeeklyLimitRemaining()) + " remaining";
                 } else {
                     errorMessage = "Transaction failed. Please check:\n- Receiver exists (phone/account/username/email)\n- Sufficient balance\n- Transaction limits";
                 }
@@ -302,30 +309,35 @@ public class SendMoneyController implements Initializable {
                 send_btn.setText("Send Money");
             }
         }
-        
+
         if (success) {
             // Show success message
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Success");
-            successAlert.setHeaderText("Transaction " + (transactionType == TransactionType.SCHEDULED ? "Scheduled" : "Completed"));
+            successAlert.setHeaderText(
+                    "Transaction " + (transactionType == TransactionType.SCHEDULED ? "Scheduled" : "Completed"));
             if (transactionType == TransactionType.SCHEDULED) {
-                successAlert.setContentText("Your transaction of $" + String.format("%.2f", amount) + " to " + receiver + " is scheduled for " + scheduledDate + ".");
+                successAlert.setContentText("Your transaction of $" + String.format("%.2f", amount) + " to " + receiver
+                        + " is scheduled for " + scheduledDate + ".");
             } else {
-                successAlert.setContentText("Successfully sent $" + String.format("%.2f", amount) + " to " + receiver + "!");
+                successAlert.setContentText(
+                        "Successfully sent $" + String.format("%.2f", amount) + " to " + receiver + "!");
             }
             successAlert.showAndWait();
-            
-            if (error_lbl != null) {
-                error_lbl.setText("✓ " + (transactionType == TransactionType.SCHEDULED ? "Transaction scheduled" : "Transaction successful") + "!");
-                error_lbl.setStyle("-fx-text-fill: green; -fx-font-size: 9;");
-            }
-            
+
+            showSuccess("✓ " + (transactionType == TransactionType.SCHEDULED ? "Transaction scheduled"
+                    : "Transaction successful") + "!");
+
             // Clear form
-            if (receiver_fld != null) receiver_fld.setText("");
-            if (amount_fld != null) amount_fld.setText("");
-            if (message_fld != null) message_fld.setText("");
-            if (transactionType_combo != null) transactionType_combo.setValue(TransactionType.INSTANT);
-            
+            if (receiver_fld != null)
+                receiver_fld.setText("");
+            if (amount_fld != null)
+                amount_fld.setText("");
+            if (message_fld != null)
+                message_fld.setText("");
+            if (transactionType_combo != null)
+                transactionType_combo.setValue(TransactionType.INSTANT);
+
             // Refresh account list to show updated balance
             if (sourceAccount_combo != null && Model.getInstance().getCurrentUser() != null) {
                 Model.getInstance().reloadUserBankAccounts();
@@ -334,68 +346,90 @@ public class SendMoneyController implements Initializable {
                     sourceAccount_combo.setItems(FXCollections.observableArrayList(accounts));
                     // Find and select the same account if it still exists
                     BankAccount updatedAccount = accounts.stream()
-                        .filter(acc -> acc.getAccountNumber().equals(sourceAccount.getAccountNumber()))
-                        .findFirst()
-                        .orElse(accounts.get(0));
+                            .filter(acc -> acc.getAccountNumber().equals(sourceAccount.getAccountNumber()))
+                            .findFirst()
+                            .orElse(accounts.get(0));
                     sourceAccount_combo.setValue(updatedAccount);
                 }
             }
         } else {
-            if (error_lbl != null) {
-                error_lbl.setText("✗ " + errorMessage);
-                error_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 9;");
-            }
+            showError("✗ " + errorMessage);
         }
     }
-    
+
     private boolean verifyOTPForTransaction() {
-        com.example.national_bank_of_egypt.Security.OTPService otpService = 
-            com.example.national_bank_of_egypt.Security.OTPService.getInstance();
-        
+        com.example.national_bank_of_egypt.Security.OTPService otpService = com.example.national_bank_of_egypt.Security.OTPService
+                .getInstance();
+
         // Get current user
         com.example.national_bank_of_egypt.Models.User currentUser = Model.getInstance().getCurrentUser();
         if (currentUser == null) {
-            if (error_lbl != null) {
-                error_lbl.setText("Error: User information not available.");
-            }
+            showError("Error: User information not available.");
             return false;
         }
-        
+
         String userName = currentUser.getUserName();
         String userEmail = currentUser.getEmail();
         String userDisplayName = currentUser.getFirstName() + " " + currentUser.getLastName();
-        
+
         // Generate and send OTP via email
         boolean emailSent = otpService.generateAndSendOTP(userName, userEmail, userDisplayName);
-        
+
         // Show OTP dialog
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
         dialog.setTitle("Two-Factor Authentication Required");
         dialog.setHeaderText("Transaction Amount Exceeds $100");
-        
+
         if (emailSent) {
             dialog.setContentText("This transaction exceeds $100 and requires 2FA verification.\n\n" +
-                "An OTP has been sent to your email address: " + userEmail + 
-                "\n\nPlease check your email and enter the OTP code below.\n" +
-                "The OTP is valid for 5 minutes.");
+                    "An OTP has been sent to your email address: " + userEmail +
+                    "\n\nPlease check your email and enter the OTP code below.\n" +
+                    "The OTP is valid for 5 minutes.");
         } else {
             dialog.setContentText("This transaction exceeds $100 and requires 2FA verification.\n\n" +
-                "Failed to send OTP email. Please contact support.\n" +
-                "For testing purposes, check the console for the OTP code.");
+                    "Failed to send OTP email. Please contact support.\n" +
+                    "For testing purposes, check the console for the OTP code.");
         }
-        
+
         java.util.Optional<String> result = dialog.showAndWait();
-        
+
         if (result.isPresent()) {
             boolean verified = otpService.verifyOTP(userName, result.get());
-            if (!verified && error_lbl != null) {
-                error_lbl.setText("Invalid OTP. Please try again.");
-                error_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 9;");
+            if (!verified) {
+                showError("Invalid OTP. Please try again.");
             }
             return verified;
         }
-        
+
         return false;
     }
-}
 
+    private void showMessage(String message, String style) {
+        if (error_lbl != null) {
+            error_lbl.setText(message);
+            error_lbl.setStyle(style);
+            error_lbl.setVisible(true);
+            error_lbl.setManaged(true);
+            // Slide down and fade in animation
+            error_lbl.setTranslateY(-10);
+            error_lbl.setOpacity(0);
+            AnimationUtils.fadeInSlideUp(error_lbl, 10, AnimationUtils.STANDARD_DURATION).play();
+        }
+    }
+
+    private void showError(String message) {
+        showMessage(message, "-fx-text-fill: red; -fx-font-size: 9;");
+    }
+
+    private void showSuccess(String message) {
+        showMessage(message, "-fx-text-fill: green; -fx-font-size: 9;");
+    }
+
+    private void hideMessage() {
+        if (error_lbl != null) {
+            error_lbl.setText("");
+            error_lbl.setVisible(false);
+            error_lbl.setManaged(false);
+        }
+    }
+}

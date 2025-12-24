@@ -5,14 +5,13 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="80.0" prefWidth="750.0" styleClass="notification_cell_container"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-    <VBox spacing="5.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="10.0">
-        <Label fx:id="title_lbl" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Notification Title" />
-        <Label fx:id="message_lbl" style="-fx-font-size: 12; -fx-text-fill: #666;" text="Notification message goes here" wrapText="true" />
+            stylesheets="@../../Styles/NotificationCell.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox spacing="8.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="10.0">
+        <Label fx:id="title_lbl" styleClass="notification_title" text="Notification Title" />
+        <Label fx:id="message_lbl" styleClass="notification_message" text="Notification message goes here" wrapText="true" />
         <AnchorPane>
-            <Label fx:id="type_lbl" style="-fx-font-size: 10;" text="TYPE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            <Label fx:id="timestamp_lbl" style="-fx-font-size: 10; -fx-text-fill: #999;" text="Timestamp" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <Label fx:id="type_lbl" styleClass="notification_type" text="TYPE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <Label fx:id="timestamp_lbl" styleClass="notification_timestamp" text="Timestamp" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         </AnchorPane>
     </VBox>
 </AnchorPane>
-

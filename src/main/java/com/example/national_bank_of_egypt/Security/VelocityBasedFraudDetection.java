@@ -4,6 +4,9 @@ import com.example.national_bank_of_egypt.Models.Transaction;
 import java.util.List;
 
 public class VelocityBasedFraudDetection implements RiskBasedFraudDetectionStrategy {
+    // VELOCITY_WINDOW_MINUTES reserved for future timestamp-based velocity detection
+    // Currently using same-day transactions as velocity indicator
+    @SuppressWarnings("unused")
     private static final int VELOCITY_WINDOW_MINUTES = 5;
     private static final int SUSPICIOUS_VELOCITY_THRESHOLD = 3;
     

@@ -2,13 +2,37 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="960.0" prefWidth="810.0" styleClass="tranaction_container" stylesheets="@../../Styles/Transactions.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.TransactionsController">
-    <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Transactions" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
-    <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="View all your transaction history" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="40.0" />
-    <HBox spacing="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="60.0">
-        <Label style="-fx-font-size: 12; -fx-font-weight: bold;" text="Filter by Account:" />
-        <ComboBox fx:id="account_filter_combo" prefWidth="300.0" />
-    </HBox>
-    <ListView fx:id="Transaction_ListView" prefHeight="870.0" prefWidth="780.0" stylesheets="@../../Styles/Transactions.css" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="95.0" AnchorPane.bottomAnchor="15.0" />
+<AnchorPane prefHeight="960.0" styleClass="transactions_container" stylesheets="@../../Styles/Transactions.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.TransactionsController">
+    <Label styleClass="label-title" text="Transactions" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="50.0">
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            
+            <VBox styleClass="card-standard" spacing="15.0">
+                <Label styleClass="section_header" text="Filter by Account" />
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Label styleClass="form-label" text="Account:" />
+                    <ComboBox fx:id="account_filter_combo" styleClass="combo-box-standard" maxWidth="400.0" prefHeight="45.0" />
+                </HBox>
+            </VBox>
+            
+            <VBox styleClass="card-standard" spacing="15.0">
+                <Label styleClass="section_header" text="Search Transactions" />
+                <TextField fx:id="search_field" styleClass="input-standard" prefHeight="45.0" maxWidth="Infinity" promptText="Search by amount, sender, receiver, or transaction ID..." />
+            </VBox>
+            
+            <VBox styleClass="card-standard" spacing="15.0">
+                <Label styleClass="section_header" text="Transaction History" />
+                <ListView fx:id="Transaction_ListView" styleClass="transactions_list" prefHeight="750.0" maxWidth="Infinity" />
+                <VBox fx:id="empty_state_container" styleClass="empty_state" spacing="10.0" alignment="CENTER" visible="false">
+                    <Label styleClass="label-subtitle" text="No Transactions Found" />
+                    <Label styleClass="label-body" text="You haven't made any transactions yet. Start by sending money to another user." wrapText="true" />
+                </VBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
 </AnchorPane>

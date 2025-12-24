@@ -1,0 +1,229 @@
+/* ============================================
+   Registration Screen Styles - Enhanced with Animations
+   ============================================ */
+
+/* Import global animations */
+@import url("animations.css");
+
+/* Root container */
+.register_container {
+    -fx-background-color: linear-gradient(to bottom right, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+/* ============================================
+   Left Sidebar - Branding Section
+   ============================================ */
+
+.register_logo_container {
+    -fx-background-color: linear-gradient(135deg, #132A13 0%, #1a3a1a 50%, #253F25 100%);
+    -fx-alignment: center;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);
+}
+
+.register_logo_container Label {
+    -fx-text-fill: #ECF39E;
+    -fx-font-size: 5em;
+    -fx-padding: 0;
+}
+
+.logo_icon {
+    -fx-font-size: 5em;
+    -fx-text-fill: #ECF39E;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+    -fx-padding: 0;
+}
+
+.logo_title {
+    -fx-font-size: 2.5em;
+    -fx-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0, 0, 1);
+}
+
+.logo_subtitle {
+    -fx-font-size: 1.1em;
+    -fx-fill: #ECF39E;
+    -fx-font-weight: 400;
+    -fx-opacity: 0.9;
+}
+
+.features_container {
+    -fx-spacing: 12;
+    -fx-padding: 30 0;
+}
+
+.feature_text {
+    -fx-font-size: 1.1em;
+    -fx-fill: rgba(255,255,255,0.9);
+    -fx-font-weight: 400;
+}
+
+/* ============================================
+   Right Side - Registration Form
+   ============================================ */
+
+.register_scroll_pane {
+    -fx-background-color: #FFFFFF;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.register_scroll_pane .viewport {
+    -fx-background-color: #FFFFFF;
+}
+
+.register_form_container {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 50 60;
+    -fx-alignment: center;
+    -fx-spacing: 25;
+}
+
+/* Welcome Section */
+.welcome_section {
+    -fx-padding: 0 0 20 0;
+}
+
+.welcome_title {
+    -fx-font-size: 2.2em;
+    -fx-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.welcome_subtitle {
+    -fx-font-size: 1.1em;
+    -fx-fill: #7f8c8d;
+    -fx-font-weight: 400;
+}
+
+/* Form Fields Container */
+.form_fields_container {
+    -fx-pref-width: 450;
+    -fx-max-width: 450;
+}
+
+/* Labels */
+.register_form_container Label {
+    -fx-font-size: 1em;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 5 0;
+}
+
+/* Input Fields - Enhanced with modern styling */
+.input_field {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d0d0d0;
+    -fx-border-width: 1.5;
+    -fx-pref-height: 45;
+    -fx-font-size: 1.1em;
+    -fx-padding: 12 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 4, 0, 0, 1);
+    -fx-transition: all 0.3s ease-out;
+}
+
+.input_field:hover {
+    -fx-border-color: #132A13;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.1), 6, 0, 0, 2);
+}
+
+.input_field:focused {
+    -fx-background-color: #fafafa;
+    -fx-border-color: #132A13;
+    -fx-border-width: 2;
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.2), 8, 0, 0, 3);
+}
+
+.input_field.success {
+    -fx-border-color: #27ae60;
+    -fx-background-color: #f0f9f4;
+}
+
+.input_field.error {
+    -fx-border-color: #e74c3c;
+    -fx-background-color: #fdf2f2;
+}
+
+/* Error Label - Enhanced */
+.error_lbl {
+    -fx-text-fill: #e74c3c;
+    -fx-font-size: 0.95em;
+    -fx-font-weight: 500;
+    -fx-padding: 12 16;
+    -fx-wrap-text: true;
+    -fx-background-color: rgba(231, 76, 60, 0.1);
+    -fx-background-radius: 8;
+    -fx-border-color: #e74c3c;
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+    -fx-alignment: center-left;
+}
+
+/* Register Button - Primary */
+.register_btn_primary {
+    -fx-background-color: linear-gradient(to right, #27ae60 0%, #2ecc71 100%);
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-pref-width: 450;
+    -fx-pref-height: 50;
+    -fx-font-size: 1.2em;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.3), 10, 0, 0, 4);
+    -fx-transition: all 0.2s ease-out;
+    -fx-padding: 12;
+}
+
+.register_btn_primary:hover {
+    -fx-background-color: linear-gradient(to right, #2ecc71 0%, #35d47a 100%);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.4), 14, 0, 0, 5);
+}
+
+.register_btn_primary:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.2), 6, 0, 0, 2);
+}
+
+.register_btn_primary:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+
+/* Cancel Button */
+.cancel_btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e74c3c;
+    -fx-background-radius: 10;
+    -fx-border-color: #e74c3c;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-font-size: 1.1em;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-out;
+}
+
+.cancel_btn:hover {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: #FFFFFF;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.cancel_btn:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Smooth transitions for all interactive elements */
+.register_form_container * {
+    -fx-transition: all 0.3s ease-out;
+}

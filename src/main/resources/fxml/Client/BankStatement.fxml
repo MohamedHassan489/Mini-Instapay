@@ -4,40 +4,36 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.BankStatementController">
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" styleClass="bankstatement_container" stylesheets="@../../Styles/BankStatement.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.BankStatementController">
    <ScrollPane fitToWidth="true" fitToHeight="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <VBox spacing="20.0" style="-fx-padding: 30;">
-         <Label style="-fx-font-size: 28; -fx-font-weight: bold;" text="Bank Statement" />
-         <Label style="-fx-font-size: 14; -fx-text-fill: #666;" text="Generate a detailed bank statement for your account transactions" />
+      <VBox styleClass="bankstatement_form_container" spacing="25.0">
+         <Label styleClass="bankstatement_title" text="Bank Statement" />
+         <Label styleClass="bankstatement_subtitle" text="Generate a detailed bank statement for your account transactions" />
          
-         <Separator />
+         <Separator styleClass="bankstatement_separator" />
          
          <VBox spacing="15.0">
-            <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Account Selection" />
-            <ComboBox fx:id="account_combo" prefHeight="40.0" prefWidth="1140.0" promptText="Select Account (or leave for all accounts)" />
+            <Label styleClass="bankstatement_section_header" text="Account Selection" />
+            <ComboBox fx:id="account_combo" styleClass="input-standard" prefHeight="45.0" prefWidth="1140.0" promptText="Select Account (or leave for all accounts)" />
          </VBox>
          
          <HBox spacing="20.0" alignment="CENTER_LEFT">
-            <Label text="Start Date:" style="-fx-font-size: 14;" />
-            <DatePicker fx:id="startDate_picker" prefHeight="35.0" prefWidth="250.0" />
-            <Label text="End Date:" style="-fx-font-size: 14;" />
-            <DatePicker fx:id="endDate_picker" prefHeight="35.0" prefWidth="250.0" />
+            <Label text="Start Date:" />
+            <DatePicker fx:id="startDate_picker" styleClass="input-standard" prefHeight="45.0" prefWidth="250.0" />
+            <Label text="End Date:" />
+            <DatePicker fx:id="endDate_picker" styleClass="input-standard" prefHeight="45.0" prefWidth="250.0" />
          </HBox>
          
          <HBox spacing="15.0">
-            <Button fx:id="generate_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" 
-                    style="-fx-background-color: #2c3e50; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" 
-                    text="Generate Statement" />
-            <Label fx:id="error_lbl" style="-fx-font-size: 12;" />
+            <Button fx:id="generate_btn" mnemonicParsing="false" styleClass="bankstatement_btn_primary" text="Generate Statement" />
+            <Label fx:id="error_lbl" styleClass="bankstatement_error_lbl" visible="false" managed="false" />
          </HBox>
          
-         <Separator />
+         <Separator styleClass="bankstatement_separator" />
          
-         <VBox spacing="10.0">
-            <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Statement" />
-            <TextArea fx:id="statement_area" prefHeight="500.0" prefWidth="1140.0" 
-                     style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 11;" 
-                     wrapText="true" />
+         <VBox spacing="15.0">
+            <Label styleClass="bankstatement_section_header" text="Statement" />
+            <TextArea fx:id="statement_area" prefHeight="500.0" prefWidth="1140.0" wrapText="true" />
          </VBox>
       </VBox>
    </ScrollPane>

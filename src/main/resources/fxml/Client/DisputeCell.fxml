@@ -4,15 +4,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="120.0" prefWidth="850.0" style="-fx-border-color: #ccc; -fx-border-width: 1; -fx-padding: 10;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-    <VBox spacing="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-        <Label fx:id="dispute_id_lbl" style="-fx-font-size: 12; -fx-font-weight: bold;" text="ID: 12345678" />
-        <Label fx:id="user_id_lbl" style="-fx-font-size: 12; -fx-text-fill: #555;" text="User: username" />
-        <Label fx:id="transaction_id_lbl" style="-fx-font-size: 14;" text="Transaction: TXN123" />
-        <Label fx:id="reason_lbl" style="-fx-font-size: 13; -fx-font-weight: bold;" text="Reason: ..." wrapText="true" />
-        <Label fx:id="status_lbl" style="-fx-font-size: 13; -fx-font-weight: bold;" text="Status: PENDING" />
-        <Label fx:id="date_lbl" style="-fx-font-size: 12; -fx-text-fill: #666;" text="Date: 2024-01-01" />
-        <Label fx:id="resolution_lbl" style="-fx-font-size: 12; -fx-text-fill: #0066cc;" text="Resolution: ..." wrapText="true" />
+<AnchorPane prefHeight="120.0" prefWidth="850.0" styleClass="dispute_cell_container"
+            stylesheets="@../../Styles/DisputeCell.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox spacing="8.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+        <Label fx:id="dispute_id_lbl" styleClass="dispute_id" text="ID: 12345678" />
+        <Label fx:id="user_id_lbl" styleClass="dispute_user" text="User: username" />
+        <Label fx:id="transaction_id_lbl" styleClass="dispute_transaction" text="Transaction: TXN123" />
+        <Label fx:id="reason_lbl" styleClass="dispute_reason" text="Reason: ..." wrapText="true" />
+        <Label fx:id="status_lbl" styleClass="dispute_status" text="Status: PENDING" />
+        <Label fx:id="date_lbl" styleClass="dispute_date" text="Date: 2024-01-01" />
+        <Label fx:id="resolution_lbl" styleClass="dispute_resolution" text="Resolution: ..." wrapText="true" />
     </VBox>
 </AnchorPane>
-

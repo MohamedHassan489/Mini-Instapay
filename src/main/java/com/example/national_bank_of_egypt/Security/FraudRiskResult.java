@@ -21,14 +21,22 @@ public class FraudRiskResult {
         }
         
         public static RiskLevel fromScore(int score) {
-            if (score <= 30) return LOW;
-            if (score <= 50) return MEDIUM;
-            if (score <= 70) return HIGH;
+            if (score <= LOW.maxScore) return LOW;
+            if (score <= MEDIUM.maxScore) return MEDIUM;
+            if (score <= HIGH.maxScore) return HIGH;
             return CRITICAL;
         }
         
         public String getDescription() {
             return description;
+        }
+        
+        public int getMinScore() {
+            return minScore;
+        }
+        
+        public int getMaxScore() {
+            return maxScore;
         }
     }
     

@@ -3,6 +3,7 @@ package com.example.national_bank_of_egypt.Controllers.Client;
 import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Notifications.Notification;
 import com.example.national_bank_of_egypt.Notifications.NotificationService;
+import com.example.national_bank_of_egypt.Utils.AnimationUtils;
 import com.example.national_bank_of_egypt.Views.NotificationCellFactory;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -38,10 +39,25 @@ public class NotificationsController implements Initializable {
             // Delay refresh to ensure user is loaded
             javafx.application.Platform.runLater(() -> {
                 refreshNotifications();
+                animatePageLoad();
             });
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error initializing NotificationsController: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Animate page load with fade-in and slide-up
+     */
+    private void animatePageLoad() {
+        if (notifications_list != null && notifications_list.getScene() != null) {
+            javafx.scene.Parent root = notifications_list.getScene().getRoot();
+            if (root != null) {
+                root.setOpacity(0);
+                root.setTranslateY(20);
+                AnimationUtils.fadeInSlideUp(root, 20, AnimationUtils.ENTRANCE_DURATION).play();
+            }
         }
     }
 

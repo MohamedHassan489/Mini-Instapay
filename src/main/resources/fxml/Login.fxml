@@ -6,26 +6,97 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="640.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.LoginController">
-    <VBox layoutY="7.0" prefHeight="640.0" prefWidth="80.0" styleClass="login_logo_container" stylesheets="@../Styles/login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <Label text="🏦" style="-fx-font-size: 20;" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 10;" text="Pay" />
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" styleClass="login_container" stylesheets="@../Styles/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.LoginController">
+    <!-- Left Sidebar with Branding -->
+    <VBox styleClass="login_logo_container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" prefWidth="500.0">
+        <VBox alignment="CENTER" spacing="30.0" VBox.vgrow="ALWAYS" styleClass="branding_content">
+            <!-- Logo Section -->
+            <VBox alignment="CENTER" spacing="25.0" styleClass="logo_section">
+                <VBox alignment="CENTER" spacing="0.0" styleClass="logo_icon_container">
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo_icon" text="🏦" />
+                </VBox>
+                <VBox alignment="CENTER" spacing="10.0" styleClass="logo_text_container">
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo_title" text="Mini-InstaPay" />
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo_subtitle" text="Secure Banking Made Simple" />
+                </VBox>
+            </VBox>
+            
+            <!-- Features Section -->
+            <VBox alignment="CENTER" spacing="18.0" styleClass="features_container">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ Secure Transactions" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ Instant Payments" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ 24/7 Banking" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ Real-time Notifications" />
+            </VBox>
+            
+            <!-- Trust Indicators -->
+            <VBox alignment="CENTER" spacing="12.0" styleClass="trust_section">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="trust_title" text="Trusted by Thousands" />
+                <VBox alignment="CENTER" spacing="8.0" styleClass="stats_container">
+                    <HBox alignment="CENTER" spacing="20.0">
+                        <VBox alignment="CENTER" spacing="5.0">
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="stat_number" text="10K+" />
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="stat_label" text="Active Users" />
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="5.0">
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="stat_number" text="99.9%" />
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="stat_label" text="Uptime" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+            
+            <!-- Decorative Elements -->
+            <VBox alignment="CENTER" spacing="5.0" styleClass="decorative_section">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="decorative_text" text="🔒 Bank-Level Security" />
+            </VBox>
+        </VBox>
     </VBox>
-    <VBox layoutX="90.0" layoutY="21.0" prefHeight="600.0" prefWidth="260.0" styleClass="login_form_container" stylesheets="@../Styles/login.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0" spacing="6.0">
-        <Label id="choice-prompt-text" style="-fx-font-size: 9;" text="Type" />
-        <ChoiceBox fx:id="acc_selector" prefWidth="260.0" prefHeight="24.0" styleClass="account_selector" />
-        <Label fx:id="username_lbl" style="-fx-font-size: 9;" text="Username" />
-        <TextField fx:id="Username_fld" prefHeight="24.0" prefWidth="260.0" styleClass="input_field" />
-        <Label style="-fx-font-size: 9;" text="Password" />
-        <PasswordField fx:id="password_fld" prefHeight="24.0" prefWidth="260.0" styleClass="input_field" />
-        <Button fx:id="login_btn" mnemonicParsing="false" prefHeight="28.0" prefWidth="260.0" styleClass="lo" style="-fx-font-size: 10;" text="Login">
-         <graphic>
-            <Label text="➜" style="-fx-text-fill: white; -fx-font-size: 14;" />
-         </graphic></Button>
-        <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="28.0" prefWidth="260.0" styleClass="register_btn" style="-fx-font-size: 10;" text="Sign Up" />
-        <Label fx:id="error_lbl" styleClass="error_lbl" style="-fx-font-size: 9;" stylesheets="@../Styles/login.css" text="" wrapText="true" />
+    
+    <!-- Right Side - Login Form -->
+    <VBox fx:id="login_form_container" alignment="CENTER" spacing="25.0" styleClass="login_form_container" stylesheets="@../Styles/login.css" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="500.0">
+        <!-- Welcome Section -->
+        <VBox alignment="CENTER" spacing="8.0" styleClass="welcome_section">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="welcome_title" text="Welcome Back" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="welcome_subtitle" text="Sign in to your account" />
+        </VBox>
+        
+        <!-- Form Fields -->
+        <VBox alignment="CENTER" styleClass="form_fields_container" prefWidth="400.0">
+            <!-- Account Type -->
+            <VBox spacing="8.0" prefWidth="400.0">
+                <Label id="choice-prompt-text" text="Account Type" />
+                <ChoiceBox fx:id="acc_selector" prefWidth="400.0" prefHeight="45.0" styleClass="account_selector" />
+            </VBox>
+            
+            <!-- Username -->
+            <VBox spacing="8.0" prefWidth="400.0">
+                <Label fx:id="username_lbl" text="Username" />
+                <TextField fx:id="Username_fld" prefHeight="45.0" prefWidth="400.0" styleClass="input_field" promptText="Enter your username" />
+            </VBox>
+            
+            <!-- Password -->
+            <VBox spacing="8.0" prefWidth="400.0">
+                <Label text="Password" />
+                <PasswordField fx:id="password_fld" prefHeight="45.0" prefWidth="400.0" styleClass="input_field" promptText="Enter your password" />
+            </VBox>
+            
+            <!-- Error Message -->
+            <Label fx:id="error_lbl" styleClass="error_lbl" text="" wrapText="true" prefWidth="400.0" visible="false" managed="false" />
+            
+            <!-- Login Button -->
+            <Button fx:id="login_btn" mnemonicParsing="false" prefHeight="50.0" prefWidth="400.0" styleClass="login_btn_primary" text="➜ Sign In" />
+            
+            <!-- Sign Up Button -->
+            <HBox alignment="CENTER" spacing="5.0">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="signup_prompt" text="Don't have an account?" />
+                <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" styleClass="register_btn" text="Sign Up" />
+            </HBox>
+        </VBox>
     </VBox>
 </AnchorPane>

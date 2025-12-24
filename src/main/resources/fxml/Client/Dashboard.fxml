@@ -1,13 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.String?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="960.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.DashboardController">
-   <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-      <Label fx:id="userName" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Welcome!" />
-      <Label fx:id="fullName_label" style="-fx-font-size: 24; -fx-text-fill: #34495e;" text="User" />
-      <Label fx:id="login_date" style="-fx-font-size: 16; -fx-text-fill: #7f8c8d;" text="Today" />
-   </VBox>
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="960.0" styleClass="dashboard" stylesheets="@../../Styles/Dashboard.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.DashboardController">
+   <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox styleClass="dashboard_container" spacing="30.0">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+         
+         <!-- Top Section: Hero & Account Card -->
+         <HBox spacing="30.0" alignment="CENTER_LEFT" prefHeight="280.0">
+             <!-- Welcome Hero Banner -->
+             <VBox styleClass="hero_banner" HBox.hgrow="ALWAYS" spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="Welcome back," styleClass="hero_subtitle" />
+                <Label fx:id="userName" styleClass="hero_title" text="User!" wrapText="true" />
+                <Label fx:id="login_date" styleClass="hero_date" text="Today" />
+             </VBox>
+             
+             <!-- Account Selector & Digital Credit Card -->
+             <VBox spacing="15.0" prefWidth="380.0" prefHeight="280.0" minWidth="380.0" maxWidth="380.0">
+                 <!-- Account Selector -->
+                 <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <Label text="Select Account:" styleClass="form-label" />
+                     <ComboBox fx:id="account_selector" prefWidth="240.0" styleClass="input-standard" promptText="Choose account..." />
+                 </HBox>
+                 
+                 <!-- Digital Credit Card -->
+                 <AnchorPane styleClass="credit_card" prefWidth="380.0" prefHeight="220.0" minWidth="380.0" maxWidth="380.0">
+                    <!-- Card Background Elements -->
+                    <Pane styleClass="card_overlay" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    
+                    <!-- Bank Info -->
+                    <Label fx:id="bank_name_label" styleClass="card_bank_name" text="Bank Name" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" />
+                    <Label fx:id="account_type_label" styleClass="card_type" text="Checking" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0" />
+                    
+                    <!-- Chip Icon -->
+                    <Pane styleClass="card_chip" prefWidth="50.0" prefHeight="35.0" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="50.0" />
+                    
+                    <!-- Account Number (Centered vertically relative to card height ~220px) -->
+                    <Label fx:id="checking_acc_num" styleClass="card_number" text="**** **** **** 0000" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="90.0" />
+                    
+                    <!-- Balance & Holder -->
+                    <VBox spacing="2.0" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="25.0" alignment="BOTTOM_RIGHT">
+                        <Label text="Available Balance" styleClass="card_label_small" />
+                        <Label fx:id="checking_bal" styleClass="card_balance" text="\$0.00" />
+                    </VBox>
+                    
+                    <Label fx:id="fullName_label" styleClass="card_holder_name" text="Mazen Saeed" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" />
+                 </AnchorPane>
+             </VBox>
+          </HBox>
+         
+         <!-- Quick Actions & Stats -->
+         <HBox spacing="30.0">
+            <!-- Left Column: Quick Send & Stats -->
+            <VBox spacing="25.0" HBox.hgrow="ALWAYS">
+                 <!-- Summary Cards -->
+                 <HBox styleClass="summary_section" spacing="20.0">
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                       <styleClass>
+                           <String fx:value="stat_card" />
+                           <String fx:value="income_card" />
+                       </styleClass>
+                       <Label styleClass="stat_label" text="Total Income" />
+                       <Label fx:id="income_bal" text="+\$0.00">
+                          <styleClass>
+                              <String fx:value="stat_value" />
+                              <String fx:value="value_income" />
+                          </styleClass>
+                       </Label>
+                    </VBox>
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                       <styleClass>
+                           <String fx:value="stat_card" />
+                           <String fx:value="expense_card" />
+                       </styleClass>
+                       <Label styleClass="stat_label" text="Total Expenses" />
+                       <Label fx:id="expenses_bal" text="-\$0.00">
+                          <styleClass>
+                              <String fx:value="stat_value" />
+                              <String fx:value="value_expense" />
+                          </styleClass>
+                       </Label>
+                    </VBox>
+                 </HBox>
+                 
+                 <!-- Quick Send Money -->
+                 <VBox styleClass="content_card" spacing="15.0" VBox.vgrow="ALWAYS">
+                    <Label styleClass="card_title" text="Quick Transfer" />
+                    <VBox spacing="15.0">
+                       <HBox spacing="15.0">
+                          <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                             <Label styleClass="field_label" text="Recipient" />
+                             <TextField fx:id="username_fld" styleClass="input_field" promptText="\@username" />
+                          </VBox>
+                          <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                             <Label styleClass="field_label" text="Amount" />
+                             <TextField fx:id="amount_fld" styleClass="input_field" promptText="0.00" />
+                          </VBox>
+                       </HBox>
+                       <VBox spacing="5.0">
+                           <Label styleClass="field_label" text="Message" />
+                           <TextArea fx:id="message_fld" styleClass="input_area" prefHeight="60.0" promptText="What is this for?" wrapText="true" />
+                       </VBox>
+                       <Button fx:id="send_btn" styleClass="action_btn" mnemonicParsing="false" text="Send Money Now" />
+                    </VBox>
+                 </VBox>
+            </VBox>
+            
+            <!-- Right Column: Recent Transactions -->
+            <VBox styleClass="content_card" spacing="15.0" prefWidth="400.0" minWidth="400.0">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label styleClass="card_title" text="Recent Activity" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button styleClass="text_btn" text="View All" />
+                </HBox>
+                <ListView fx:id="Transaction_list" styleClass="modern_list_view" VBox.vgrow="ALWAYS" />
+            </VBox>
+         </HBox>
+      </VBox>
+   </ScrollPane>
 </AnchorPane>

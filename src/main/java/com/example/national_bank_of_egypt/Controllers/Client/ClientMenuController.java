@@ -1,9 +1,13 @@
 package com.example.national_bank_of_egypt.Controllers.Client;
 
 import com.example.national_bank_of_egypt.Models.Model;
+import com.example.national_bank_of_egypt.Utils.AnimationUtils;
 import com.example.national_bank_of_egypt.Views.clientmenuoption;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -18,10 +22,75 @@ public class ClientMenuController implements Initializable {
     public Button disputes_btn;
     public Button notifications_btn;
     public Button logout_btn;
+    
+    @FXML
+    private VBox menu_container;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addlisteners();
+        
+        // Add animations on load
+        Platform.runLater(() -> {
+            animateMenuItems();
+            setupMenuButtonAnimations();
+        });
+    }
+    
+    /**
+     * Animate menu items with staggered fade-in
+     */
+    private void animateMenuItems() {
+        if (menu_container != null) {
+            Button[] menuButtons = {
+                dashboard_btn, transaction_btn, accounts_btn, send_money_btn,
+                disputes_btn, notifications_btn, profile_btn, logout_btn
+            };
+            
+            // Staggered fade-in animation
+            for (int i = 0; i < menuButtons.length; i++) {
+                if (menuButtons[i] != null) {
+                    menuButtons[i].setOpacity(0);
+                    menuButtons[i].setTranslateX(-10);
+                    
+                    javafx.animation.FadeTransition fade = AnimationUtils.fadeIn(
+                        menuButtons[i], 
+                        AnimationUtils.STANDARD_DURATION
+                    );
+                    javafx.animation.TranslateTransition slide = AnimationUtils.slideInFromLeft(
+                        menuButtons[i], 
+                        10, 
+                        AnimationUtils.STANDARD_DURATION
+                    );
+                    
+                    fade.setDelay(javafx.util.Duration.millis(i * 50));
+                    slide.setDelay(javafx.util.Duration.millis(i * 50));
+                    
+                    fade.play();
+                    slide.play();
+                }
+            }
+        }
+    }
+    
+    /**
+     * Setup hover animations for menu buttons
+     */
+    private void setupMenuButtonAnimations() {
+        Button[] menuButtons = {
+            dashboard_btn, transaction_btn, accounts_btn, send_money_btn,
+            disputes_btn, notifications_btn, profile_btn, logout_btn
+        };
+        
+        for (Button btn : menuButtons) {
+            if (btn != null) {
+                btn.hoverProperty().addListener((obs, wasHovered, isHovered) -> {
+                    if (isHovered) {
+                        AnimationUtils.scaleHover(btn, 1.05, AnimationUtils.QUICK_DURATION).play();
+                    }
+                });
+            }
+        }
     }
 
     private void addlisteners(){

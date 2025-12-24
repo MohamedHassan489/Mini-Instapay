@@ -1,0 +1,76 @@
+/* ============================================
+   Dispute Cell Styles
+   ============================================ */
+
+/* Import global animations and common styles */
+@import url("animations.css");
+@import url("common.css");
+
+.dispute_cell_container {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 6, 0, 0, 2);
+    -fx-transition: all 0.3s ease-out;
+}
+
+.dispute_cell_container:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.12), 10, 0, 0, 3);
+    -fx-border-color: #132A13;
+}
+
+.dispute_id {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.dispute_transaction {
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #34495e;
+}
+
+.dispute_user {
+    -fx-font-size: 0.95em;
+    -fx-text-fill: #555;
+}
+
+.dispute_reason {
+    -fx-font-size: 1em;
+    -fx-text-fill: #7f8c8d;
+    -fx-wrap-text: true;
+}
+
+.dispute_status {
+    -fx-font-size: 1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #132A13;
+}
+
+.dispute_status.pending {
+    -fx-text-fill: #f39c12;
+}
+
+.dispute_status.resolved {
+    -fx-text-fill: #27ae60;
+}
+
+.dispute_status.rejected {
+    -fx-text-fill: #e74c3c;
+}
+
+.dispute_date {
+    -fx-font-size: 0.9em;
+    -fx-text-fill: #95a5a6;
+}
+
+.dispute_resolution {
+    -fx-font-size: 0.95em;
+    -fx-text-fill: #3498db;
+    -fx-wrap-text: true;
+}
+

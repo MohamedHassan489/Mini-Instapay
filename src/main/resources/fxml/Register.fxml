@@ -3,35 +3,100 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="640.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.RegistrationController">
-    <VBox spacing="6.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="15.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 13; -fx-font-weight: bold;" text="Sign Up" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="First Name *" />
-        <TextField fx:id="firstName_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Last Name *" />
-        <TextField fx:id="lastName_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Email *" />
-        <TextField fx:id="email_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Phone *" />
-        <TextField fx:id="phoneNumber_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Address" />
-        <TextField fx:id="address_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Username *" />
-        <TextField fx:id="userName_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Password *" />
-        <PasswordField fx:id="password_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 9;" text="Confirm *" />
-        <PasswordField fx:id="confirmPassword_fld" prefHeight="22.0" prefWidth="340.0" />
-        <Label fx:id="error_lbl" style="-fx-text-fill: red; -fx-font-size: 9;" text="" wrapText="true" />
-        <VBox spacing="6.0">
-            <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="26.0" prefWidth="340.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 10;" text="Register" />
-            <Button fx:id="cancel_btn" mnemonicParsing="false" prefHeight="26.0" prefWidth="340.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-size: 10;" text="Cancel" />
+<AnchorPane prefHeight="700.0" prefWidth="900.0" styleClass="register_container" stylesheets="@../Styles/register.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.RegistrationController">
+    <!-- Left Sidebar with Branding -->
+    <VBox styleClass="register_logo_container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" prefWidth="350.0">
+        <VBox alignment="CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
+            <VBox alignment="CENTER" spacing="15.0">
+                <Label text="🏦" styleClass="logo_icon" />
+                <VBox alignment="CENTER" spacing="5.0">
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo_title" text="Mini-InstaPay" />
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="logo_subtitle" text="Create Your Account" />
+                </VBox>
+            </VBox>
+            <VBox alignment="CENTER" spacing="10.0" styleClass="features_container">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ Quick Registration" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ Secure &amp; Protected" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="feature_text" text="✓ Start Banking Today" />
+            </VBox>
         </VBox>
     </VBox>
+    
+    <!-- Right Side - Registration Form with ScrollPane -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="register_scroll_pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="350.0">
+        <VBox fx:id="register_form_container" alignment="CENTER" spacing="20.0" styleClass="register_form_container" prefWidth="550.0">
+            <!-- Welcome Section -->
+            <VBox alignment="CENTER" spacing="8.0" styleClass="welcome_section">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="welcome_title" text="Create Account" />
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="welcome_subtitle" text="Fill in your details to get started" />
+            </VBox>
+            
+            <!-- Form Fields -->
+            <VBox alignment="CENTER" spacing="18.0" styleClass="form_fields_container" prefWidth="450.0">
+                <!-- First Name -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="First Name *" />
+                    <TextField fx:id="firstName_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Enter your first name" />
+                </VBox>
+                
+                <!-- Last Name -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Last Name *" />
+                    <TextField fx:id="lastName_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Enter your last name" />
+                </VBox>
+                
+                <!-- Email -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Email *" />
+                    <TextField fx:id="email_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Enter your email address" />
+                </VBox>
+                
+                <!-- Phone -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Phone *" />
+                    <TextField fx:id="phoneNumber_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Enter your phone number" />
+                </VBox>
+                
+                <!-- Address -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Address" />
+                    <TextField fx:id="address_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Enter your address (optional)" />
+                </VBox>
+                
+                <!-- Username -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Username *" />
+                    <TextField fx:id="userName_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Choose a username" />
+                </VBox>
+                
+                <!-- Password -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Password *" />
+                    <PasswordField fx:id="password_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Create a password" />
+                </VBox>
+                
+                <!-- Confirm Password -->
+                <VBox spacing="8.0" prefWidth="450.0">
+                    <Label text="Confirm Password *" />
+                    <PasswordField fx:id="confirmPassword_fld" prefHeight="45.0" prefWidth="450.0" styleClass="input_field" promptText="Confirm your password" />
+                </VBox>
+                
+                <!-- Error Message -->
+                <Label fx:id="error_lbl" styleClass="error_lbl" text="" wrapText="true" prefWidth="450.0" visible="false" managed="false" />
+                
+                <!-- Buttons -->
+                <VBox spacing="12.0" prefWidth="450.0">
+                    <Button fx:id="register_btn" mnemonicParsing="false" prefHeight="50.0" prefWidth="450.0" styleClass="register_btn_primary" text="Create Account" />
+                    <Button fx:id="cancel_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="450.0" styleClass="cancel_btn" text="Cancel" />
+                </VBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
 </AnchorPane>
-

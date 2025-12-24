@@ -4,45 +4,56 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.ReportsController">
-    <ScrollPane fitToWidth="true" fitToHeight="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <VBox spacing="20.0" style="-fx-padding: 30;">
-            <Label style="-fx-font-size: 28; -fx-font-weight: bold;" text="Reports &amp; Analytics" />
-            <Label style="-fx-font-size: 14; -fx-text-fill: #666;" text="Generate comprehensive reports on transactions and user activity" />
+<AnchorPane prefHeight="900.0" prefWidth="1200.0" styleClass="content_area" stylesheets="@../../Styles/Admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.ReportsController">
+    <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <VBox spacing="20.0" style="-fx-padding: 0 0 50 0;">
             
-            <Separator />
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="section_title" text="Reports &amp; Analytics" />
+               <Region HBox.hgrow="ALWAYS" />
+            </HBox>
             
-            <VBox spacing="15.0">
-                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Select Report Type" />
-                <ComboBox fx:id="reportType_combo" prefHeight="40.0" prefWidth="1140.0" />
+            <!-- Controls Section -->
+            <VBox styleClass="card" spacing="20.0">
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <Label text="Report Configuration" styleClass="table_header" />
+                </HBox>
+                
+                <GridPane hgap="20.0" vgap="15.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="33" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="33" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="33" />
+                    </columnConstraints>
+                    
+                    <VBox spacing="5.0" GridPane.columnIndex="0">
+                        <Label text="Report Type" style="-fx-font-weight: bold;" />
+                        <ComboBox fx:id="reportType_combo" maxWidth="Infinity" styleClass="filter_combo" />
+                    </VBox>
+                    
+                    <VBox spacing="5.0" GridPane.columnIndex="1">
+                        <Label fx:id="monthLabel" text="Month" style="-fx-font-weight: bold;" />
+                        <DatePicker fx:id="monthDatePicker" maxWidth="Infinity" />
+                    </VBox>
+                    
+                    <VBox spacing="5.0" GridPane.columnIndex="2">
+                        <Label fx:id="yearLabel" text="Year" style="-fx-font-weight: bold;" />
+                        <DatePicker fx:id="yearDatePicker" maxWidth="Infinity" />
+                    </VBox>
+                </GridPane>
+                
+                <HBox spacing="15.0" alignment="CENTER_RIGHT">
+                    <Button fx:id="detailedReport_btn" mnemonicParsing="false" styleClass="secondary_btn" text="Detailed Report" />
+                    <Button fx:id="generateReport_btn" mnemonicParsing="false" styleClass="action_btn" text="Generate Summary Report" />
+                </HBox>
             </VBox>
             
-            <HBox spacing="20.0" alignment="CENTER_LEFT">
-                <Label fx:id="monthLabel" text="Select Month:" style="-fx-font-size: 14;" />
-                <DatePicker fx:id="monthDatePicker" prefHeight="35.0" prefWidth="250.0" />
-            </HBox>
-            
-            <HBox spacing="20.0" alignment="CENTER_LEFT">
-                <Label fx:id="yearLabel" text="Select Year:" style="-fx-font-size: 14;" />
-                <DatePicker fx:id="yearDatePicker" prefHeight="35.0" prefWidth="250.0" />
-            </HBox>
-            
-            <HBox spacing="15.0">
-                <Button fx:id="generateReport_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" 
-                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" 
-                        text="Generate Report" />
-                <Button fx:id="detailedReport_btn" mnemonicParsing="false" prefHeight="45.0" prefWidth="200.0" 
-                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;" 
-                        text="Generate Detailed Report" />
-            </HBox>
-            
-            <Separator />
-            
-            <VBox spacing="10.0">
-                <Label style="-fx-font-size: 16; -fx-font-weight: bold;" text="Report Output" />
-                <TextArea fx:id="reportContent_area" prefHeight="500.0" prefWidth="1140.0" 
+            <!-- Output Section -->
+            <VBox styleClass="card" spacing="10.0" VBox.vgrow="ALWAYS">
+                <Label text="Report Output" styleClass="table_header" />
+                <TextArea fx:id="reportContent_area" prefHeight="500.0" 
                          editable="false" wrapText="true" 
-                         style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 12;" />
+                         style="-fx-font-family: 'Courier New', monospace; -fx-font-size: 13; -fx-control-inner-background: #f8f9fa; -fx-background-radius: 5;" />
             </VBox>
         </VBox>
     </ScrollPane>

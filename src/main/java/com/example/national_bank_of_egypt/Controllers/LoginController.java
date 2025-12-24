@@ -1,10 +1,14 @@
 package com.example.national_bank_of_egypt.Controllers;
 
 import com.example.national_bank_of_egypt.Models.Model;
+import com.example.national_bank_of_egypt.Utils.AnimationUtils;
 import com.example.national_bank_of_egypt.Views.AccountType;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -18,6 +22,9 @@ public class LoginController implements Initializable {
     public Button login_btn;
     public Button register_btn;
     public Label error_lbl;
+    
+    @FXML
+    private VBox login_form_container;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -28,21 +35,98 @@ public class LoginController implements Initializable {
         if (register_btn != null) {
             register_btn.setOnAction(actionEvent -> onRegister());
         }
+        
+        // Clear error when user starts typing
+        if (Username_fld != null) {
+            Username_fld.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (error_lbl != null && error_lbl.isVisible() && !newVal.isEmpty()) {
+                    hideError();
+                }
+            });
+        }
+        
+        if (password_fld != null) {
+            password_fld.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (error_lbl != null && error_lbl.isVisible() && !newVal.isEmpty()) {
+                    hideError();
+                }
+            });
+        }
+        
+        // Add animations on load
+        Platform.runLater(() -> {
+            animateLoginForm();
+            setupInputAnimations();
+        });
+    }
+    
+    /**
+     * Animate the login form entrance
+     */
+    private void animateLoginForm() {
+        if (login_form_container != null) {
+            // Start with form invisible and slightly to the right
+            login_form_container.setOpacity(0);
+            login_form_container.setTranslateX(30);
+            
+            // Fade in and slide in from right (parallel animation)
+            javafx.animation.ParallelTransition parallel = new javafx.animation.ParallelTransition();
+            parallel.getChildren().addAll(
+                AnimationUtils.slideInFromRight(login_form_container, 30, AnimationUtils.ENTRANCE_DURATION),
+                AnimationUtils.fadeIn(login_form_container, AnimationUtils.ENTRANCE_DURATION)
+            );
+            parallel.play();
+        }
+    }
+    
+    /**
+     * Setup input field focus animations
+     */
+    private void setupInputAnimations() {
+        // Add focus listeners for smooth transitions
+        if (Username_fld != null) {
+            Username_fld.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    // Focus gained - scale up slightly
+                    AnimationUtils.scaleHover(Username_fld, 1.02, AnimationUtils.STANDARD_DURATION).play();
+                }
+            });
+        }
+        
+        if (password_fld != null) {
+            password_fld.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    // Focus gained - scale up slightly
+                    AnimationUtils.scaleHover(password_fld, 1.02, AnimationUtils.STANDARD_DURATION).play();
+                }
+            });
+        }
     }
 
     private void onLogin(){
         try {
+            // Hide any previous errors
+            hideError();
+            
             // Validate input
             String username = Username_fld.getText();
             String password = password_fld.getText();
             
             if (username == null || username.trim().isEmpty()) {
-                error_lbl.setText("Please enter username.");
+                showError("Please enter username.");
+                // Shake animation for empty field
+                if (Username_fld != null) {
+                    AnimationUtils.shake(Username_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+                }
                 return;
             }
             
             if (password == null || password.trim().isEmpty()) {
-                error_lbl.setText("Please enter password.");
+                showError("Please enter password.");
+                // Shake animation for empty field
+                if (password_fld != null) {
+                    AnimationUtils.shake(password_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+                }
                 return;
             }
             
@@ -51,35 +135,45 @@ public class LoginController implements Initializable {
             if(Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT){
                 Model.getInstance().evaluateUserCred(username.trim(), password);
                 
-                // Check if account is suspended
-                if (Model.getInstance().getCurrentUser() != null && 
-                    "suspended".equalsIgnoreCase(Model.getInstance().getCurrentUser().twoFactorEnabledProperty().get())) {
-                    error_lbl.setText("Your account has been suspended. Please contact support.");
+                // Check if login was successful by checking if currentUser is set
+                if (Model.getInstance().getCurrentUser() == null) {
+                    // Login failed - no user found
                     Username_fld.setText("");
                     password_fld.setText("");
+                    showError("Invalid credentials. Please check your username and password.");
+                    return;
+                }
+                
+                // Check if account is suspended
+                if ("suspended".equalsIgnoreCase(Model.getInstance().getCurrentUser().twoFactorEnabledProperty().get())) {
+                    showError("Your account has been suspended. Please contact support.");
+                    Username_fld.setText("");
+                    password_fld.setText("");
+                    Model.getInstance().setCurrentUser(null);
                     return;
                 }
                 
                 // Check if 2FA is enabled and OTP verification is needed
-                if (Model.getInstance().getCurrentUser() != null && 
-                    "true".equalsIgnoreCase(Model.getInstance().getCurrentUser().twoFactorEnabledProperty().get())) {
+                String twoFactorStatus = Model.getInstance().getCurrentUser().twoFactorEnabledProperty().get();
+                if (twoFactorStatus != null && "true".equalsIgnoreCase(twoFactorStatus)) {
                     // Show OTP verification dialog
                     if (verifyOTP(username.trim())) {
                         Model.getInstance().setUserLoginSuccessFlag(true);
                         Model.getInstance().getViewFactory().showClinetWindow();
                         Model.getInstance().getViewFactory().closeStage(stage);
                     } else {
-                        error_lbl.setText("Invalid OTP. Please try again.");
+                        showError("Invalid OTP. Please try again.");
                         Model.getInstance().setCurrentUser(null);
                         Model.getInstance().setUserLoginSuccessFlag(false);
                     }
-                } else if (Model.getInstance().getUserLoginSuccessFlag() != null && Model.getInstance().getUserLoginSuccessFlag()) {
+                } else {
+                    // 2FA is not enabled - proceed with login
+                    // Double-check that login flag is set (should be set by evaluateUserCred)
+                    if (Model.getInstance().getUserLoginSuccessFlag() == null || !Model.getInstance().getUserLoginSuccessFlag()) {
+                        Model.getInstance().setUserLoginSuccessFlag(true);
+                    }
                     Model.getInstance().getViewFactory().showClinetWindow();
                     Model.getInstance().getViewFactory().closeStage(stage);
-                } else {
-                    Username_fld.setText("");
-                    password_fld.setText("");
-                    error_lbl.setText("Invalid credentials. Please check your username and password.");
                 }
             } else {
                 Model.getInstance().evaluateAdminCred(username.trim(), password);
@@ -89,12 +183,12 @@ public class LoginController implements Initializable {
                 } else {
                     Username_fld.setText("");
                     password_fld.setText("");
-                    error_lbl.setText("Invalid admin credentials. Please check your username and password.");
+                    showError("Invalid admin credentials. Please check your username and password.");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            error_lbl.setText("An error occurred during login. Please try again.");
+            showError("An error occurred during login. Please try again.");
         }
     }
     
@@ -105,7 +199,7 @@ public class LoginController implements Initializable {
         // Get user's email from current user
         com.example.national_bank_of_egypt.Models.User currentUser = Model.getInstance().getCurrentUser();
         if (currentUser == null) {
-            error_lbl.setText("Error: User information not available.");
+            showError("Error: User information not available.");
             return false;
         }
         
@@ -144,16 +238,64 @@ public class LoginController implements Initializable {
 
     private void setAcc_selector(){
         Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
+        // Hide error when switching account types
+        hideError();
+        // Clear input fields when switching
+        if (Username_fld != null) {
+            Username_fld.clear();
+        }
+        if (password_fld != null) {
+            password_fld.clear();
+        }
+        
         if (acc_selector.getValue() == AccountType.ADMIN){
-            username_lbl.setText("AdminName");
+            username_lbl.setText("Admin Name");
+            if (Username_fld != null) {
+                Username_fld.setPromptText("Enter your admin name");
+            }
             if (register_btn != null) {
-                register_btn.setVisible(false);
+                // Fade out register button
+                javafx.animation.FadeTransition fadeOut = AnimationUtils.fadeOut(register_btn, AnimationUtils.STANDARD_DURATION);
+                fadeOut.setOnFinished(e -> register_btn.setVisible(false));
+                fadeOut.play();
             }
         }else {
-            username_lbl.setText("UserName");
-            if (register_btn != null) {
-                register_btn.setVisible(true);
+            username_lbl.setText("Username");
+            if (Username_fld != null) {
+                Username_fld.setPromptText("Enter your username");
             }
+            if (register_btn != null) {
+                // Fade in register button
+                register_btn.setVisible(true);
+                register_btn.setOpacity(0);
+                AnimationUtils.fadeIn(register_btn, AnimationUtils.STANDARD_DURATION).play();
+            }
+        }
+    }
+    
+    /**
+     * Show error message with animation
+     */
+    private void showError(String message) {
+        if (error_lbl != null) {
+            error_lbl.setText(message);
+            error_lbl.setVisible(true);
+            error_lbl.setManaged(true);
+            // Slide down and fade in animation
+            error_lbl.setTranslateY(-10);
+            error_lbl.setOpacity(0);
+            AnimationUtils.fadeInSlideUp(error_lbl, 10, AnimationUtils.STANDARD_DURATION).play();
+        }
+    }
+    
+    /**
+     * Hide error message
+     */
+    private void hideError() {
+        if (error_lbl != null) {
+            error_lbl.setText("");
+            error_lbl.setVisible(false);
+            error_lbl.setManaged(false);
         }
     }
 }

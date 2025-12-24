@@ -1,8 +1,12 @@
 package com.example.national_bank_of_egypt.Controllers;
 
 import com.example.national_bank_of_egypt.Models.Model;
+import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -21,6 +25,9 @@ public class RegistrationController implements Initializable {
     public Button cancel_btn;
     public Label error_lbl;
 
+    @FXML
+    private VBox register_form_container;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (register_btn != null) {
@@ -28,6 +35,67 @@ public class RegistrationController implements Initializable {
         }
         if (cancel_btn != null) {
             cancel_btn.setOnAction(actionEvent -> onCancel());
+        }
+
+        // Add animations on load
+        Platform.runLater(() -> {
+            animateRegistrationForm();
+            setupInputAnimations();
+            hideError();
+        });
+    }
+
+    /**
+     * Animate the registration form entrance
+     */
+    private void animateRegistrationForm() {
+        if (register_form_container != null) {
+            // Start with form invisible and slightly to the right
+            register_form_container.setOpacity(0);
+            register_form_container.setTranslateX(30);
+
+            // Fade in and slide in from right (parallel animation)
+            javafx.animation.ParallelTransition parallel = new javafx.animation.ParallelTransition();
+            parallel.getChildren().addAll(
+                    AnimationUtils.slideInFromRight(register_form_container, 30, AnimationUtils.ENTRANCE_DURATION),
+                    AnimationUtils.fadeIn(register_form_container, AnimationUtils.ENTRANCE_DURATION));
+            parallel.play();
+        }
+    }
+
+    /**
+     * Setup input field focus animations
+     */
+    private void setupInputAnimations() {
+        // Add focus listeners for all text fields
+        TextField[] fields = { firstName_fld, lastName_fld, email_fld, phoneNumber_fld,
+                address_fld, userName_fld };
+
+        for (TextField field : fields) {
+            if (field != null) {
+                field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                    if (newVal) {
+                        AnimationUtils.scaleHover(field, 1.02, AnimationUtils.STANDARD_DURATION).play();
+                    }
+                });
+            }
+        }
+
+        // Password fields
+        if (password_fld != null) {
+            password_fld.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    AnimationUtils.scaleHover(password_fld, 1.02, AnimationUtils.STANDARD_DURATION).play();
+                }
+            });
+        }
+
+        if (confirmPassword_fld != null) {
+            confirmPassword_fld.focusedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    AnimationUtils.scaleHover(confirmPassword_fld, 1.02, AnimationUtils.STANDARD_DURATION).play();
+                }
+            });
         }
     }
 
@@ -42,42 +110,61 @@ public class RegistrationController implements Initializable {
         String confirmPassword = confirmPassword_fld.getText();
 
         // Clear previous error
-        error_lbl.setText("");
+        hideError();
 
         // Validate required fields
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || 
-            phoneNumber.isEmpty() || userName.isEmpty() || password.isEmpty()) {
-            error_lbl.setText("Please fill all required fields");
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
+                phoneNumber.isEmpty() || userName.isEmpty() || password.isEmpty()) {
+            showError("Please fill all required fields");
+            shakeEmptyFields(firstName, lastName, email, phoneNumber, userName, password);
             return;
         }
 
         // Validate email format
         if (!isValidEmail(email)) {
-            error_lbl.setText("Please enter a valid email address");
+            showError("Please enter a valid email address");
+            if (email_fld != null) {
+                AnimationUtils.shake(email_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+            }
             return;
         }
 
         // Validate phone number (should be numeric and reasonable length)
         if (!phoneNumber.matches("\\d{10,15}")) {
-            error_lbl.setText("Phone number must be 10-15 digits");
+            showError("Phone number must be 10-15 digits");
+            if (phoneNumber_fld != null) {
+                AnimationUtils.shake(phoneNumber_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+            }
             return;
         }
 
         // Validate username (alphanumeric and underscore, 3-20 chars)
         if (!userName.matches("^[a-zA-Z0-9_]{3,20}$")) {
-            error_lbl.setText("Username must be 3-20 characters (letters, numbers, underscore only)");
+            showError("Username must be 3-20 characters (letters, numbers, underscore only)");
+            if (userName_fld != null) {
+                AnimationUtils.shake(userName_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+            }
             return;
         }
 
         // Validate password match
         if (!password.equals(confirmPassword)) {
-            error_lbl.setText("Passwords do not match");
+            showError("Passwords do not match");
+            if (password_fld != null) {
+                AnimationUtils.shake(password_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+            }
+            if (confirmPassword_fld != null) {
+                AnimationUtils.shake(confirmPassword_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+            }
             return;
         }
 
         // Validate password strength
         if (password.length() < 6) {
-            error_lbl.setText("Password must be at least 6 characters");
+            showError("Password must be at least 6 characters");
+            if (password_fld != null) {
+                AnimationUtils.shake(password_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+            }
             return;
         }
 
@@ -88,13 +175,64 @@ public class RegistrationController implements Initializable {
             successAlert.setHeaderText("Account Created");
             successAlert.setContentText("Registration successful! You can now login with your credentials.");
             successAlert.showAndWait();
-            
+
             clearFields();
             Stage stage = (Stage) error_lbl.getScene().getWindow();
             Model.getInstance().getViewFactory().closeStage(stage);
             Model.getInstance().getViewFactory().showLoginWindow();
         } else {
-            error_lbl.setText("Registration failed: Username, email, or phone number already exists");
+            showError("Registration failed: Username, email, or phone number already exists");
+        }
+    }
+
+    /**
+     * Shake empty required fields
+     */
+    private void shakeEmptyFields(String firstName, String lastName, String email,
+            String phoneNumber, String userName, String password) {
+        if (firstName.isEmpty() && firstName_fld != null) {
+            AnimationUtils.shake(firstName_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+        }
+        if (lastName.isEmpty() && lastName_fld != null) {
+            AnimationUtils.shake(lastName_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+        }
+        if (email.isEmpty() && email_fld != null) {
+            AnimationUtils.shake(email_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+        }
+        if (phoneNumber.isEmpty() && phoneNumber_fld != null) {
+            AnimationUtils.shake(phoneNumber_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+        }
+        if (userName.isEmpty() && userName_fld != null) {
+            AnimationUtils.shake(userName_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+        }
+        if (password.isEmpty() && password_fld != null) {
+            AnimationUtils.shake(password_fld, 5, AnimationUtils.STANDARD_DURATION).play();
+        }
+    }
+
+    /**
+     * Show error message with animation
+     */
+    /**
+     * Show error message with animation
+     */
+    private void showError(String message) {
+        if (error_lbl != null) {
+            error_lbl.setText(message);
+            error_lbl.setVisible(true);
+            error_lbl.setManaged(true);
+            // Slide down and fade in animation
+            error_lbl.setTranslateY(-10);
+            error_lbl.setOpacity(0);
+            AnimationUtils.fadeInSlideUp(error_lbl, 10, AnimationUtils.STANDARD_DURATION).play();
+        }
+    }
+
+    private void hideError() {
+        if (error_lbl != null) {
+            error_lbl.setText("");
+            error_lbl.setVisible(false);
+            error_lbl.setManaged(false);
         }
     }
 
@@ -124,4 +262,3 @@ public class RegistrationController implements Initializable {
         confirmPassword_fld.setText("");
     }
 }
-

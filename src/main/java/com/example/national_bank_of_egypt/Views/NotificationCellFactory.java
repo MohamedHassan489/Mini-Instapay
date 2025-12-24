@@ -2,6 +2,8 @@ package com.example.national_bank_of_egypt.Views;
 
 import com.example.national_bank_of_egypt.Controllers.Client.NotificationCellController;
 import com.example.national_bank_of_egypt.Notifications.Notification;
+import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 
@@ -20,7 +22,16 @@ public class NotificationCellFactory extends ListCell<Notification> {
                 NotificationCellController controller = new NotificationCellController(notification);
                 loader.setController(controller);
                 setText(null);
-                setGraphic(loader.load());
+                javafx.scene.Node cellContent = loader.load();
+                setGraphic(cellContent);
+                
+                // Add fade-in animation
+                if (cellContent != null) {
+                    cellContent.setOpacity(0);
+                    Platform.runLater(() -> {
+                        AnimationUtils.fadeIn(cellContent, AnimationUtils.STANDARD_DURATION).play();
+                    });
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 // Fallback to simple text display

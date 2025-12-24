@@ -1,0 +1,295 @@
+/* ============================================
+   Global Animation Styles
+   ============================================
+   This file contains reusable animation styles
+   and transition effects for the entire application.
+   ============================================ */
+
+/* ============================================
+   Transition Durations
+   ============================================ */
+.root {
+    -fx-transition-duration-quick: 150ms;
+    -fx-transition-duration-standard: 300ms;
+    -fx-transition-duration-slow: 400ms;
+}
+
+/* ============================================
+   Button Animations
+   ============================================ */
+
+/* Standard button hover effect */
+.button {
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-out;
+}
+
+.button:hover {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 8, 0, 0, 2);
+}
+
+.button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.button:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+
+/* Primary button style */
+.primary-button {
+    -fx-background-color: #132A13;
+    -fx-text-fill: #FFFFFF;
+    -fx-transition: all 0.2s ease-out;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1a3a1a;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.4), 10, 0, 0, 3);
+}
+
+/* Secondary button style */
+.secondary-button {
+    -fx-background-color: #ECF39E;
+    -fx-text-fill: #132A13;
+    -fx-transition: all 0.2s ease-out;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #f0f5b0;
+    -fx-effect: dropshadow(three-pass-box, rgba(236,243,158,0.4), 8, 0, 0, 2);
+}
+
+/* ============================================
+   Input Field Animations
+   ============================================ */
+
+.text-field, .password-field, .choice-box {
+    -fx-transition: all 0.3s ease-out;
+    -fx-background-radius: 5;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.2), 5, 0, 0, 1);
+}
+
+.text-field:error {
+    -fx-border-color: #ff4444;
+    -fx-border-width: 2;
+}
+
+.text-field:success {
+    -fx-border-color: #44ff44;
+    -fx-border-width: 2;
+}
+
+/* ============================================
+   Card Animations
+   ============================================ */
+
+.card {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-transition: all 0.3s ease-out;
+}
+
+.card:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+/* ============================================
+   Menu Item Animations
+   ============================================ */
+
+.menu-item {
+    -fx-transition: all 0.2s ease-out;
+    -fx-cursor: hand;
+}
+
+.menu-item:hover {
+    -fx-translate-x: 5;
+    -fx-background-color: rgba(19,42,19,0.1);
+}
+
+.menu-item:active, .menu-item.selected {
+    -fx-background-color: rgba(19,42,19,0.2);
+    -fx-border-color: #132A13;
+    -fx-border-width: 0 0 0 3;
+}
+
+/* ============================================
+   Fade Animations
+   ============================================ */
+
+.fade-in {
+    -fx-opacity: 0;
+}
+
+.fade-in.visible {
+    -fx-opacity: 1;
+    -fx-transition: opacity 0.3s ease-out;
+}
+
+/* ============================================
+   Slide Animations
+   ============================================ */
+
+.slide-in-right {
+    -fx-translate-x: 50;
+    -fx-opacity: 0;
+}
+
+.slide-in-right.visible {
+    -fx-translate-x: 0;
+    -fx-opacity: 1;
+    -fx-transition: all 0.4s ease-out;
+}
+
+.slide-in-left {
+    -fx-translate-x: -50;
+    -fx-opacity: 0;
+}
+
+.slide-in-left.visible {
+    -fx-translate-x: 0;
+    -fx-opacity: 1;
+    -fx-transition: all 0.4s ease-out;
+}
+
+.slide-up {
+    -fx-translate-y: 30;
+    -fx-opacity: 0;
+}
+
+.slide-up.visible {
+    -fx-translate-y: 0;
+    -fx-opacity: 1;
+    -fx-transition: all 0.4s ease-out;
+}
+
+/* ============================================
+   Scale Animations
+   ============================================ */
+
+.scale-on-hover {
+    -fx-transition: transform 0.2s ease-out;
+}
+
+.scale-on-hover:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* ============================================
+   Pulse Animation (for notifications/alerts)
+   ============================================ */
+
+@keyframes pulse {
+    0%, 100% {
+        -fx-opacity: 1;
+    }
+    50% {
+        -fx-opacity: 0.7;
+    }
+}
+
+.pulse {
+    -fx-animation: pulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Shake Animation (for errors)
+   ============================================ */
+
+@keyframes shake {
+    0%, 100% { -fx-translate-x: 0; }
+    10%, 30%, 50%, 70%, 90% { -fx-translate-x: -3px; }
+    20%, 40%, 60%, 80% { -fx-translate-x: 3px; }
+}
+
+.shake {
+    -fx-animation: shake 0.5s ease-in-out;
+}
+
+/* ============================================
+   Loading Spinner (placeholder - actual spinner would be JavaFX code)
+   ============================================ */
+
+.loading {
+    -fx-opacity: 0.6;
+    -fx-cursor: wait;
+}
+
+/* ============================================
+   Page Transition Container
+   ============================================ */
+
+.page-container {
+    -fx-transition: opacity 0.3s ease-in-out;
+}
+
+.page-container.transitioning {
+    -fx-opacity: 0.5;
+}
+
+/* ============================================
+   Icon Animations
+   ============================================ */
+
+.icon-bounce:hover {
+    -fx-translate-y: -3;
+    -fx-transition: translate-y 0.2s ease-out;
+}
+
+/* ============================================
+   List Cell Animations
+   ============================================ */
+
+.list-cell {
+    -fx-transition: background-color 0.2s ease-out;
+}
+
+.list-cell:hover {
+    -fx-background-color: rgba(19,42,19,0.05);
+}
+
+.list-cell:selected {
+    -fx-background-color: rgba(19,42,19,0.15);
+}
+
+/* ============================================
+   Window Animations
+   ============================================ */
+
+.window-entrance {
+    -fx-opacity: 0;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+.window-entrance.visible {
+    -fx-opacity: 1;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-transition: all 0.3s ease-out;
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.smooth-transition {
+    -fx-transition: all 0.3s ease-out;
+}
+
+.no-transition {
+    -fx-transition: none;
+}
+

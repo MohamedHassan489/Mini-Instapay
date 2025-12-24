@@ -2,38 +2,72 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="960.0" prefWidth="810.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.SendMoneyController">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="960.0" styleClass="sendmoney_container" stylesheets="@../../Styles/SendMoney.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Client.SendMoneyController">
     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-        <VBox spacing="15.0" style="-fx-padding: 15;">
-        <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Send Money" />
-        <Label style="-fx-font-size: 12; -fx-text-fill: #666;" text="Transfer money to another user" wrapText="true" />
-        
-        <Label style="-fx-font-size: 13; -fx-font-weight: bold; -fx-padding: 8 0 0 0;" text="Recipient" />
-        <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="Enter phone number, account number, username, or email" wrapText="true" />
-        <TextField fx:id="receiver_fld" prefHeight="35.0" prefWidth="780.0" promptText="e.g., 1234567890, ACC001, username, or user@email.com" />
-        
-        <Label style="-fx-font-size: 13; -fx-font-weight: bold; -fx-padding: 8 0 0 0;" text="From Account" />
-        <ComboBox fx:id="sourceAccount_combo" prefHeight="35.0" prefWidth="780.0" promptText="Select account" />
-        
-        <Label style="-fx-font-size: 13; -fx-font-weight: bold; -fx-padding: 8 0 0 0;" text="Amount" />
-        <TextField fx:id="amount_fld" prefHeight="35.0" prefWidth="780.0" promptText="0.00" />
-        
-        <Label style="-fx-font-size: 13; -fx-font-weight: bold; -fx-padding: 8 0 0 0;" text="Transaction Type" />
-        <ComboBox fx:id="transactionType_combo" prefHeight="35.0" prefWidth="780.0" />
-        
-        <VBox fx:id="scheduledDate_container" spacing="6.0" visible="false">
-            <Label style="-fx-font-size: 13; -fx-font-weight: bold;" text="Scheduled Date" />
-            <Label style="-fx-font-size: 11; -fx-text-fill: #666;" text="Select a future date for scheduled transfer" wrapText="true" />
-            <DatePicker fx:id="scheduledDate_picker" prefHeight="35.0" prefWidth="780.0" />
-        </VBox>
-        
-        <Label style="-fx-font-size: 13; -fx-font-weight: bold; -fx-padding: 8 0 0 0;" text="Message (Optional)" />
-        <TextArea fx:id="message_fld" prefHeight="100.0" prefWidth="780.0" promptText="Add a note or message for this transaction" wrapText="true" />
-        
-            <Button fx:id="send_btn" mnemonicParsing="false" prefHeight="42.0" prefWidth="780.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 13; -fx-font-weight: bold; -fx-background-radius: 5;" text="Send Money" />
-            <Label fx:id="error_lbl" style="-fx-text-fill: red; -fx-font-size: 11;" text="" wrapText="true" minHeight="50.0" prefHeight="50.0" />
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            
+            <VBox spacing="8.0">
+               <Label styleClass="label-title" text="Send Money" />
+               <Label styleClass="label-body" text="Transfer money to another user" wrapText="true" />
+            </VBox>
+            
+            <VBox styleClass="card-standard" spacing="15.0">
+               <Label styleClass="section_header" text="Recipient Information" />
+                  <VBox spacing="5.0">
+                     <Label styleClass="label-body" text="Recipient *" />
+                     <Label styleClass="label-caption" text="Enter phone number, account number, username, or email" wrapText="true" />
+                     <TextField fx:id="receiver_fld" styleClass="input-standard" prefHeight="45.0" maxWidth="Infinity" promptText="e.g., 1234567890, ACC001, username, or user@email.com">
+                        <tooltip>
+                           <Tooltip text="You can enter the recipient's phone number, account number, username, or email address" />
+                        </tooltip>
+                     </TextField>
+                  </VBox>
+            </VBox>
+            
+            <VBox styleClass="card-standard" spacing="15.0">
+               <Label styleClass="section_header" text="Transaction Details" />
+               <VBox spacing="12.0">
+                  <VBox spacing="5.0">
+                     <Label styleClass="label-body" text="From Account *" />
+                     <ComboBox fx:id="sourceAccount_combo" styleClass="input-standard" prefHeight="45.0" maxWidth="Infinity" promptText="Select account" />
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <Label styleClass="label-body" text="Amount *" />
+                     <TextField fx:id="amount_fld" styleClass="input-standard" prefHeight="45.0" maxWidth="Infinity" promptText="0.00" />
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <Label styleClass="label-body" text="Transaction Type *" />
+                     <ComboBox fx:id="transactionType_combo" styleClass="input-standard" prefHeight="45.0" maxWidth="Infinity" />
+                  </VBox>
+                  <VBox fx:id="scheduledDate_container" styleClass="scheduled_date_container" spacing="8.0" visible="false">
+                     <Label styleClass="label-body" text="Scheduled Date *" />
+                     <Label styleClass="label-caption" text="Select a future date for scheduled transfer" wrapText="true" />
+                     <DatePicker fx:id="scheduledDate_picker" styleClass="input-standard" prefHeight="45.0" maxWidth="Infinity" />
+                  </VBox>
+               </VBox>
+            </VBox>
+            
+            <VBox styleClass="card-standard" spacing="15.0">
+               <Label styleClass="section_header" text="Additional Information" />
+               <VBox spacing="5.0">
+                  <Label styleClass="label-body" text="Message (Optional)" />
+                  <TextArea fx:id="message_fld" styleClass="text-area-standard" prefHeight="100.0" maxWidth="Infinity" promptText="Add a note or message for this transaction" wrapText="true" />
+               </VBox>
+            </VBox>
+            
+            <VBox spacing="12.0">
+               <Button fx:id="send_btn" mnemonicParsing="false" styleClass="btn-primary" text="Send Money">
+                  <tooltip>
+                     <Tooltip text="Send money to another user. Transactions over $100 require 2FA verification." />
+                  </tooltip>
+               </Button>
+               <Label fx:id="error_lbl" styleClass="label-error" text="" wrapText="true" visible="false" managed="false" />
+            </VBox>
         </VBox>
     </ScrollPane>
 </AnchorPane>
-

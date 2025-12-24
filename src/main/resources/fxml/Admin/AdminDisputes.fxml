@@ -3,17 +3,34 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import java.lang.String?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.AdminDisputesController">
-    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="Dispute Management" />
-        <ListView fx:id="disputes_list" prefHeight="400.0" prefWidth="760.0" />
-        <HBox spacing="10.0">
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Selected Dispute Resolution:" />
-            <TextArea fx:id="resolution_fld" prefHeight="80.0" prefWidth="500.0" />
-            <Button fx:id="resolve_btn" mnemonicParsing="false" prefHeight="80.0" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Resolve" />
+<AnchorPane prefHeight="750.0" prefWidth="850.0" styleClass="content_area" stylesheets="@../../Styles/Admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.AdminDisputesController">
+    <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="section_title" text="Dispute Management" />
+
+        <!-- Split View: List & Resolution -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            
+            <!-- List Section -->
+            <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="10.0">
+                <Label text="Pending Disputes" styleClass="table_header" />
+                <ListView fx:id="disputes_list" styleClass="modern_list_view" VBox.vgrow="ALWAYS" />
+            </VBox>
+
+            <!-- Action Section -->
+            <VBox styleClass="card" prefWidth="350.0" minWidth="300.0" spacing="15.0">
+                <Label text="Resolution Panel" styleClass="section_title" style="-fx-font-size: 18;" />
+                
+                <Label text="Resolution Note:" style="-fx-text-fill: #666;" />
+                <TextArea fx:id="resolution_fld" wrapText="true" VBox.vgrow="ALWAYS" promptText="Enter resolution details here..." style="-fx-font-family: 'Inter';" />
+                
+                <Button fx:id="resolve_btn" mnemonicParsing="false" text="Resolve Dispute" maxWidth="Infinity" styleClass="action_btn" />
+                
+                <Label fx:id="status_lbl" visible="false" managed="false" styleClass="status_badge" />
+            </VBox>
         </HBox>
-        <Label fx:id="status_lbl" text="" />
     </VBox>
 </AnchorPane>
 

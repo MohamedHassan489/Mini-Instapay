@@ -59,11 +59,11 @@ public class SystemHealthController implements Initializable {
             
             int totalTransactions = 0;
             int successfulTransactions = 0;
-            double totalAmount = 0.0;
             
             if (stats != null && stats.next()) {
                 totalTransactions = stats.getInt("total");
-                totalAmount = stats.getDouble("totalAmount");
+                // totalAmount retrieved but not currently displayed in UI
+                // stats.getDouble("totalAmount");
             }
             
             // Get all transactions to calculate success rate

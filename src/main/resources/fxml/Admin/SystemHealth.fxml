@@ -3,43 +3,71 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.SystemHealthController">
-    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="System Health Monitoring" />
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 12; -fx-fill: #666;" text="Updates every 5 seconds" />
+<AnchorPane prefHeight="600.0" prefWidth="800.0" styleClass="content_area" stylesheets="@../../Styles/Admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.SystemHealthController">
+    <VBox spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         
-        <HBox spacing="30.0">
-            <VBox spacing="10.0" prefWidth="250.0">
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="System Status" />
-                <Label fx:id="status_lbl" text="Online" style="-fx-text-fill: green; -fx-font-size: 16;" />
-                
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="System Uptime" />
-                <Label fx:id="uptime_lbl" text="0h 0m" style="-fx-font-size: 14;" />
-                
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Transaction Success Rate" />
-                <Label fx:id="successRate_lbl" text="0%" style="-fx-font-size: 14;" />
-            </VBox>
-            
-            <VBox spacing="10.0" prefWidth="250.0">
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Transactions (Last 24h)" />
-                <Label fx:id="totalTransactions_lbl" text="0" style="-fx-font-size: 14;" />
-                
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Suspicious Transactions" />
-                <Label fx:id="suspiciousTransactions_lbl" text="0" style="-fx-font-size: 14;" />
-            </VBox>
-            
-            <VBox spacing="10.0" prefWidth="250.0">
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Total Users" />
-                <Label fx:id="totalUsers_lbl" text="0" style="-fx-font-size: 14;" />
-                
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Active Users (Last 7 days)" />
-                <Label fx:id="activeUsers_lbl" text="0" style="-fx-font-size: 14;" />
-                
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14; -fx-font-weight: bold;" text="Pending Disputes" />
-                <Label fx:id="pendingDisputes_lbl" text="0" style="-fx-font-size: 14;" />
-            </VBox>
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="section_title" text="System Health" />
+             <Label text="Updates every 5s" style="-fx-text-fill: #999; -fx-font-size: 12;" />
         </HBox>
+        
+        <GridPane hgap="20.0" vgap="20.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.3" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.3" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.3" />
+            </columnConstraints>
+            
+            <!-- Status Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                 <Label text="System Status" styleClass="cell_subtitle" />
+                 <Label fx:id="status_lbl" text="ONLINE" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2e7d32;" />
+            </VBox>
+            
+            <!-- Uptime Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                 <Label text="Uptime" styleClass="cell_subtitle" />
+                 <Label fx:id="uptime_lbl" text="0h 0m" style="-fx-font-size: 24; -fx-font-weight: bold;" />
+            </VBox>
+            
+            <!-- Success Rate Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                 <Label text="Transition Success" styleClass="cell_subtitle" />
+                 <Label fx:id="successRate_lbl" text="99.9%" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #1565c0;" />
+            </VBox>
+            
+            <!-- Users Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                 <Label text="Total Users" styleClass="cell_subtitle" />
+                 <Label fx:id="totalUsers_lbl" text="0" style="-fx-font-size: 28; -fx-font-weight: bold;" />
+                 <HBox spacing="5.0" alignment="CENTER_LEFT">
+                    <Label text="Active (7d):" style="-fx-text-fill: #666;" />
+                    <Label fx:id="activeUsers_lbl" text="0" style="-fx-font-weight: bold;" />
+                 </HBox>
+            </VBox>
+            
+            <!-- Transactions Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                 <Label text="24h Transactions" styleClass="cell_subtitle" />
+                 <Label fx:id="totalTransactions_lbl" text="0" style="-fx-font-size: 28; -fx-font-weight: bold;" />
+            </VBox>
+            
+            <!-- Disputes Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                 <Label text="Pending Disputes" styleClass="cell_subtitle" />
+                 <Label fx:id="pendingDisputes_lbl" text="0" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #ef6c00;" />
+            </VBox>
+
+             <!-- Suspicious Card -->
+            <VBox styleClass="card" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                 <Label text="Suspicious Activity" styleClass="cell_subtitle" />
+                 <Label fx:id="suspiciousTransactions_lbl" text="0" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #c62828;" />
+            </VBox>
+            
+        </GridPane>
+        
     </VBox>
 </AnchorPane>
 

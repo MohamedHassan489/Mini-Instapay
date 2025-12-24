@@ -4,18 +4,29 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Text?>
+<?import java.lang.String?>
 
-<AnchorPane prefHeight="50.0" prefWidth="750.0" styleClass="client_cell_container" stylesheets="@../../Styles/ClientCell.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-   <Text text="👤" style="-fx-font-size: 20;" layoutX="14.0" layoutY="29.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
-   <HBox layoutX="144.0" layoutY="-36.0" prefHeight="40.0" prefWidth="668.0" AnchorPane.leftAnchor="60.0" AnchorPane.topAnchor="5.0">
-      <Label fx:id="fName_lbl" prefHeight="24.0" prefWidth="81.0" text="Mido" />
-      <Label fx:id="lName_lbl" prefHeight="24.0" prefWidth="89.0" text="Hassan" />
-      <Label fx:id="UserName_lbl" prefHeight="24.0" prefWidth="144.0" text="Mido@instapay" />
-      <Label fx:id="email_lbl" prefHeight="24.0" prefWidth="150.0" text="email@example.com" />
-      <Label fx:id="phone_lbl" prefHeight="24.0" prefWidth="100.0" text="1234567890" />
-      <Label fx:id="data_lbl" prefHeight="24.0" prefWidth="112.0" text="5-5-2022" />
-      <Text text="📅" style="-fx-fill: #258055; -fx-font-size: 20;" />
-      <Button fx:id="suspend_btn" text="Suspend" style="-fx-background-color: #dc3545; -fx-text-fill: white;" />
+<AnchorPane prefHeight="50.0" prefWidth="750.0" stylesheets="@../../Styles/Admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <styleClass>
+      <String fx:value="list-cell" /> 
+   </styleClass>
+   <HBox alignment="CENTER_LEFT" spacing="15.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
+      <Text text="👤" style="-fx-font-size: 18;" />
+      
+      <HBox spacing="5.0" alignment="CENTER_LEFT" prefWidth="200.0">
+         <Label fx:id="fName_lbl" text="Mido" styleClass="cell_title" />
+         <Label fx:id="lName_lbl" text="Hassan" styleClass="cell_title" />
+      </HBox>
+      
+      <Label fx:id="UserName_lbl" text="\@Mido" styleClass="cell_subtitle" prefWidth="120.0" />
+      <Label fx:id="email_lbl" text="email@example.com" styleClass="cell_subtitle" prefWidth="150.0" />
+      <Label fx:id="phone_lbl" text="123..." style="-fx-text-fill: #999;" />
+      
+      <Region HBox.hgrow="ALWAYS" />
+      
+      <Label fx:id="data_lbl" text="2024-05-05" style="-fx-font-size: 11; -fx-text-fill: #aaa;" />
+      <Button fx:id="suspend_btn" text="Block" styleClass="danger_btn" style="-fx-padding: 4 10; -fx-font-size: 11;" />
    </HBox>
 </AnchorPane>

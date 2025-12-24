@@ -3,18 +3,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
+<?import java.lang.String?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.AdminTransactionsController">
-    <VBox layoutX="20.0" layoutY="20.0" prefHeight="560.0" prefWidth="760.0" spacing="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 24; -fx-font-weight: bold;" text="All Transactions" />
-        <HBox spacing="10.0">
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Filter:" />
-            <ComboBox fx:id="filter_combo" prefHeight="30.0" prefWidth="200.0" />
-            <TextField fx:id="search_fld" prefHeight="30.0" prefWidth="300.0" promptText="Search by user, amount, or transaction ID" />
-            <Button fx:id="flagSuspicious_btn" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Flag Suspicious" />
+<AnchorPane prefHeight="750.0" prefWidth="850.0" styleClass="content_area" stylesheets="@../../Styles/Admin.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.Admin.AdminTransactionsController">
+    <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="20.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="section_title" text="All Transactions" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="flagSuspicious_btn" mnemonicParsing="false" styleClass="danger_btn" text="🚩 Flag Suspicious" />
         </HBox>
-        <ListView fx:id="transactions_list" prefHeight="450.0" prefWidth="760.0" />
-        <Label fx:id="status_lbl" text="" />
+
+        <!-- Filters & Search -->
+        <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="search_container">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Filter:" style="-fx-fill: #666;" />
+            <ComboBox fx:id="filter_combo" styleClass="filter_combo" prefWidth="150.0" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Text text="🔍" style="-fx-fill: #999;" />
+            <TextField fx:id="search_fld" promptText="Search ID, Amount, User..." styleClass="search_field" prefWidth="250.0" />
+        </HBox>
+
+        <!-- Transaction List -->
+        <VBox styleClass="card" VBox.vgrow="ALWAYS">
+            <HBox style="-fx-padding: 0 0 10 0; -fx-border-color: transparent transparent #eee transparent;">
+                <Label text="Transaction History" styleClass="table_header" />
+            </HBox>
+            <ListView fx:id="transactions_list" styleClass="modern_list_view" VBox.vgrow="ALWAYS" />
+        </VBox>
+        
+        <Label fx:id="status_lbl" styleClass="status_badge" visible="false" managed="false" />
     </VBox>
 </AnchorPane>
 

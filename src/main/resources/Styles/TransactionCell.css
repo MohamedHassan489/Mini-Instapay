@@ -1,37 +1,63 @@
-.cell_container{
-   -fx-background-color: #FFFFFF;
-   -fx-background-radius: 10;
-   -fx-dropshadow: three-pass-box #DDDDDD 5 0 0 7;
+/* ============================================
+   Transaction Cell Styles
+   ============================================ */
+
+/* Import global animations and common styles */
+@import url("animations.css");
+@import url("common.css");
+
+.cell_container {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-padding: 10;
+    -fx-transition: all 0.3s ease-out;
+}
+
+.cell_container:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 12, 0, 0, 4);
 }
 
 .trans_icon_container {
-   -fx-background-color: #FFFFFF;
-   -fx-alignment: center;
-   -fx-spacing: 5;
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-spacing: 5;
+}
+
+.trans_icon {
+    -fx-font-size: 1.2em;
+    -fx-text-fill: #132A13;
+    -fx-font-weight: bold;
 }
 
 .trans_data_lbl {
-   -fx-text-fill: #AAAAAA;
-   -fx-font-weight: 700;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 1em;
+    -fx-font-weight: 600;
 }
 
 .trans_pAddress_lbl {
-   -fx-text-fill: #000000;
-   -fx-font-weight: 700;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 1em;
+    -fx-font-weight: 600;
 }
 
-.cell_container_lbl {
-   -fx-stroke: #EEEEEE;
+.trans_separator {
+    -fx-stroke: #d0d0d0;
+    -fx-stroke-width: 1.5;
 }
 
 .trans_amount_lbl {
-   -fx-background-color: #132A13;
-   -fx-background-radius: 2;
-   -fx-text-fill: #FFFFFF;
-   -fx-padding: 5;
-   -fx-font-weight: 700;
+    -fx-background-color: #132A13;
+    -fx-background-radius: 6;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 6 12;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+    -fx-effect: dropshadow(three-pass-box, rgba(19,42,19,0.3), 4, 0, 0, 2);
 }
 
 .trans_amount_lbl FontAwesomeIconView {
-   -fx-fill: #FFFFFF;
+    -fx-fill: #FFFFFF;
 }

@@ -1,19 +1,58 @@
-.tranaction_container {
-    -fx-background-color: #EEEEEE;
+/* ============================================
+   Transactions Screen Styles
+   ============================================ */
+
+/* Import global animations and common styles */
+@import url("animations.css");
+@import url("common.css");
+
+/* Root container */
+.transactions_container {
+    -fx-background-color: linear-gradient(to bottom, #f5f7fa 0%, #e8ecf1 100%);
 }
 
-.tranaction_container Text {
-    -fx-fill: #000000;
-    -fx-font-size: 2.5em;
-    -fx-font-family: 'Courier New', Courier, monospace;
+/* Page Title */
+.transactions_title {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 15;
 }
 
-.tranaction_container .list-view {
-    -fx-background-color: #EEEEEE;
+.transactions_subtitle {
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 0 0 0 15;
+}
+
+/* Transactions List */
+.transactions_list {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);
+}
+
+.transactions_list .list-view {
+    -fx-background-color: transparent;
     -fx-padding: 10;
 }
 
-.tranaction_container .list-cell {
-    -fx-background-color: #EEEEEE;
-    -fx-pref-width: 800;
+.transactions_list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10 0;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.transactions_list .list-cell:hover {
+    -fx-background-color: rgba(19,42,19,0.05);
+}
+
+.transactions_list .list-cell:selected {
+    -fx-background-color: rgba(19,42,19,0.1);
+}
+
+.transactions_list .list-cell:empty {
+    -fx-border-width: 0;
 }

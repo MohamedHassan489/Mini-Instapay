@@ -37,7 +37,7 @@ public class OTPService {
      * @return Generated OTP
      */
     public String generateOTP(String userId) {
-        String otp = String.format("%06d", random.nextInt(1000000));
+        String otp = String.format("%0" + OTP_LENGTH + "d", random.nextInt((int) Math.pow(10, OTP_LENGTH)));
         otpStore.put(userId, otp);
         otpExpiry.put(userId, System.currentTimeMillis() + (OTP_EXPIRY_MINUTES * 60 * 1000));
         

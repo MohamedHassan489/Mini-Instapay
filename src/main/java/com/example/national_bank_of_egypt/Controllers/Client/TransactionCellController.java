@@ -1,6 +1,5 @@
 package com.example.national_bank_of_egypt.Controllers.Client;
 
-import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Models.Transaction;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;

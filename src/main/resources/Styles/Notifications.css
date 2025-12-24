@@ -1,0 +1,60 @@
+/* ============================================
+   Notifications Screen Styles
+   ============================================ */
+
+/* Import global animations and common styles */
+@import url("animations.css");
+@import url("common.css");
+
+/* Root container */
+.notifications_container {
+    -fx-background-color: linear-gradient(to bottom, #f5f7fa 0%, #e8ecf1 100%);
+}
+
+/* Page Title */
+.notifications_title {
+    -fx-font-size: 2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 15;
+}
+
+/* Notifications List */
+.notifications_list {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
+
+.notifications_list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 12 15;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0 0 1 0;
+    -fx-transition: background-color 0.2s ease-out;
+}
+
+.notifications_list .list-cell:hover {
+    -fx-background-color: rgba(19,42,19,0.05);
+}
+
+.notifications_list .list-cell:selected {
+    -fx-background-color: rgba(19,42,19,0.1);
+}
+
+.notifications_list .list-cell:empty {
+    -fx-border-width: 0;
+}
+
+/* Empty State */
+.notifications_empty {
+    -fx-alignment: center;
+    -fx-padding: 50;
+    -fx-spacing: 15;
+}
+
+.notifications_empty Label {
+    -fx-font-size: 1.2em;
+    -fx-text-fill: #7f8c8d;
+}
+
