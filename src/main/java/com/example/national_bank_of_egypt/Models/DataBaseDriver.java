@@ -28,6 +28,21 @@ public class DataBaseDriver {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Get the database connection for health check purposes
+     * @return the active database connection, or null if not available
+     */
+    public Connection getConnection() {
+        try {
+            if (con != null && !con.isClosed()) {
+                return con;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private void initializeDatabase() {
         try {
@@ -261,6 +276,43 @@ public class DataBaseDriver {
         logDbDebug("DataBaseDriver.java:214", "updateUser exhausted retries",
                 "duration=" + (updateEndTime - updateStartTime) + "ms", "H1,H2,H3");
         // #endregion
+        return false;
+    }
+
+    /**
+     * Update user profile including 2FA setting (for Admin use)
+     */
+    public boolean updateUserProfile(String userName, String firstName, String lastName, String email, 
+            String phoneNumber, String address, String twoFactorEnabled) {
+        int maxRetries = 5;
+        int baseRetryDelay = 200;
+
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            try (Statement statement = this.con.createStatement()) {
+                String sql = "UPDATE Users SET FirstName='" + firstName.replace("'", "''") + 
+                        "', LastName='" + lastName.replace("'", "''") +
+                        "', Email='" + email.replace("'", "''") + 
+                        "', PhoneNumber='" + phoneNumber.replace("'", "''") + 
+                        "', Address='" + address.replace("'", "''") +
+                        "', TwoFactorEnabled='" + twoFactorEnabled.replace("'", "''") +
+                        "' WHERE UserName='" + userName.replace("'", "''") + "'";
+                int rowsAffected = statement.executeUpdate(sql);
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                if (e.getMessage() != null && e.getMessage().contains("database is locked")
+                        && attempt < maxRetries - 1) {
+                    try {
+                        Thread.sleep(baseRetryDelay * (1L << attempt));
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
+                } else {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
         return false;
     }
 

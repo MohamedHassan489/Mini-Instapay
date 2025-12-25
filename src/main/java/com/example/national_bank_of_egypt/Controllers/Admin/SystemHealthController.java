@@ -21,14 +21,13 @@ public class SystemHealthController implements Initializable {
     public Label totalUsers_lbl;
     public Label pendingDisputes_lbl;
     public Label suspiciousTransactions_lbl;
+    public Label uptimePercent_lbl; // New: uptime percentage label
     
     private DataBaseDriver db;
     private Timeline updateTimeline;
-    private long startTime;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        startTime = System.currentTimeMillis();
         db = new DataBaseDriver();
         
         // Initial status
@@ -41,16 +40,32 @@ public class SystemHealthController implements Initializable {
     }
     
     private void updateSystemHealth() {
+        Model model = Model.getInstance();
+        
         try {
-            // System Status
-            status_lbl.setText("Online");
-            status_lbl.setStyle("-fx-text-fill: green; -fx-font-size: 16; -fx-font-weight: bold;");
+            // System Status - check actual database connectivity
+            boolean isOnline = model.isSystemOnline();
+            status_lbl.setText(isOnline ? "Online" : "Offline");
+            status_lbl.setStyle(isOnline ? 
+                "-fx-text-fill: green; -fx-font-size: 16; -fx-font-weight: bold;" :
+                "-fx-text-fill: red; -fx-font-size: 16; -fx-font-weight: bold;");
             
-            // Calculate uptime
-            long uptimeMillis = System.currentTimeMillis() - startTime;
-            long uptimeHours = uptimeMillis / (1000 * 60 * 60);
-            long uptimeMinutes = (uptimeMillis % (1000 * 60 * 60)) / (1000 * 60);
-            uptime_lbl.setText(uptimeHours + "h " + uptimeMinutes + "m");
+            // System Uptime - from application start time (stored in Model singleton)
+            // Formula: Uptime = Total Runtime - Downtime
+            uptime_lbl.setText(model.getFormattedUptime());
+            
+            // Uptime Percentage: (Total time - Downtime) / Total time × 100
+            double uptimePercent = model.getUptimePercentage();
+            if (uptimePercent_lbl != null) {
+                uptimePercent_lbl.setText(String.format("%.1f%%", uptimePercent));
+                if (uptimePercent >= 99.0) {
+                    uptimePercent_lbl.setStyle("-fx-text-fill: green;");
+                } else if (uptimePercent >= 95.0) {
+                    uptimePercent_lbl.setStyle("-fx-text-fill: orange;");
+                } else {
+                    uptimePercent_lbl.setStyle("-fx-text-fill: red;");
+                }
+            }
             
             // Transaction Stats (last 24 hours)
             LocalDate today = LocalDate.now();
@@ -130,6 +145,8 @@ public class SystemHealthController implements Initializable {
             
         } catch (Exception e) {
             e.printStackTrace();
+            // Record downtime event when error occurs
+            model.recordDowntimeEvent();
             status_lbl.setText("Error");
             status_lbl.setStyle("-fx-text-fill: red; -fx-font-size: 16;");
         }

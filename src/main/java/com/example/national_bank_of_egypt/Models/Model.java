@@ -30,6 +30,12 @@ public class Model {
     private Boolean userLoginSuccessFlag;
     private Boolean adminLoginSuccessFlag;
     private String lastErrorMessage; // Store last error for UI display
+    
+    // System Uptime Tracking
+    private final long systemStartTime;
+    private long totalDowntimeMillis;
+    private int downtimeEventCount;
+    private boolean systemOnline;
 
     private Model() {
         this.viewFactory = new ViewFactory();
@@ -44,6 +50,12 @@ public class Model {
         this.adminLoginSuccessFlag = false;
         this.users = FXCollections.observableArrayList();
         this.lastErrorMessage = null;
+        
+        // Initialize uptime tracking
+        this.systemStartTime = System.currentTimeMillis();
+        this.totalDowntimeMillis = 0;
+        this.downtimeEventCount = 0;
+        this.systemOnline = true;
     }
 
     public static synchronized Model getInstance() {
@@ -1151,5 +1163,106 @@ public class Model {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    // ==================== SYSTEM UPTIME TRACKING ====================
+    
+    /**
+     * Get the system start time (when application was launched)
+     */
+    public long getSystemStartTime() {
+        return systemStartTime;
+    }
+    
+    /**
+     * Get total time the system has been running (in milliseconds)
+     */
+    public long getTotalRunTimeMillis() {
+        return System.currentTimeMillis() - systemStartTime;
+    }
+    
+    /**
+     * Get total downtime (in milliseconds)
+     */
+    public long getTotalDowntimeMillis() {
+        return totalDowntimeMillis;
+    }
+    
+    /**
+     * Get actual uptime (total runtime minus downtime)
+     */
+    public long getActualUptimeMillis() {
+        return getTotalRunTimeMillis() - totalDowntimeMillis;
+    }
+    
+    /**
+     * Calculate uptime percentage: (Total time - Downtime) / Total time × 100
+     */
+    public double getUptimePercentage() {
+        long totalTime = getTotalRunTimeMillis();
+        if (totalTime <= 0) return 100.0;
+        return ((totalTime - totalDowntimeMillis) * 100.0) / totalTime;
+    }
+    
+    /**
+     * Get formatted uptime string (e.g., "2h 45m")
+     */
+    public String getFormattedUptime() {
+        long uptimeMillis = getActualUptimeMillis();
+        long hours = uptimeMillis / (1000 * 60 * 60);
+        long minutes = (uptimeMillis % (1000 * 60 * 60)) / (1000 * 60);
+        return hours + "h " + minutes + "m";
+    }
+    
+    /**
+     * Get formatted total runtime string
+     */
+    public String getFormattedTotalRuntime() {
+        long runtimeMillis = getTotalRunTimeMillis();
+        long hours = runtimeMillis / (1000 * 60 * 60);
+        long minutes = (runtimeMillis % (1000 * 60 * 60)) / (1000 * 60);
+        return hours + "h " + minutes + "m";
+    }
+    
+    /**
+     * Record a downtime event (when an error/failure occurs)
+     * @param durationMillis estimated duration of the downtime event
+     */
+    public void recordDowntimeEvent(long durationMillis) {
+        this.totalDowntimeMillis += durationMillis;
+        this.downtimeEventCount++;
+    }
+    
+    /**
+     * Record a downtime event with default duration (30 seconds per event)
+     */
+    public void recordDowntimeEvent() {
+        recordDowntimeEvent(30000); // 30 seconds default downtime per event
+    }
+    
+    /**
+     * Get total number of downtime events
+     */
+    public int getDowntimeEventCount() {
+        return downtimeEventCount;
+    }
+    
+    /**
+     * Check if system is currently online
+     */
+    public boolean isSystemOnline() {
+        // Check database connectivity as primary health indicator
+        try {
+            return dataBaseDriver != null && dataBaseDriver.getConnection() != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Get system status string
+     */
+    public String getSystemStatus() {
+        return isSystemOnline() ? "Online" : "Offline";
     }
 }

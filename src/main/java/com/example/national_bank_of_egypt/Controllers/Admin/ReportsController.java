@@ -106,6 +106,10 @@ public class ReportsController implements Initializable {
             } else if (reportType.equals("Account Usage Analysis")) {
                 var analysis = reportService.generateAccountUsageAnalysis();
                 reportContent_area.setText(formatAccountUsageAnalysis(analysis));
+            } else if (reportType.equals("Detailed Account Usage")) {
+                // Generate summary report for Detailed Account Usage
+                var analysis = reportService.generateAccountUsageAnalysis();
+                reportContent_area.setText(formatDetailedAccountUsageSummary(analysis));
             }
         } catch (Exception e) {
             reportContent_area.setText("Error generating report: " + e.getMessage());
@@ -199,6 +203,53 @@ public class ReportsController implements Initializable {
             analysis.getEngagementRate(),
             analysis.getTransactionsPerUser(),
             analysis.getRecentTransactions()
+        );
+    }
+    
+    private String formatDetailedAccountUsageSummary(com.example.national_bank_of_egypt.Reports.AccountUsageAnalysis analysis) {
+        return String.format(
+            "═══════════════════════════════════════════════════════════\n" +
+            "         DETAILED ACCOUNT USAGE SUMMARY REPORT\n" +
+            "═══════════════════════════════════════════════════════════\n\n" +
+            "Generated: %s\n\n" +
+            "┌─────────────────────────────────────────────────────────┐\n" +
+            "│  USER OVERVIEW                                          │\n" +
+            "├─────────────────────────────────────────────────────────┤\n" +
+            "│  Total Registered Users:     %d                         \n" +
+            "│  Active Users (30 Days):     %d                         \n" +
+            "│  Engagement Rate:            %.2f%%                      \n" +
+            "└─────────────────────────────────────────────────────────┘\n\n" +
+            "┌─────────────────────────────────────────────────────────┐\n" +
+            "│  TRANSACTION OVERVIEW                                   │\n" +
+            "├─────────────────────────────────────────────────────────┤\n" +
+            "│  Total Transactions:         %d                         \n" +
+            "│  Recent (Last 30 Days):      %d                         \n" +
+            "│  Avg Transaction Amount:     $%.2f                      \n" +
+            "│  Transactions per User:      %.2f                       \n" +
+            "└─────────────────────────────────────────────────────────┘\n\n" +
+            "┌─────────────────────────────────────────────────────────┐\n" +
+            "│  KEY INSIGHTS                                          │\n" +
+            "├─────────────────────────────────────────────────────────┤\n" +
+            "│  • User engagement is at %.1f%%                          \n" +
+            "│  • Average %.2f transactions per user                   \n" +
+            "│  • %d recent transactions in last month                 \n" +
+            "│  • Platform shows %s activity level                     \n" +
+            "└─────────────────────────────────────────────────────────┘\n\n" +
+            "═══════════════════════════════════════════════════════════\n" +
+            "        Use 'Detailed Report' for per-user breakdown\n" +
+            "═══════════════════════════════════════════════════════════\n",
+            java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+            analysis.getTotalUsers(),
+            analysis.getActiveUsers(),
+            analysis.getEngagementRate(),
+            analysis.getTotalTransactions(),
+            analysis.getRecentTransactions(),
+            analysis.getAvgTransactionAmount(),
+            analysis.getTransactionsPerUser(),
+            analysis.getEngagementRate(),
+            analysis.getTransactionsPerUser(),
+            analysis.getRecentTransactions(),
+            analysis.getEngagementRate() >= 50 ? "HEALTHY" : (analysis.getEngagementRate() >= 25 ? "MODERATE" : "LOW")
         );
     }
 }
