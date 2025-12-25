@@ -227,25 +227,26 @@ public class DisputesController implements Initializable {
         }
     }
 
-    private void showMessage(String message, String style) {
+    private void showError(String message) {
         if (error_lbl != null) {
             error_lbl.setText(message);
-            error_lbl.setStyle(style);
+            error_lbl.setStyle("-fx-text-fill: #e74c3c; -fx-background-color: rgba(231, 76, 60, 0.1); -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #e74c3c; -fx-border-radius: 5;");
             error_lbl.setVisible(true);
             error_lbl.setManaged(true);
-            // Slide down and fade in animation
-            error_lbl.setTranslateY(-10);
-            error_lbl.setOpacity(0);
-            AnimationUtils.fadeInSlideUp(error_lbl, 10, AnimationUtils.STANDARD_DURATION).play();
+            error_lbl.setOpacity(1.0);
+            error_lbl.setTranslateY(0);
         }
     }
 
-    private void showError(String message) {
-        showMessage(message, "-fx-text-fill: red;");
-    }
-
     private void showSuccess(String message) {
-        showMessage(message, "-fx-text-fill: green;");
+        if (error_lbl != null) {
+            error_lbl.setText(message);
+            error_lbl.setStyle("-fx-text-fill: #27ae60; -fx-background-color: rgba(39, 174, 96, 0.1); -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #27ae60; -fx-border-radius: 5;");
+            error_lbl.setVisible(true);
+            error_lbl.setManaged(true);
+            error_lbl.setOpacity(1.0);
+            error_lbl.setTranslateY(0);
+        }
     }
 
     private void hideMessage() {
