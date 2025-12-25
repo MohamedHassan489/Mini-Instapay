@@ -57,8 +57,8 @@ public class EncryptionService {
     /**
      * Private constructor to enforce Singleton pattern.
      * 
-     * <p>Generates a random 256-bit AES key on instantiation.
-     * This key will be used for all encryption/decryption operations.</p>
+     * <p>Generates a random 256-bit AES key on instantiation.(symmetric encryption algorithm)
+     * "Advanced Encryption Standard." This key will be used for all encryption/decryption operations.</p>
      */
     private EncryptionService() {
         try {

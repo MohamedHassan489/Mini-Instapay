@@ -43,7 +43,7 @@ public class FrequencyBasedFraudDetection implements FraudDetectionStrategy, Ris
      * Maximum number of daily transactions before flagging as suspicious.
      * Users exceeding this threshold receive the highest risk points.
      */
-    private static final int SUSPICIOUS_FREQUENCY_THRESHOLD = 10;
+    private static final int SUSPICIOUS_FREQUENCY_THRESHOLD = 100;
     
     /**
      * User's recent transaction history.

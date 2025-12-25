@@ -153,7 +153,7 @@ public final class FraudRiskResult {
      * @return A new Builder instance for constructing FraudRiskResult
      */
     public static Builder builder() {
-        return new Builder();
+        return new Builder(); 
     }
 
     // ==================== GETTERS (READ-ONLY ACCESS) ====================
