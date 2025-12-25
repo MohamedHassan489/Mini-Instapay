@@ -63,10 +63,10 @@ public class AmountPatternDetection implements RiskBasedFraudDetectionStrategy {
      * @param transaction The transaction to analyze
      * @param userId The user performing the transaction
      * @param recentTransactions User's recent transaction history for pattern analysis
-     * @param result The result object to add risk factors to
+     * @param builder The Builder object to add risk factors to
      */
     @Override
-    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result) {
+    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder) {
         // Return early if no transaction history is available
         if (recentTransactions == null || recentTransactions.isEmpty()) {
             return;
@@ -98,7 +98,7 @@ public class AmountPatternDetection implements RiskBasedFraudDetectionStrategy {
         
         // Check if current amount significantly exceeds user's average (3x or more)
         if (averageAmount > 0 && currentAmount > averageAmount * SUSPICIOUS_MULTIPLIER) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "AMOUNT_PATTERN",
                 25,
                 String.format("Amount ($%.2f) is %.1fx user's average ($%.2f)", 
@@ -106,7 +106,7 @@ public class AmountPatternDetection implements RiskBasedFraudDetectionStrategy {
             );
         // Check if current amount exceeds 2x user's historical maximum
         } else if (maxAmount > 0 && currentAmount > maxAmount * 2.0) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "AMOUNT_PATTERN",
                 20,
                 String.format("Amount ($%.2f) is 2x user's largest transaction ($%.2f)", 

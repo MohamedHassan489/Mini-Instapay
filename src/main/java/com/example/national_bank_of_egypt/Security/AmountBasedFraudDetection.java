@@ -72,15 +72,15 @@ public class AmountBasedFraudDetection implements FraudDetectionStrategy, RiskBa
      * @param transaction The transaction to analyze
      * @param userId The user performing the transaction (not used in amount-based detection)
      * @param recentTransactions Not used by this strategy
-     * @param result The result object to add risk factors to
+     * @param builder The Builder object to add risk factors to
      */
     @Override
-    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result) {
+    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder) {
         double amount = transaction.getAmount();
         
         // Check if amount exceeds the suspicious threshold
         if (amount > SUSPICIOUS_AMOUNT_THRESHOLD) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "AMOUNT",
                 30,
                 String.format("Large transaction amount: $%.2f (exceeds threshold of $%.2f)", 
@@ -88,7 +88,7 @@ public class AmountBasedFraudDetection implements FraudDetectionStrategy, RiskBa
             );
         // Check if amount is approaching the threshold (80% or more)
         } else if (amount > SUSPICIOUS_AMOUNT_THRESHOLD * 0.8) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "AMOUNT",
                 15,
                 String.format("Approaching threshold: $%.2f (80%% of $%.2f threshold)", 

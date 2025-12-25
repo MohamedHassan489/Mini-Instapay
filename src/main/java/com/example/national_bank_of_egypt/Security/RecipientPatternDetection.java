@@ -55,13 +55,13 @@ public class RecipientPatternDetection implements RiskBasedFraudDetectionStrateg
      * @param transaction The transaction to analyze
      * @param userId The user performing the transaction
      * @param recentTransactions User's recent transaction history
-     * @param result The result object to add risk factors to
+     * @param builder The Builder object to add risk factors to
      */
     @Override
-    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result) {
+    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder) {
         // If no transaction history exists, flag as new user
         if (recentTransactions == null || recentTransactions.isEmpty()) {
-            result.addRiskFactor("RECIPIENT", 20, "New recipient - no transaction history");
+            builder.addRiskFactor("RECIPIENT", 20, "New recipient - no transaction history");
             return;
         }
         
@@ -75,7 +75,7 @@ public class RecipientPatternDetection implements RiskBasedFraudDetectionStrateg
         
         // Check if the current recipient is in the set of known recipients
         if (!knownRecipients.contains(currentReceiver)) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "RECIPIENT",
                 20,
                 String.format("New recipient: %s (never transacted with before)", currentReceiver)

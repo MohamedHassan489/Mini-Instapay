@@ -22,9 +22,10 @@ import java.util.List;
  * 
  * <h2>Usage Example:</h2>
  * <pre>{@code
- * FraudRiskResult result = new FraudRiskResult();
+ * FraudRiskResult.Builder builder = FraudRiskResult.builder();
  * RiskBasedFraudDetectionStrategy strategy = new AmountBasedFraudDetection();
- * strategy.assessRisk(transaction, userId, history, result);
+ * strategy.assessRisk(transaction, userId, history, builder);
+ * FraudRiskResult result = builder.build();
  * // result now contains risk factors from this strategy
  * }</pre>
  * 
@@ -48,8 +49,8 @@ public interface RiskBasedFraudDetectionStrategy {
      * @param userId The unique identifier of the user performing the transaction
      * @param recentTransactions List of user's recent transactions for pattern analysis
      *                          (may be null or empty for new users)
-     * @param result The accumulator object to add risk factors to. This object is
+     * @param builder The Builder object to add risk factors to. This builder is
      *               mutated by this method to include any detected risk factors.
      */
-    void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result);
+    void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder);
 }

@@ -5,14 +5,13 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" styleClass="register_container" stylesheets="@../Styles/register.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.RegistrationController">
+<HBox minHeight="700.0" minWidth="1000.0" prefHeight="700.0" prefWidth="1000.0" styleClass="register_container" stylesheets="@../Styles/register.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.national_bank_of_egypt.Controllers.RegistrationController">
     <!-- Left Sidebar with Branding -->
-    <VBox styleClass="register_logo_container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" prefWidth="350.0">
+    <VBox styleClass="register_logo_container" minWidth="400.0" prefWidth="400.0" maxWidth="400.0" HBox.hgrow="NEVER">
         <VBox alignment="CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
             <VBox alignment="CENTER" spacing="15.0">
                 <Label text="🏦" styleClass="logo_icon" />
@@ -30,7 +29,7 @@
     </VBox>
     
     <!-- Right Side - Registration Form with ScrollPane -->
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="register_scroll_pane" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="350.0">
+    <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="register_scroll_pane" HBox.hgrow="ALWAYS">
         <VBox fx:id="register_form_container" alignment="CENTER" spacing="20.0" styleClass="register_form_container" prefWidth="550.0">
             <!-- Welcome Section -->
             <VBox alignment="CENTER" spacing="8.0" styleClass="welcome_section">
@@ -99,4 +98,4 @@
             </VBox>
         </VBox>
     </ScrollPane>
-</AnchorPane>
+</HBox>

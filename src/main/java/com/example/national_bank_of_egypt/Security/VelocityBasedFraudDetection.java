@@ -73,10 +73,10 @@ public class VelocityBasedFraudDetection implements RiskBasedFraudDetectionStrat
      * @param transaction The transaction to analyze
      * @param userId The user performing the transaction
      * @param recentTransactions User's recent transaction history
-     * @param result The result object to add risk factors to
+     * @param builder The Builder object to add risk factors to
      */
     @Override
-    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result) {
+    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder) {
         // Return early if no transaction history is available
         if (recentTransactions == null || recentTransactions.isEmpty()) {
             return;
@@ -93,7 +93,7 @@ public class VelocityBasedFraudDetection implements RiskBasedFraudDetectionStrat
         // If user has made multiple transactions today, it indicates high velocity
         // This is a practical approximation since we don't have exact timestamps
         if (todayCount >= SUSPICIOUS_VELOCITY_THRESHOLD) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "VELOCITY",
                 30,
                 String.format("Unusually rapid transactions: %d transactions today (indicates high velocity)", 
@@ -101,7 +101,7 @@ public class VelocityBasedFraudDetection implements RiskBasedFraudDetectionStrat
             );
         } else if (todayCount >= 2) {
             // Moderate velocity - user has made 2 transactions today
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "VELOCITY",
                 15,
                 String.format("Multiple transactions today: %d transactions (may indicate rapid activity)", 

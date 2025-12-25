@@ -18,6 +18,9 @@
     -fx-background-color: linear-gradient(135deg, #132A13 0%, #1a3a1a 50%, #253F25 100%);
     -fx-alignment: center;
     -fx-padding: 40;
+    -fx-min-width: 400;
+    -fx-pref-width: 400;
+    -fx-max-width: 400;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);
 }
 

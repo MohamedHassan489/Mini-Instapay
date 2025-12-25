@@ -109,10 +109,10 @@ public class FrequencyBasedFraudDetection implements FraudDetectionStrategy, Ris
      * @param transaction The transaction to analyze
      * @param userId The user performing the transaction
      * @param recentTransactions User's recent transaction history
-     * @param result The result object to add risk factors to
+     * @param builder The Builder object to add risk factors to
      */
     @Override
-    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result) {
+    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder) {
         // Return early if no transaction history is available
         if (recentTransactions == null || recentTransactions.isEmpty()) {
             return;
@@ -128,7 +128,7 @@ public class FrequencyBasedFraudDetection implements FraudDetectionStrategy, Ris
         
         // Check if daily transaction count exceeds threshold
         if (todayCount >= SUSPICIOUS_FREQUENCY_THRESHOLD) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "FREQUENCY",
                 25,
                 String.format("High transaction frequency: %d transactions today (threshold: %d)", 
@@ -136,7 +136,7 @@ public class FrequencyBasedFraudDetection implements FraudDetectionStrategy, Ris
             );
         // Check if approaching threshold (80% or more)
         } else if (todayCount >= SUSPICIOUS_FREQUENCY_THRESHOLD * 0.8) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "FREQUENCY",
                 15,
                 String.format("Approaching frequency limit: %d transactions today", todayCount)

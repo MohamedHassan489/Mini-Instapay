@@ -156,21 +156,21 @@ public class FraudDetectionService {
      * @return FraudRiskResult containing comprehensive risk assessment
      */
     public FraudRiskResult assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions) {
-        // Create a new result object to accumulate risk factors
-        FraudRiskResult result = new FraudRiskResult();
+        // Create a new Builder to accumulate risk factors (Builder Pattern)
+        FraudRiskResult.Builder builder = FraudRiskResult.builder();
         
         // Add frequency-based strategy dynamically if we have recent transactions
         // This strategy is added dynamically because it requires transaction history
         if (recentTransactions != null && !recentTransactions.isEmpty()) {
             FrequencyBasedFraudDetection freqStrategy = new FrequencyBasedFraudDetection(recentTransactions);
-            freqStrategy.assessRisk(transaction, userId, recentTransactions, result);
+            freqStrategy.assessRisk(transaction, userId, recentTransactions, builder);
         }
         
         // Run all registered risk-based strategies
-        // Each strategy adds its risk factors to the result object
+        // Each strategy adds its risk factors to the builder
         for (RiskBasedFraudDetectionStrategy strategy : riskStrategies) {
             try {
-                strategy.assessRisk(transaction, userId, recentTransactions, result);
+                strategy.assessRisk(transaction, userId, recentTransactions, builder);
             } catch (Exception e) {
                 // Log error but continue with other strategies
                 // One failing strategy should not break the entire assessment
@@ -178,7 +178,8 @@ public class FraudDetectionService {
             }
         }
         
-        return result;
+        // Build and return the final immutable FraudRiskResult
+        return builder.build();
     }
 }
 

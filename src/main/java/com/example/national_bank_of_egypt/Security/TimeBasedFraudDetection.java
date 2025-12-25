@@ -71,10 +71,10 @@ public class TimeBasedFraudDetection implements RiskBasedFraudDetectionStrategy 
      * @param transaction The transaction to analyze
      * @param userId The user performing the transaction (not used by this strategy)
      * @param recentTransactions Not used by this strategy
-     * @param result The result object to add risk factors to
+     * @param builder The Builder object to add risk factors to
      */
     @Override
-    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult result) {
+    public void assessRisk(Transaction transaction, String userId, List<Transaction> recentTransactions, FraudRiskResult.Builder builder) {
         // Get the current time when the transaction is being processed
         LocalTime currentTime = LocalTime.now();
         
@@ -87,14 +87,14 @@ public class TimeBasedFraudDetection implements RiskBasedFraudDetectionStrategy 
         
         // Highest risk: transactions during unusual hours (late night/early morning)
         if (isUnusualHours) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "TIME",
                 15,
                 String.format("Transaction at unusual time: %s (outside normal business hours)", currentTime)
             );
         // Moderate risk: transactions outside business hours but not late night
         } else if (!isBusinessHours) {
-            result.addRiskFactor(
+            builder.addRiskFactor(
                 "TIME",
                 10,
                 String.format("Transaction outside business hours: %s", currentTime)

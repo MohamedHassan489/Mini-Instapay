@@ -21,41 +21,59 @@
 }
 
 /* ============================================
+   Left Sidebar ScrollPane
+   ============================================ */
+
+.login_sidebar_scroll {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.login_sidebar_scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.login_sidebar_scroll .scroll-bar {
+    -fx-opacity: 0;
+}
+
+/* ============================================
    Left Sidebar - Branding Section
    ============================================ */
 
 .login_logo_container {
     -fx-background-color: #132A13;
     -fx-alignment: center;
-    -fx-padding: 40 30;
+    -fx-padding: 30 25;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 20, 0, 0, 0);
     -fx-background-radius: 0 0 0 0;
 }
 
 .branding_content {
-    -fx-padding: 40 30;
+    -fx-padding: 20 25;
 }
 
 .logo_section {
-    -fx-padding: 20 0;
+    -fx-padding: 10 0;
 }
 
 .logo_icon_container {
-    -fx-padding: 35;
+    -fx-padding: 25;
     -fx-background-color: rgba(255, 235, 59, 0.3);
     -fx-background-radius: 50;
     -fx-effect: dropshadow(gaussian, rgba(255, 235, 59, 0.6), 25, 0, 0, 0);
     -fx-alignment: center;
-    -fx-min-width: 170;
-    -fx-min-height: 170;
-    -fx-pref-width: 170;
-    -fx-pref-height: 170;
-    -fx-max-width: 170;
-    -fx-max-height: 170;
+    -fx-min-width: 130;
+    -fx-min-height: 130;
+    -fx-pref-width: 130;
+    -fx-pref-height: 130;
+    -fx-max-width: 130;
+    -fx-max-height: 130;
 }
 
 .logo_icon {
-    -fx-font-size: 70px;
+    -fx-font-size: 55px;
     -fx-fill: #FFEB3B;
     -fx-effect: dropshadow(gaussian, rgba(255, 235, 59, 0.9), 30, 0, 0, 0),
         dropshadow(gaussian, rgba(0, 0, 0, 0.8), 15, 0, 0, 4);
@@ -67,17 +85,17 @@
 
 .login_logo_container Label {
     -fx-text-fill: #FFEB3B;
-    -fx-font-size: 4em;
+    -fx-font-size: 3.5em;
     -fx-padding: 0;
     -fx-font-weight: bold;
 }
 
 .logo_text_container {
-    -fx-padding: 10 0;
+    -fx-padding: 5 0;
 }
 
 .logo_title {
-    -fx-font-size: 2.5em;
+    -fx-font-size: 2.2em;
     -fx-fill: #FFFFFF;
     -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 10, 0, 0, 3),
@@ -86,7 +104,7 @@
 }
 
 .logo_subtitle {
-    -fx-font-size: 1.2em;
+    -fx-font-size: 1.1em;
     -fx-fill: #FFEB3B;
     -fx-font-weight: 700;
     -fx-opacity: 1;
@@ -96,8 +114,8 @@
 }
 
 .features_container {
-    -fx-spacing: 18;
-    -fx-padding: 45 30;
+    -fx-spacing: 12;
+    -fx-padding: 25 20;
     -fx-background-color: rgba(255, 255, 255, 0.12);
     -fx-background-radius: 20;
     -fx-border-color: rgba(236, 243, 158, 0.35);
