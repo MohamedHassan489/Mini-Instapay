@@ -5,6 +5,7 @@ import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Models.TransactionLimit;
 import com.example.national_bank_of_egypt.Transactions.TransactionType;
 import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import com.example.national_bank_of_egypt.Utils.ErrorHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -284,24 +285,31 @@ public class SendMoneyController implements Initializable {
         String errorMessage = "";
 
         try {
+            Model.getInstance().clearLastError();
             success = Model.getInstance().sendMoney(receiver, sourceAccount.getAccountNumber(), amount, message,
                     transactionTypeStr, scheduledDate);
 
             if (!success) {
-                // Try to get more specific error information
-                TransactionLimit limit = Model.getInstance()
-                        .getTransactionLimit(Model.getInstance().getCurrentUser().getUserName());
-                if (limit != null && (limit.isDailyLimitExceeded(amount) || limit.isWeeklyLimitExceeded(amount))) {
-                    errorMessage = "Transaction limit exceeded. Daily: $"
-                            + String.format("%.2f", limit.getDailyLimitRemaining()) + " remaining, Weekly: $"
-                            + String.format("%.2f", limit.getWeeklyLimitRemaining()) + " remaining";
+                // Try to get more specific error information from Model
+                String modelError = Model.getInstance().getLastErrorMessage();
+                if (modelError != null && !modelError.isEmpty()) {
+                    errorMessage = modelError;
                 } else {
-                    errorMessage = "Transaction failed. Please check:\n- Receiver exists (phone/account/username/email)\n- Sufficient balance\n- Transaction limits";
+                    // Check transaction limits
+                    TransactionLimit limit = Model.getInstance()
+                            .getTransactionLimit(Model.getInstance().getCurrentUser().getUserName());
+                    if (limit != null && (limit.isDailyLimitExceeded(amount) || limit.isWeeklyLimitExceeded(amount))) {
+                        errorMessage = "Transaction limit exceeded. Daily: $"
+                                + String.format("%.2f", limit.getDailyLimitRemaining()) + " remaining, Weekly: $"
+                                + String.format("%.2f", limit.getWeeklyLimitRemaining()) + " remaining";
+                    } else {
+                        errorMessage = "Transaction failed. Please check:\n- Receiver exists (phone/account/username/email)\n- Sufficient balance\n- Transaction limits";
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            errorMessage = "An error occurred: " + e.getMessage();
+            errorMessage = "Transaction error: " + ErrorHandler.getUserFriendlyMessage(e);
         } finally {
             // Re-enable button
             if (send_btn != null) {

@@ -1,32 +1,49 @@
 package com.example.national_bank_of_egypt.Models;
 
+import com.example.national_bank_of_egypt.Exceptions.RepositoryException;
+import com.example.national_bank_of_egypt.Exceptions.TransactionException;
+import com.example.national_bank_of_egypt.Repository.BankAccountRepository;
+import com.example.national_bank_of_egypt.Repository.BankAccountRepositoryImpl;
+import com.example.national_bank_of_egypt.Repository.TransactionRepository;
+import com.example.national_bank_of_egypt.Repository.TransactionRepositoryImpl;
+import com.example.national_bank_of_egypt.Repository.UserRepository;
+import com.example.national_bank_of_egypt.Repository.UserRepositoryImpl;
 import com.example.national_bank_of_egypt.Views.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class Model {
     private static Model model;
     private final ViewFactory viewFactory;
     private final DataBaseDriver dataBaseDriver;
+    private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
+    private final BankAccountRepository bankAccountRepository;
     private final ObservableList<User> users;
     private User currentUser;
     private final ObservableList<Transaction> transactions;
     private final ObservableList<Dispute> disputes;
     private Boolean userLoginSuccessFlag;
     private Boolean adminLoginSuccessFlag;
+    private String lastErrorMessage; // Store last error for UI display
 
     private Model() {
         this.viewFactory = new ViewFactory();
         this.dataBaseDriver = new DataBaseDriver();
+        this.userRepository = new UserRepositoryImpl(dataBaseDriver);
+        this.transactionRepository = new TransactionRepositoryImpl(dataBaseDriver);
+        this.bankAccountRepository = new BankAccountRepositoryImpl(dataBaseDriver);
         this.userLoginSuccessFlag = false;
         this.currentUser = null;
         this.transactions = FXCollections.observableArrayList();
         this.disputes = FXCollections.observableArrayList();
         this.adminLoginSuccessFlag = false;
         this.users = FXCollections.observableArrayList();
+        this.lastErrorMessage = null;
     }
 
     public static synchronized Model getInstance() {
@@ -66,6 +83,18 @@ public class Model {
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
+    }
+    
+    public String getLastErrorMessage() {
+        return lastErrorMessage;
+    }
+    
+    public void clearLastError() {
+        this.lastErrorMessage = null;
+    }
+    
+    private void setLastError(String message) {
+        this.lastErrorMessage = message;
     }
 
     public void evaluateUserCred(String userName, String password) {
@@ -170,58 +199,12 @@ public class Model {
 
     private void loadUserBankAccounts(User user) {
         user.getBankAccounts().clear();
-        ResultSet rs = dataBaseDriver.getBankAccounts(user.getUserName());
-        // #region agent log
         try {
-            java.nio.file.Files.write(
-                    java.nio.file.Paths
-                            .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
-                    ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:136\",\"message\":\"getBankAccounts ResultSet created\",\"timestamp\":"
-                            + System.currentTimeMillis() + ",\"data\":{\"userName\":\"" + user.getUserName()
-                            + "\",\"resultSetNull\":" + (rs == null) + "}}\n").getBytes(),
-                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-        } catch (Exception logEx) {
-        }
-        // #endregion
-        try {
-            if (rs != null) {
-                while (rs.next()) {
-                    String accountNumber = rs.getString("AccountNumber");
-                    String bankName = rs.getString("BankName");
-                    double balance = rs.getDouble("Balance");
-                    String accountType = rs.getString("AccountType");
-                    BankAccount account = new BankAccount(user.getUserName(), accountNumber, bankName, balance,
-                            accountType);
-                    user.getBankAccounts().add(account);
-                }
-            }
-        } catch (Exception e) {
+            java.util.List<BankAccount> accounts = bankAccountRepository.findByOwner(user.getUserName());
+            user.getBankAccounts().addAll(accounts);
+        } catch (RepositoryException e) {
+            setLastError("Failed to load bank accounts: " + e.getMessage());
             e.printStackTrace();
-        } finally {
-            // #region agent log
-            try {
-                if (rs != null) {
-                    rs.close();
-                    java.nio.file.Files.write(
-                            java.nio.file.Paths
-                                    .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
-                            ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:151\",\"message\":\"getBankAccounts ResultSet closed\",\"timestamp\":"
-                                    + System.currentTimeMillis() + "}\n").getBytes(),
-                            java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-                }
-            } catch (Exception closeEx) {
-                try {
-                    java.nio.file.Files.write(
-                            java.nio.file.Paths
-                                    .get("c:\\Users\\DELL\\Downloads\\National_Bank_of_Egypt_work\\.cursor\\debug.log"),
-                            ("{\"sessionId\":\"debug-session\",\"runId\":\"run1\",\"hypothesisId\":\"H4\",\"location\":\"Model.java:154\",\"message\":\"getBankAccounts ResultSet close failed\",\"timestamp\":"
-                                    + System.currentTimeMillis() + ",\"data\":{\"error\":\"" + closeEx.getMessage()
-                                    + "\"}}\n").getBytes(),
-                            java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
-                } catch (Exception logEx) {
-                }
-            }
-            // #endregion
         }
     }
 
@@ -262,119 +245,241 @@ public class Model {
 
     public boolean registerUser(String firstName, String lastName, String email, String phoneNumber,
             String address, String userName, String password) {
-        // Check if username already exists
-        if (dataBaseDriver.userExists(userName)) {
+        try {
+            clearLastError();
+            
+            // Validate input
+            if (firstName == null || firstName.trim().isEmpty()) {
+                setLastError("First name is required.");
+                return false;
+            }
+            if (lastName == null || lastName.trim().isEmpty()) {
+                setLastError("Last name is required.");
+                return false;
+            }
+            if (email == null || email.trim().isEmpty()) {
+                setLastError("Email is required.");
+                return false;
+            }
+            if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+                setLastError("Phone number is required.");
+                return false;
+            }
+            if (userName == null || userName.trim().isEmpty()) {
+                setLastError("Username is required.");
+                return false;
+            }
+            if (password == null || password.trim().isEmpty()) {
+                setLastError("Password is required.");
+                return false;
+            }
+            
+            // Check if username already exists
+            if (userRepository.existsByUserName(userName)) {
+                setLastError("Username already exists. Please choose another.");
+                return false;
+            }
+            // Check if phone number already exists
+            if (userRepository.existsByPhoneNumber(phoneNumber)) {
+                setLastError("Phone number is already registered.");
+                return false;
+            }
+            // Check if email already exists
+            if (dataBaseDriver.emailExists(email)) {
+                setLastError("Email is already registered.");
+                return false;
+            }
+
+            // Create user
+            User newUser = new User(firstName, lastName, email, phoneNumber, address, userName, password, LocalDate.now());
+            boolean success = userRepository.save(newUser);
+
+            if (success) {
+                // Create default transaction limits for new user (daily: $5000, weekly: $20000)
+                dataBaseDriver.createTransactionLimit(userName, 5000.0, 20000.0);
+            } else {
+                setLastError("Failed to create user account. Please try again.");
+            }
+
+            return success;
+        } catch (RepositoryException e) {
+            setLastError("Registration failed: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            setLastError("An unexpected error occurred during registration.");
+            e.printStackTrace();
             return false;
         }
-        // Check if phone number already exists
-        if (dataBaseDriver.phoneNumberExists(phoneNumber)) {
-            return false;
-        }
-        // Check if email already exists
-        if (dataBaseDriver.emailExists(email)) {
-            return false;
-        }
-
-        // Create user
-        boolean success = dataBaseDriver.createUser(firstName, lastName, email, phoneNumber, address, userName,
-                password, LocalDate.now());
-
-        if (success) {
-            // Create default transaction limits for new user (daily: $5000, weekly: $20000)
-            dataBaseDriver.createTransactionLimit(userName, 5000.0, 20000.0);
-        }
-
-        return success;
     }
 
     public boolean updateUserProfile(String firstName, String lastName, String email, String phoneNumber,
             String address) {
-        if (currentUser == null)
+        clearLastError();
+        
+        if (currentUser == null) {
+            setLastError("No user is logged in.");
             return false;
-        boolean success = dataBaseDriver.updateUser(currentUser.getUserName(), firstName, lastName, email, phoneNumber,
-                address);
-        if (success) {
-            currentUser.firstNameProperty().set(firstName);
-            currentUser.lastNameProperty().set(lastName);
-            currentUser.emailProperty().set(email);
-            currentUser.phoneNumberProperty().set(phoneNumber);
-            currentUser.addressProperty().set(address);
+        }
+        
+        // Validate inputs
+        if (firstName == null || firstName.trim().isEmpty()) {
+            setLastError("First name is required.");
+            return false;
+        }
+        if (lastName == null || lastName.trim().isEmpty()) {
+            setLastError("Last name is required.");
+            return false;
+        }
+        if (email == null || email.trim().isEmpty()) {
+            setLastError("Email is required.");
+            return false;
+        }
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            setLastError("Phone number is required.");
+            return false;
+        }
+        
+        // Update the current user object first
+        currentUser.firstNameProperty().set(firstName);
+        currentUser.lastNameProperty().set(lastName);
+        currentUser.emailProperty().set(email);
+        currentUser.phoneNumberProperty().set(phoneNumber);
+        currentUser.addressProperty().set(address);
+        
+        boolean success = userRepository.update(currentUser);
+        if (!success) {
+            setLastError("Failed to update profile. Please try again.");
         }
         return success;
     }
 
     public boolean addBankAccount(String accountNumber, String bankName, double balance, String accountType) {
-        if (currentUser == null)
+        try {
+            clearLastError();
+            
+            if (currentUser == null) {
+                setLastError("No user is logged in.");
+                return false;
+            }
+                
+            if (accountNumber == null || accountNumber.trim().isEmpty()) {
+                setLastError("Account number is required.");
+                return false;
+            }
+            if (bankName == null || bankName.trim().isEmpty()) {
+                setLastError("Bank name is required.");
+                return false;
+            }
+            if (balance < 0) {
+                setLastError("Balance cannot be negative.");
+                return false;
+            }
+            
+            BankAccount newAccount = new BankAccount(currentUser.getUserName(), accountNumber, bankName, balance, accountType);
+            boolean success = bankAccountRepository.save(newAccount);
+            
+            if (success) {
+                // Reload from database to ensure consistency
+                loadUserBankAccounts(currentUser);
+            } else {
+                setLastError("Failed to add bank account. Please try again.");
+            }
+            
+            return success;
+        } catch (RepositoryException e) {
+            setLastError("Failed to add bank account: " + e.getMessage());
+            e.printStackTrace();
             return false;
-        boolean success = dataBaseDriver.createBankAccount(currentUser.getUserName(), accountNumber, bankName, balance,
-                accountType);
-        if (success) {
-            // Reload from database to ensure consistency
-            loadUserBankAccounts(currentUser);
+        } catch (Exception e) {
+            setLastError("An unexpected error occurred while adding bank account.");
+            e.printStackTrace();
+            return false;
         }
-        return success;
     }
 
     public boolean removeBankAccount(String accountNumber) {
-        if (currentUser == null)
+        clearLastError();
+        
+        if (currentUser == null) {
+            setLastError("No user is logged in.");
             return false;
-        boolean success = dataBaseDriver.deleteBankAccount(accountNumber);
-        if (success) {
-            // Reload from database to ensure consistency
-            loadUserBankAccounts(currentUser);
         }
-        return success;
+        
+        if (accountNumber == null || accountNumber.trim().isEmpty()) {
+            setLastError("Account number is required.");
+            return false;
+        }
+        
+        // Check if it's the last account
+        if (currentUser.getBankAccounts() != null && currentUser.getBankAccounts().size() <= 1) {
+            setLastError("Cannot remove the last bank account. You must have at least one account.");
+            return false;
+        }
+        
+        try {
+            boolean success = bankAccountRepository.delete(accountNumber);
+            if (success) {
+                // Reload from database to ensure consistency
+                loadUserBankAccounts(currentUser);
+            } else {
+                setLastError("Failed to remove bank account. Please try again.");
+            }
+            return success;
+        } catch (RepositoryException e) {
+            setLastError("Failed to remove bank account: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            setLastError("An unexpected error occurred while removing bank account.");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updateBankAccount(String accountNumber, String bankName, String accountType) {
-        if (currentUser == null)
+        clearLastError();
+        
+        if (currentUser == null) {
+            setLastError("No user is logged in.");
             return false;
-        boolean success = dataBaseDriver.updateBankAccount(accountNumber, bankName, accountType);
-        if (success) {
-            // Reload from database to ensure consistency
-            loadUserBankAccounts(currentUser);
         }
-        return success;
+        
+        if (accountNumber == null || accountNumber.trim().isEmpty()) {
+            setLastError("Account number is required.");
+            return false;
+        }
+        
+        try {
+            boolean success = dataBaseDriver.updateBankAccount(accountNumber, bankName, accountType);
+            if (success) {
+                // Reload from database to ensure consistency
+                loadUserBankAccounts(currentUser);
+            } else {
+                setLastError("Failed to update bank account. Please try again.");
+            }
+            return success;
+        } catch (Exception e) {
+            setLastError("An unexpected error occurred while updating bank account.");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void loadTransactions(int limit) {
-        if (currentUser == null)
-            return;
-        transactions.clear();
-        ResultSet rs = dataBaseDriver.getTransactions(currentUser.getUserName(), limit);
         try {
-            if (rs != null) {
-                while (rs.next()) {
-                    String transactionId = rs.getString("TransactionID");
-                    String sender = rs.getString("Sender");
-                    String receiver = rs.getString("Receiver");
-                    String senderAccount = rs.getString("SenderAccount");
-                    String receiverAccount = rs.getString("ReceiverAccount");
-                    double amount = rs.getDouble("Amount");
-                    String[] dateParts = rs.getString("Date").split("-");
-                    LocalDate date = LocalDate.of(
-                            Integer.parseInt(dateParts[0]),
-                            Integer.parseInt(dateParts[1]),
-                            Integer.parseInt(dateParts[2]));
-                    String message = rs.getString("Message");
-                    String status = rs.getString("Status");
-                    String transactionType = rs.getString("TransactionType");
-
-                    Transaction transaction = new Transaction(transactionId, sender, receiver, senderAccount,
-                            receiverAccount, amount, date, message, status, transactionType);
-                    transactions.add(transaction);
-                }
-            }
-        } catch (Exception e) {
+            if (currentUser == null)
+                return;
+            clearLastError();
+            transactions.clear();
+            java.util.List<Transaction> transactionList = transactionRepository.findByUserId(currentUser.getUserName(), limit);
+            transactions.addAll(transactionList);
+        } catch (RepositoryException e) {
+            setLastError("Failed to load transactions: " + e.getMessage());
             e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (Exception closeEx) {
-                closeEx.printStackTrace();
-            }
+        } catch (Exception e) {
+            setLastError("An unexpected error occurred while loading transactions.");
+            e.printStackTrace();
         }
     }
 
@@ -563,8 +668,12 @@ public class Model {
 
     public boolean sendMoney(String receiverIdentifier, String senderAccount, double amount, String message,
             String transactionType, LocalDate scheduledDate) {
-        if (currentUser == null)
+        clearLastError();
+        
+        if (currentUser == null) {
+            setLastError("You must be logged in to send money.");
             return false;
+        }
 
         ResultSet receiverRs = null;
         String receiver = null;
@@ -637,6 +746,13 @@ public class Model {
         }
 
         if (receiver == null || receiverAccount == null) {
+            setLastError("Receiver not found. Please check the username, phone number, email, or account number.");
+            return false;
+        }
+        
+        // Check if trying to send to self
+        if (receiver.equals(currentUser.getUserName())) {
+            setLastError("You cannot send money to yourself.");
             return false;
         }
 
@@ -660,10 +776,23 @@ public class Model {
         }
 
         // Check if limit is exceeded
-        if (limit.isDailyLimitExceeded(amount) || limit.isWeeklyLimitExceeded(amount)) {
+        if (limit.isDailyLimitExceeded(amount)) {
+            double remaining = limit.getDailyLimitRemaining();
+            setLastError(String.format("Daily transaction limit exceeded! You can only send $%.2f more today. Your daily limit is $%.2f.", 
+                remaining, limit.getDailyLimit()));
             com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
                     .sendNotification(currentUser.getUserName(), "Transaction Limit Exceeded",
-                            "Your transaction exceeds your daily or weekly limit", "LIMIT");
+                            "Your transaction exceeds your daily limit", "LIMIT");
+            return false;
+        }
+        
+        if (limit.isWeeklyLimitExceeded(amount)) {
+            double remaining = limit.getWeeklyLimitRemaining();
+            setLastError(String.format("Weekly transaction limit exceeded! You can only send $%.2f more this week. Your weekly limit is $%.2f.", 
+                remaining, limit.getWeeklyLimit()));
+            com.example.national_bank_of_egypt.Notifications.NotificationService.getInstance()
+                    .sendNotification(currentUser.getUserName(), "Transaction Limit Exceeded",
+                            "Your transaction exceeds your weekly limit", "LIMIT");
             return false;
         }
 
@@ -694,13 +823,17 @@ public class Model {
 
         // For instant transactions, proceed with balance check and transfer
         ResultSet senderAccRs = dataBaseDriver.getBankAccountByNumber(senderAccount);
-        if (senderAccRs == null)
+        if (senderAccRs == null) {
+            setLastError("Source account not found. Please select a valid account.");
             return false;
+        }
 
         try {
             if (senderAccRs.next()) {
                 double senderBalance = senderAccRs.getDouble("Balance");
                 if (senderBalance < amount) {
+                    setLastError(String.format("Insufficient balance! You have $%.2f but tried to send $%.2f.", 
+                        senderBalance, amount));
                     return false;
                 }
 
@@ -959,14 +1092,64 @@ public class Model {
     }
 
     public boolean resolveDispute(String disputeId, String resolution) {
-        return dataBaseDriver.resolveDispute(disputeId, resolution);
+        clearLastError();
+        
+        if (disputeId == null || disputeId.trim().isEmpty()) {
+            setLastError("Dispute ID is required.");
+            return false;
+        }
+        if (resolution == null || resolution.trim().isEmpty()) {
+            setLastError("Resolution description is required.");
+            return false;
+        }
+        
+        try {
+            boolean success = dataBaseDriver.resolveDispute(disputeId, resolution);
+            if (!success) {
+                setLastError("Failed to resolve dispute. Please try again.");
+            }
+            return success;
+        } catch (Exception e) {
+            setLastError("An error occurred while resolving dispute: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updateDisputeStatus(String disputeId, String status, String resolution) {
-        return dataBaseDriver.updateDisputeStatus(disputeId, status, resolution);
+        clearLastError();
+        
+        try {
+            boolean success = dataBaseDriver.updateDisputeStatus(disputeId, status, resolution);
+            if (!success) {
+                setLastError("Failed to update dispute status.");
+            }
+            return success;
+        } catch (Exception e) {
+            setLastError("An error occurred while updating dispute status: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean suspendAccount(String userName) {
-        return dataBaseDriver.suspendUser(userName);
+        clearLastError();
+        
+        if (userName == null || userName.trim().isEmpty()) {
+            setLastError("Username is required.");
+            return false;
+        }
+        
+        try {
+            boolean success = dataBaseDriver.suspendUser(userName);
+            if (!success) {
+                setLastError("Failed to suspend account. User may not exist or is already suspended.");
+            }
+            return success;
+        } catch (Exception e) {
+            setLastError("An error occurred while suspending account: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }

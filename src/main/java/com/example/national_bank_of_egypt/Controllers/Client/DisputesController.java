@@ -4,6 +4,7 @@ import com.example.national_bank_of_egypt.Models.Dispute;
 import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Models.Transaction;
 import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import com.example.national_bank_of_egypt.Utils.ErrorHandler;
 import com.example.national_bank_of_egypt.Views.DisputeCellFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -187,31 +188,42 @@ public class DisputesController implements Initializable {
         String disputeId = UUID.randomUUID().toString();
         String userId = Model.getInstance().getCurrentUser().getUserName();
 
-        if (Model.getInstance().getDataBaseDriver().createDispute(disputeId, transactionId, userId, reason, "PENDING",
-                LocalDate.now())) {
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Success");
-            successAlert.setHeaderText("Dispute Submitted");
-            successAlert.setContentText("Your dispute has been submitted successfully. An admin will review it.");
-            successAlert.showAndWait();
+        try {
+            Model.getInstance().clearLastError();
+            if (Model.getInstance().getDataBaseDriver().createDispute(disputeId, transactionId, userId, reason, "PENDING",
+                    LocalDate.now())) {
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle("Success");
+                successAlert.setHeaderText("Dispute Submitted");
+                successAlert.setContentText("Your dispute has been submitted successfully. An admin will review it.");
+                successAlert.showAndWait();
 
-            showSuccess("Dispute submitted successfully");
+                showSuccess("Dispute submitted successfully");
 
-            // Clear form and refresh list
-            if (transactionId_fld != null)
-                transactionId_fld.setText("");
-            if (reason_fld != null)
-                reason_fld.setText("");
-            if (transaction_combo != null)
-                transaction_combo.getSelectionModel().clearSelection();
-            Model.getInstance().loadDisputes();
-            loadUserTransactions(); // Reload transactions in case new ones were added
-            if (disputes_list != null) {
-                disputes_list.setItems(Model.getInstance().getDisputes());
-                disputes_list.setCellFactory(e -> new DisputeCellFactory());
+                // Clear form and refresh list
+                if (transactionId_fld != null)
+                    transactionId_fld.setText("");
+                if (reason_fld != null)
+                    reason_fld.setText("");
+                if (transaction_combo != null)
+                    transaction_combo.getSelectionModel().clearSelection();
+                Model.getInstance().loadDisputes();
+                loadUserTransactions(); // Reload transactions in case new ones were added
+                if (disputes_list != null) {
+                    disputes_list.setItems(Model.getInstance().getDisputes());
+                    disputes_list.setCellFactory(e -> new DisputeCellFactory());
+                }
+            } else {
+                String errorMessage = Model.getInstance().getLastErrorMessage();
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    showError(errorMessage);
+                } else {
+                    showError("Failed to submit dispute. Please try again.");
+                }
             }
-        } else {
-            showError("Failed to submit dispute. Please try again.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("An error occurred: " + ErrorHandler.getUserFriendlyMessage(e));
         }
     }
 

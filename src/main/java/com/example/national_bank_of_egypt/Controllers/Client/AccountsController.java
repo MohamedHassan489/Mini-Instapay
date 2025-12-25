@@ -4,6 +4,7 @@ import com.example.national_bank_of_egypt.Models.BankAccount;
 import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Utils.AnimationUtils;
 import com.example.national_bank_of_egypt.Utils.DialogUtils;
+import com.example.national_bank_of_egypt.Utils.ErrorHandler;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -282,38 +283,50 @@ public class AccountsController implements Initializable {
         }
 
         // Add account
-        if (Model.getInstance().addBankAccount(accountNumber, bankName, balance, accountType)) {
-            // Reload bank accounts from database to ensure consistency
-            if (Model.getInstance().getCurrentUser() != null) {
-                Model.getInstance().reloadUserBankAccounts();
-            }
+        try {
+            Model.getInstance().clearLastError();
+            if (Model.getInstance().addBankAccount(accountNumber, bankName, balance, accountType)) {
+                // Reload bank accounts from database to ensure consistency
+                if (Model.getInstance().getCurrentUser() != null) {
+                    Model.getInstance().reloadUserBankAccounts();
+                }
 
-            // Show success message
-            DialogUtils.showSuccess("Success", "Bank account has been added successfully!");
+                // Show success message
+                DialogUtils.showSuccess("Success", "Bank account has been added successfully!");
 
-            // Clear form
-            if (new_account_num_fld != null)
-                new_account_num_fld.setText("");
-            if (new_bank_name_fld != null)
-                new_bank_name_fld.setText("");
-            if (new_balance_fld != null)
-                new_balance_fld.setText("");
-            if (account_type_combo != null)
-                account_type_combo.setValue("Checking");
+                // Clear form
+                if (new_account_num_fld != null)
+                    new_account_num_fld.setText("");
+                if (new_bank_name_fld != null)
+                    new_bank_name_fld.setText("");
+                if (new_balance_fld != null)
+                    new_balance_fld.setText("");
+                if (account_type_combo != null)
+                    account_type_combo.setValue("Checking");
 
-            // Refresh list and select new account
-            if (accounts_list != null && Model.getInstance().getCurrentUser() != null) {
-                accounts_list.setItems(Model.getInstance().getCurrentUser().getBankAccounts());
-                // Select the newly added account
-                for (BankAccount acc : Model.getInstance().getCurrentUser().getBankAccounts()) {
-                    if (acc.getAccountNumber().equals(accountNumber)) {
-                        accounts_list.getSelectionModel().select(acc);
-                        break;
+                // Refresh list and select new account
+                if (accounts_list != null && Model.getInstance().getCurrentUser() != null) {
+                    accounts_list.setItems(Model.getInstance().getCurrentUser().getBankAccounts());
+                    // Select the newly added account
+                    for (BankAccount acc : Model.getInstance().getCurrentUser().getBankAccounts()) {
+                        if (acc.getAccountNumber().equals(accountNumber)) {
+                            accounts_list.getSelectionModel().select(acc);
+                            break;
+                        }
                     }
                 }
+            } else {
+                // Display specific error from Model
+                String errorMessage = Model.getInstance().getLastErrorMessage();
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    showError(add_account_error_lbl, errorMessage);
+                } else {
+                    showError(add_account_error_lbl, "Failed to add account. Account number may already exist.");
+                }
             }
-        } else {
-            showError(add_account_error_lbl, "Failed to add account. Account number may already exist.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError(add_account_error_lbl, "An error occurred: " + ErrorHandler.getUserFriendlyMessage(e));
         }
     }
 
@@ -346,39 +359,51 @@ public class AccountsController implements Initializable {
             }
 
             // Remove account
-            if (Model.getInstance().removeBankAccount(selectedAccount.getAccountNumber())) {
-                // Reload bank accounts from database to ensure consistency
-                if (Model.getInstance().getCurrentUser() != null) {
-                    Model.getInstance().reloadUserBankAccounts();
-                }
+            try {
+                Model.getInstance().clearLastError();
+                if (Model.getInstance().removeBankAccount(selectedAccount.getAccountNumber())) {
+                    // Reload bank accounts from database to ensure consistency
+                    if (Model.getInstance().getCurrentUser() != null) {
+                        Model.getInstance().reloadUserBankAccounts();
+                    }
 
-                // Show success message
-                DialogUtils.showSuccess("Success", "Bank account has been removed successfully!");
+                    // Show success message
+                    DialogUtils.showSuccess("Success", "Bank account has been removed successfully!");
 
-                // Clear details and refresh list
-                if (account_num_lbl != null)
-                    account_num_lbl.setText("-");
-                if (bank_name_lbl != null)
-                    bank_name_lbl.setText("-");
-                if (balance_lbl != null)
-                    balance_lbl.setText("$0.00");
-                if (account_type_lbl != null)
-                    account_type_lbl.setText("-");
-                if (update_bank_name_fld != null)
-                    update_bank_name_fld.setText("");
-                if (update_account_type_combo != null)
-                    update_account_type_combo.setValue(null);
+                    // Clear details and refresh list
+                    if (account_num_lbl != null)
+                        account_num_lbl.setText("-");
+                    if (bank_name_lbl != null)
+                        bank_name_lbl.setText("-");
+                    if (balance_lbl != null)
+                        balance_lbl.setText("$0.00");
+                    if (account_type_lbl != null)
+                        account_type_lbl.setText("-");
+                    if (update_bank_name_fld != null)
+                        update_bank_name_fld.setText("");
+                    if (update_account_type_combo != null)
+                        update_account_type_combo.setValue(null);
 
-                // Refresh list
-                if (accounts_list != null && Model.getInstance().getCurrentUser() != null) {
-                    accounts_list.setItems(Model.getInstance().getCurrentUser().getBankAccounts());
-                    // Select first account if available
-                    if (!Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
-                        accounts_list.getSelectionModel().select(0);
+                    // Refresh list
+                    if (accounts_list != null && Model.getInstance().getCurrentUser() != null) {
+                        accounts_list.setItems(Model.getInstance().getCurrentUser().getBankAccounts());
+                        // Select first account if available
+                        if (!Model.getInstance().getCurrentUser().getBankAccounts().isEmpty()) {
+                            accounts_list.getSelectionModel().select(0);
+                        }
+                    }
+                } else {
+                    // Display specific error from Model
+                    String errorMessage = Model.getInstance().getLastErrorMessage();
+                    if (errorMessage != null && !errorMessage.isEmpty()) {
+                        showError(remove_account_error_lbl, errorMessage);
+                    } else {
+                        showError(remove_account_error_lbl, "Failed to remove account. Please try again.");
                     }
                 }
-            } else {
-                showError(remove_account_error_lbl, "Failed to remove account. Please try again.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError(remove_account_error_lbl, "An error occurred: " + ErrorHandler.getUserFriendlyMessage(e));
             }
         }
     }
@@ -407,28 +432,40 @@ public class AccountsController implements Initializable {
         }
 
         // Update account
-        if (Model.getInstance().updateBankAccount(selectedAccount.getAccountNumber(), bankName, accountType)) {
-            // Reload bank accounts from database to ensure consistency
-            if (Model.getInstance().getCurrentUser() != null) {
-                Model.getInstance().reloadUserBankAccounts();
-            }
+        try {
+            Model.getInstance().clearLastError();
+            if (Model.getInstance().updateBankAccount(selectedAccount.getAccountNumber(), bankName, accountType)) {
+                // Reload bank accounts from database to ensure consistency
+                if (Model.getInstance().getCurrentUser() != null) {
+                    Model.getInstance().reloadUserBankAccounts();
+                }
 
-            // Show success message
-            DialogUtils.showSuccess("Success", "Bank account information has been updated successfully!");
+                // Show success message
+                DialogUtils.showSuccess("Success", "Bank account information has been updated successfully!");
 
-            // Refresh list to show updated values
-            if (accounts_list != null && Model.getInstance().getCurrentUser() != null) {
-                accounts_list.setItems(Model.getInstance().getCurrentUser().getBankAccounts());
-                // Reselect the updated account
-                for (BankAccount acc : Model.getInstance().getCurrentUser().getBankAccounts()) {
-                    if (acc.getAccountNumber().equals(selectedAccount.getAccountNumber())) {
-                        accounts_list.getSelectionModel().select(acc);
-                        break;
+                // Refresh list to show updated values
+                if (accounts_list != null && Model.getInstance().getCurrentUser() != null) {
+                    accounts_list.setItems(Model.getInstance().getCurrentUser().getBankAccounts());
+                    // Reselect the updated account
+                    for (BankAccount acc : Model.getInstance().getCurrentUser().getBankAccounts()) {
+                        if (acc.getAccountNumber().equals(selectedAccount.getAccountNumber())) {
+                            accounts_list.getSelectionModel().select(acc);
+                            break;
+                        }
                     }
                 }
+            } else {
+                // Display specific error from Model
+                String errorMessage = Model.getInstance().getLastErrorMessage();
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    showError(update_account_error_lbl, errorMessage);
+                } else {
+                    showError(update_account_error_lbl, "Failed to update account. Please try again.");
+                }
             }
-        } else {
-            showError(update_account_error_lbl, "Failed to update account. Please try again.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError(update_account_error_lbl, "An error occurred: " + ErrorHandler.getUserFriendlyMessage(e));
         }
     }
 }

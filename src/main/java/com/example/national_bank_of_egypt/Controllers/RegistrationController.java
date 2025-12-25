@@ -2,6 +2,7 @@ package com.example.national_bank_of_egypt.Controllers;
 
 import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import com.example.national_bank_of_egypt.Utils.ErrorHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -169,19 +170,33 @@ public class RegistrationController implements Initializable {
         }
 
         // Attempt registration
-        if (Model.getInstance().registerUser(firstName, lastName, email, phoneNumber, address, userName, password)) {
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Registration Successful");
-            successAlert.setHeaderText("Account Created");
-            successAlert.setContentText("Registration successful! You can now login with your credentials.");
-            successAlert.showAndWait();
+        try {
+            Model.getInstance().clearLastError();
+            
+            if (Model.getInstance().registerUser(firstName, lastName, email, phoneNumber, address, userName, password)) {
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle("Registration Successful");
+                successAlert.setHeaderText("Account Created");
+                successAlert.setContentText("Registration successful! You can now login with your credentials.");
+                successAlert.showAndWait();
 
-            clearFields();
-            Stage stage = (Stage) error_lbl.getScene().getWindow();
-            Model.getInstance().getViewFactory().closeStage(stage);
-            Model.getInstance().getViewFactory().showLoginWindow();
-        } else {
-            showError("Registration failed: Username, email, or phone number already exists");
+                clearFields();
+                Stage stage = (Stage) error_lbl.getScene().getWindow();
+                Model.getInstance().getViewFactory().closeStage(stage);
+                Model.getInstance().getViewFactory().showLoginWindow();
+            } else {
+                // Display specific error from Model
+                String errorMessage = Model.getInstance().getLastErrorMessage();
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    showError(errorMessage);
+                } else {
+                    showError("Registration failed: Username, email, or phone number already exists");
+                }
+            }
+        } catch (Exception e) {
+            // Handle any unexpected errors
+            showError("An unexpected error occurred: " + ErrorHandler.getUserFriendlyMessage(e));
+            e.printStackTrace();
         }
     }
 

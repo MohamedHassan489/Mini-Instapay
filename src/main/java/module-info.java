@@ -28,4 +28,6 @@ module com.example.national_bank_of_egypt {
     exports com.example.national_bank_of_egypt.Transactions;
     exports com.example.national_bank_of_egypt.Reports;
     exports com.example.national_bank_of_egypt.Repository;
+    exports com.example.national_bank_of_egypt.Exceptions;
+    exports com.example.national_bank_of_egypt.Utils;
 }

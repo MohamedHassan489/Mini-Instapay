@@ -119,13 +119,24 @@ public class ClientsController implements Initializable {
                     "Are you sure you want to suspend account: " + selectedUser.getUserName() + "?");
 
             if (confirmed) {
-                if (Model.getInstance().suspendAccount(selectedUser.getUserName())) {
-                    DialogUtils.showSuccess("Success",
-                            "Account " + selectedUser.getUserName() + " has been suspended.");
-                    // Refresh list or update UI if needed
-                    Model.getInstance().loadAllUsers();
-                } else {
-                    DialogUtils.showError("Error", "Could not suspend account. Please try again.");
+                try {
+                    Model.getInstance().clearLastError();
+                    if (Model.getInstance().suspendAccount(selectedUser.getUserName())) {
+                        DialogUtils.showSuccess("Success",
+                                "Account " + selectedUser.getUserName() + " has been suspended.");
+                        // Refresh list or update UI if needed
+                        Model.getInstance().loadAllUsers();
+                    } else {
+                        String errorMessage = Model.getInstance().getLastErrorMessage();
+                        if (errorMessage != null && !errorMessage.isEmpty()) {
+                            DialogUtils.showError("Error", errorMessage);
+                        } else {
+                            DialogUtils.showError("Error", "Could not suspend account. Please try again.");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    DialogUtils.showError("Error", "An error occurred: " + e.getMessage());
                 }
             }
         }

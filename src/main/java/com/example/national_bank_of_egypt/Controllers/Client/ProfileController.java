@@ -3,6 +3,7 @@ package com.example.national_bank_of_egypt.Controllers.Client;
 import com.example.national_bank_of_egypt.Models.Model;
 import com.example.national_bank_of_egypt.Models.TransactionLimit;
 import com.example.national_bank_of_egypt.Utils.AnimationUtils;
+import com.example.national_bank_of_egypt.Utils.ErrorHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -296,7 +297,13 @@ public class ProfileController implements Initializable {
             // Reload limits to show updated values
             loadTransactionLimits();
         } else {
-            showError(limits_error_lbl, "Failed to update limits. Please try again.");
+            // Display specific error from Model
+            String errorMessage = Model.getInstance().getLastErrorMessage();
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                showError(limits_error_lbl, errorMessage);
+            } else {
+                showError(limits_error_lbl, "Failed to update limits. Please try again.");
+            }
         }
     }
 
@@ -472,7 +479,13 @@ public class ProfileController implements Initializable {
                                 "PROFILE");
             }
 
-            showError(error_lbl, "Failed to update profile. Please try again.");
+            // Display specific error from Model
+            String errorMessage = Model.getInstance().getLastErrorMessage();
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                showError(error_lbl, errorMessage);
+            } else {
+                showError(error_lbl, "Failed to update profile. Please try again.");
+            }
         }
     }
 

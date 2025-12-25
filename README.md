@@ -1,2 +1,0 @@
-# Mini-Instapay
-SDP Project

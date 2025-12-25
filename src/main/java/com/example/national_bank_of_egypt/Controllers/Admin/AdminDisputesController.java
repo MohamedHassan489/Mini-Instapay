@@ -30,20 +30,49 @@ public class AdminDisputesController implements Initializable {
     
     private void onResolveDispute() {
         Dispute selected = disputes_list.getSelectionModel().getSelectedItem();
-        if (selected != null && !resolution_fld.getText().isEmpty()) {
-            if (Model.getInstance().resolveDispute(selected.getDisputeId(), resolution_fld.getText())) {
-                status_lbl.setText("Dispute resolved successfully");
-                status_lbl.setStyle("-fx-text-fill: green;");
+        
+        if (selected == null) {
+            showError("Please select a dispute to resolve.");
+            return;
+        }
+        
+        if (resolution_fld.getText() == null || resolution_fld.getText().trim().isEmpty()) {
+            showError("Please enter a resolution description.");
+            return;
+        }
+        
+        try {
+            Model.getInstance().clearLastError();
+            if (Model.getInstance().resolveDispute(selected.getDisputeId(), resolution_fld.getText().trim())) {
+                showSuccess("Dispute resolved successfully!");
                 resolution_fld.setText("");
                 Model.getInstance().loadAllDisputes();
                 disputes_list.setItems(Model.getInstance().getAllDisputes());
             } else {
-                status_lbl.setText("Failed to resolve dispute");
-                status_lbl.setStyle("-fx-text-fill: red;");
+                String errorMessage = Model.getInstance().getLastErrorMessage();
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    showError(errorMessage);
+                } else {
+                    showError("Failed to resolve dispute. Please try again.");
+                }
             }
-        } else {
-            status_lbl.setText("Please select a dispute and enter resolution");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("An error occurred: " + e.getMessage());
+        }
+    }
+    
+    private void showError(String message) {
+        if (status_lbl != null) {
+            status_lbl.setText(message);
             status_lbl.setStyle("-fx-text-fill: red;");
+        }
+    }
+    
+    private void showSuccess(String message) {
+        if (status_lbl != null) {
+            status_lbl.setText(message);
+            status_lbl.setStyle("-fx-text-fill: green;");
         }
     }
 }
